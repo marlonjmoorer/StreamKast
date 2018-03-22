@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.FeedResult
+import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.load
 import kotlinx.android.synthetic.main.item_podcast.view.*
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class SectionAdapter(private val data: List<FeedResult>) :
+open class SectionAdapter(private val data: List<MediaItem>) :
         RecyclerView.Adapter<SectionAdapter.ViewHolder>() {
 
 
@@ -32,7 +33,7 @@ class SectionAdapter(private val data: List<FeedResult>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         var show=   data[position]
-        holder.view.show_title.text= show.name
+        holder.view.show_title.text= show.collectionName
         show.artworkUrl100?.let {
             holder.view.show_thumbnail.load(it)
         }
@@ -41,3 +42,5 @@ class SectionAdapter(private val data: List<FeedResult>) :
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = data.size
 }
+
+

@@ -87,11 +87,12 @@ class Link {
 
 }
 
-class FeedResult {
+class FeedResult{
 
     @SerializedName("artistName")
     @Expose
     var artistName: String? = null
+
     @SerializedName("id")
     @Expose
     var id: String? = null
