@@ -3,22 +3,47 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:background="@color/purple_200"
     >
-    <TextView
-        android:text="header"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/header_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/section_header"
-        android:gravity="center"
-        android:textSize="20sp"
-        />
+        android:layout_height="wrap_content">
+        <TextView
+            android:text="header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:id="@+id/section_header"
+            android:gravity="center"
+
+            android:textSize="20sp"
+            />
+
+
+    </LinearLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/section_header"
+        android:layout_below="@+id/header_wrapper"
         android:background="@color/pink_500"
+        />
+    <TextView
+        android:text="More"
+        android:layout_below="@+id/section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/more_link"
+        android:paddingRight="8dp"
+        android:gravity="right"
+        android:textSize="18sp"
+        android:textColor="@color/blue_A200"
+        android:clickable="true"
         />
 </RelativeLayout>

@@ -7,14 +7,13 @@ import com.example.marlonmoorer.streamkast.api.ItunesRepository
 import com.example.marlonmoorer.streamkast.api.models.FeedResult
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
+import com.example.marlonmoorer.streamkast.async
 
-/**
- * Created by marlonmoorer on 3/21/18.
- */
+
 class FeatureViewModel : ViewModel() {
     var topPodcastList: MutableLiveData<List<MediaItem>>?=null
     var showByGenre =mutableMapOf<MediaGenre,MutableLiveData<List<MediaItem>?>>()
-    var limit=5
+    var limit=6
     var itunesRepository:ItunesRepository
     init {
         itunesRepository= ItunesRepository()
@@ -37,14 +36,14 @@ class FeatureViewModel : ViewModel() {
         return showByGenre[genre]!!
     }
 
-    fun loadTopPodcast() = Thread({
+    fun loadTopPodcast() = async{
             val podcast= itunesRepository.topPodCast(limit)
             topPodcastList?.postValue(podcast)
-    }).start()
+    }
 
-    fun loadShowByGenre(genre: MediaGenre)=Thread({
+    fun loadShowByGenre(genre: MediaGenre)=async{
         val podcast= itunesRepository.getShowsByGenre(genre,limit)
         showByGenre[genre]?.postValue(podcast)
-    }).start()
+    }
 
 }

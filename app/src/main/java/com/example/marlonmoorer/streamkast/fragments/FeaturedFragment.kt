@@ -11,11 +11,11 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.example.marlonmoorer.streamkast.adapters.SectionAdapter
-import com.example.marlonmoorer.streamkast.adapters.SectionListAdpater
+import com.example.marlonmoorer.streamkast.adapters.SectionListAdapter
 import com.example.marlonmoorer.streamkast.adapters.SectionModel
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.viewModels.FeatureViewModel
+import com.example.marlonmoorer.streamkast.viewModels.ListDialogViewModel
 import kotlinx.android.synthetic.main.fragment_featured.*
 
 
@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_featured.*
  */
 class FeaturedFragment : Fragment() {
 
-    lateinit var adapter:SectionListAdpater
+    lateinit var adapter: SectionListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_featured,
@@ -33,21 +33,34 @@ class FeaturedFragment : Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        val model = ViewModelProviders.of(this).get(FeatureViewModel::class.java!!)
+        val featureViewModel = ViewModelProviders.of(activity!!).get(FeatureViewModel::class.java!!)
+        val listViewModel=ViewModelProviders.of(activity!!).get(ListDialogViewModel::class.java!!)
         var sections= mutableListOf<SectionModel>()
-        adapter= SectionListAdpater(sections,context!!)
-        model.getFeatured()?.observe(this, Observer{ podcast->
+        adapter= SectionListAdapter(sections,listViewModel)
+        featureViewModel.getFeatured()?.observe(this, Observer{ podcast->
             podcast?.let {
-                adapter.prependSection(SectionModel("Featured", it) )
+                adapter.prependSection(SectionModel(it,title = "Featured") )
             }
         })
-        MediaGenre.values().take(4).forEach { genre->
-            model.getShowsByGenre(genre).observe(this, Observer{ podcast->
+        MediaGenre.values().forEach { genre->
+            featureViewModel.getShowsByGenre(genre).observe(this, Observer{ podcast->
                 podcast?.let {
-                    adapter.addSection(SectionModel(genre.displayname(), podcast) )
+                    adapter.addSection(SectionModel(podcast,genre) )
                 }
             })
         }
+        listViewModel.isLoading.observe(this,Observer{loading->
+           if (loading!!) {
+               fragmentManager?.let{
+                   it.beginTransaction()
+                           .add(android.R.id.content,ListDialogFragment())
+                           .addToBackStack("list")
+                           .setCustomAnimations(R.anim.slide_up,R.anim.slide_up_out)
+                           .commit()
+                   //  ListDialogFragment().show(fragmentManager,"list")
+               }
+           }
+        })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +73,7 @@ class FeaturedFragment : Fragment() {
         contentList.hasFixedSize()
         contentList.adapter=adapter
 
-
-
     }
+
+
 }

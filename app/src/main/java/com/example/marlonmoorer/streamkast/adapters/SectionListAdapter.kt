@@ -1,7 +1,5 @@
 package com.example.marlonmoorer.streamkast.adapters
 
-import android.content.Context
-import android.media.browse.MediaBrowser
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,34 +7,42 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.MediaItem
-import com.example.marlonmoorer.streamkast.load
-import kotlinx.android.synthetic.main.item_podcast.view.*
+import com.example.marlonmoorer.streamkast.viewModels.ListDialogViewModel
 import kotlinx.android.synthetic.main.item_section.view.*
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class SectionListAdpater(private var collections:MutableList<SectionModel>, val context: Context): RecyclerView.Adapter<SectionListAdpater.ViewHolder>() {
+class SectionListAdapter(private var collections:MutableList<SectionModel>,val viewModel: ListDialogViewModel): RecyclerView.Adapter<SectionListAdapter.ViewHolder>() {
+
+
+    private var layoutManager:LinearLayoutManager? = null
+
 
 
     override fun getItemCount()= collections.size
+
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         var collection=  collections[position]
         holder?.view?.apply {
-            section?.layoutManager=LinearLayoutManager(context,LinearLayoutManager.HORIZONTAL,false)
+            if(section.layoutManager==null)section?.layoutManager=layoutManager
             section?.adapter=SectionAdapter(collection.items)
-            section_header.text=collection.title
+            section_header.text= collection.genre?.displayname()?:collection.title
+
+            more_link.setOnClickListener{
+               // viewModel
+                viewModel.loadMore(collection.genre)
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
+        layoutManager=LinearLayoutManager(parent!!.context,LinearLayoutManager.HORIZONTAL,false)
         val view = LayoutInflater.from(parent?.context)
                 .inflate(R.layout.item_section, parent, false)
-
         return ViewHolder(view)
     }
 

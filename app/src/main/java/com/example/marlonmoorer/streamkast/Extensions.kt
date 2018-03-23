@@ -11,3 +11,8 @@ fun ImageView.load(url:String){
             .load(url)
             .into(this);
 }
+fun Any.async(fn:()->Unit){
+    Thread({
+        fn()
+    }).start()
+}

@@ -4,12 +4,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.FeedResult
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.load
-import kotlinx.android.synthetic.main.item_podcast.view.*
+import kotlinx.android.synthetic.main.item_podcast_tile.view.*
 
 /**
  * Created by marlonmoorer on 3/21/18.
@@ -24,7 +22,7 @@ open class SectionAdapter(private val data: List<MediaItem>) :
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_podcast, parent, false)
+                .inflate(R.layout.item_podcast_tile, parent, false)
 
         return ViewHolder(view)
     }

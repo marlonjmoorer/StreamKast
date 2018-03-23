@@ -68,7 +68,7 @@ enum class MediaGenre(private val value:String){
        // override fun imageResource(): Int? = R.drawable.icons8_globe_filled
     },
     Government("1325"){
-        override fun displayname()="Government & Organizations"
+        override fun displayname() ="Government & Organizations"
        // override fun imageResource(): Int? = R.drawable.icons8_us_capitol_filled
     };
 
