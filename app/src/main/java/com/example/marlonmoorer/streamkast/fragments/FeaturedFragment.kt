@@ -53,9 +53,16 @@ class FeaturedFragment : Fragment() {
            if (loading!!) {
                fragmentManager?.let{
                    it.beginTransaction()
-                           .add(android.R.id.content,ListDialogFragment())
+                           .setCustomAnimations(
+                                   R.anim.design_bottom_sheet_slide_in,
+                                   R.anim.design_bottom_sheet_slide_out)
+//                           .setCustomAnimations(
+//                                   R.anim.card_flip_right_in,
+//                                   R.anim.card_flip_right_out,
+//                                   R.anim.card_flip_left_in,
+//                                   R.anim.card_flip_left_out)
                            .addToBackStack("list")
-                           .setCustomAnimations(R.anim.slide_up,R.anim.slide_up_out)
+                           .add(android.R.id.content,ListDialogFragment())
                            .commit()
                    //  ListDialogFragment().show(fragmentManager,"list")
                }

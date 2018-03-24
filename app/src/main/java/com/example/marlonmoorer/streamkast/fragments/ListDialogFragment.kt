@@ -43,8 +43,14 @@ class ListDialogFragment: Fragment() {
 
     override fun onStart() {
         super.onStart()
-        selection.layoutManager = LinearLayoutManager(activity)
-        selection.adapter = adapter
+        selection.apply {
+            layoutManager = LinearLayoutManager(activity)
+            setHasFixedSize(true)
+            setItemViewCacheSize(30);
+            setDrawingCacheEnabled(true);
+            adapter =this@ListDialogFragment.adapter
+          //  setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        }
         tool_bar.setNavigationOnClickListener{
             fragmentManager?.popBackStack()
         }
