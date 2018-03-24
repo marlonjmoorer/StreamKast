@@ -12,15 +12,15 @@ import kotlinx.android.synthetic.main.item_podcast.view.*
 
 
 
-class PodcastListAdapter(private val data: List<MediaItem>):RecyclerView.Adapter<PodcastListAdapter.ViewHolder>(){
+class PodcastListAdapter(private val data: List<MediaItem>):RecyclerView.Adapter<DataViewHolder<ItemPodcastBinding>>(){
 
 
     override fun getItemCount()=data.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DataViewHolder<ItemPodcastBinding>, position: Int) {
 
         var show=data[position]
-        holder?.bind(show)
+        holder?.binding.show=show
 
 //       holder.view.apply {
 //           item_title.text=show.collectionName
@@ -35,23 +35,13 @@ class PodcastListAdapter(private val data: List<MediaItem>):RecyclerView.Adapter
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder<ItemPodcastBinding> {
             val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_podcast, parent, false)
             val viewDataBinding: ItemPodcastBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_podcast, parent, false)
-            return ViewHolder(viewDataBinding)
+            return DataViewHolder(viewDataBinding)
     }
 
-    class ViewHolder(binding: ItemPodcastBinding):RecyclerView.ViewHolder(binding.root){
-        val binding:ItemPodcastBinding
 
-        init {
-            this.binding=binding
-        }
-        fun bind(item: MediaItem) {
-            binding.show=item
-            binding.executePendingBindings()
-        }
-    }
 
 }

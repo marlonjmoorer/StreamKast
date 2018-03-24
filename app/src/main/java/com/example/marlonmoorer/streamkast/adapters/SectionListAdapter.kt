@@ -1,5 +1,6 @@
 package com.example.marlonmoorer.streamkast.adapters
 
+import android.databinding.DataBindingUtil
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.R
+import com.example.marlonmoorer.streamkast.databinding.ItemSectionBinding
 import kotlinx.android.synthetic.main.item_section.view.*
 import com.example.marlonmoorer.streamkast.viewModels.FeatureViewModel
 
@@ -14,40 +16,30 @@ import com.example.marlonmoorer.streamkast.viewModels.FeatureViewModel
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class SectionListAdapter(private var collections:MutableList<SectionModel>,val viewModel: FeatureViewModel): RecyclerView.Adapter<SectionListAdapter.ViewHolder>() {
+class SectionListAdapter(private var collections:MutableList<SectionModel>): RecyclerView.Adapter<DataViewHolder<ItemSectionBinding>>() {
 
 
     private var layoutManager: RecyclerView.LayoutManager? = null
 
-
-
     override fun getItemCount()= collections.size
 
 
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
-    override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
+
+    override fun onBindViewHolder(holder: DataViewHolder<ItemSectionBinding>, position: Int) {
         var collection=  collections[position]
-        holder?.view?.apply {
+        holder?.binding?.apply {
             if(section.layoutManager==null)section?.layoutManager=layoutManager
             section?.adapter=SectionAdapter(collection.items)
-            section_header.text= collection.genre?.displayname()?:collection.title
 
-            more_link.setOnClickListener{
-               // viewModel
-
-                viewModel.loadMore(collection.genre)
-
-            }
+            setSection(collection)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        //layoutManager=LinearLayoutManager(parent!!.context,LinearLayoutManager.HORIZONTAL,false)
+    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DataViewHolder<ItemSectionBinding> {
         layoutManager= GridLayoutManager(parent!!.context,3)
-        val view = LayoutInflater.from(parent?.context)
-                .inflate(R.layout.item_section, parent, false)
-        return ViewHolder(view)
+        val viewBinding:ItemSectionBinding= DataBindingUtil.inflate(LayoutInflater.from(parent.context),R.layout.item_section,parent,false)
+        return DataViewHolder(viewBinding)
     }
 
     fun addSection(section: SectionModel){

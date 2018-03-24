@@ -2,6 +2,7 @@ package com.example.marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.example.marlonmoorer.streamkast.adapters.SectionModel
 
 import com.example.marlonmoorer.streamkast.api.ItunesRepository
 import com.example.marlonmoorer.streamkast.api.models.FeedResult
@@ -17,6 +18,7 @@ class FeatureViewModel : ViewModel() {
     private val loading=MutableLiveData<Boolean>()
     private var limit=6
     private var itunesRepository:ItunesRepository
+    private var sections= MutableLiveData<List<SectionModel>>()
 
 
     val podcast
@@ -25,6 +27,10 @@ class FeatureViewModel : ViewModel() {
         get()=loading
     init {
         itunesRepository= ItunesRepository()
+    }
+
+    fun getSections(): MutableLiveData<List<SectionModel>> {
+        return sections
     }
 
     fun getFeatured(): MutableLiveData<List<MediaItem>>? {
