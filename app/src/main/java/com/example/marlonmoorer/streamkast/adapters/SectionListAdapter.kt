@@ -1,5 +1,6 @@
 package com.example.marlonmoorer.streamkast.adapters
 
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -16,7 +17,7 @@ import kotlinx.android.synthetic.main.item_section.view.*
 class SectionListAdapter(private var collections:MutableList<SectionModel>,val viewModel: ListDialogViewModel): RecyclerView.Adapter<SectionListAdapter.ViewHolder>() {
 
 
-    private var layoutManager:LinearLayoutManager? = null
+    private var layoutManager: RecyclerView.LayoutManager? = null
 
 
 
@@ -40,7 +41,8 @@ class SectionListAdapter(private var collections:MutableList<SectionModel>,val v
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        layoutManager=LinearLayoutManager(parent!!.context,LinearLayoutManager.HORIZONTAL,false)
+        //layoutManager=LinearLayoutManager(parent!!.context,LinearLayoutManager.HORIZONTAL,false)
+        layoutManager= GridLayoutManager(parent!!.context,3)
         val view = LayoutInflater.from(parent?.context)
                 .inflate(R.layout.item_section, parent, false)
         return ViewHolder(view)

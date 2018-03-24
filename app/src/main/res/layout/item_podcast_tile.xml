@@ -2,11 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="120dp"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="top"
     android:background="@color/blue_200"
-    android:maxHeight="200dp"
     android:orientation="vertical">
 
     <FrameLayout
@@ -24,7 +23,7 @@
         app:layout_constraintVertical_bias="0.095">
 
         <ImageView
-            android:id="@+id/show_thumbnail"
+            android:id="@+id/show_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>
@@ -37,15 +36,15 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@color/green_300"
+        android:ellipsize="end"
+        android:gravity="center_horizontal"
         android:lines="2"
         android:padding="4dp"
-        android:gravity="center_horizontal"
+        android:scrollHorizontally="true"
         android:text="The Life Coach School Podcast with Brooke Castillo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout"
-        android:scrollHorizontally="true"
-        android:ellipsize="end" />
-
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+    
 </LinearLayout>

@@ -6,8 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
+
+import android.widget.LinearLayout
 import com.example.marlonmoorer.streamkast.load
-import kotlinx.android.synthetic.main.item_podcast_tile.view.*
+import kotlinx.android.synthetic.main.item_podcast_tile2.view.*
+import org.jetbrains.anko.dip
+
 
 /**
  * Created by marlonmoorer on 3/21/18.
@@ -22,7 +26,7 @@ open class SectionAdapter(private val data: List<MediaItem>) :
     override fun onCreateViewHolder(parent: ViewGroup,
                                     viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_podcast_tile, parent, false)
+                .inflate(R.layout.item_podcast_tile2, parent, false)
 
         return ViewHolder(view)
     }
@@ -31,10 +35,16 @@ open class SectionAdapter(private val data: List<MediaItem>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         var show=   data[position]
-        holder.view.show_title.text= show.collectionName
-        show.artworkUrl100?.let {
-            holder.view.show_thumbnail.load(it)
+        holder.view?.apply {
+            //show_title.text= show.collectionName
+            show.artworkUrl100?.let {
+                show_image.load(it)
+            }
+           // show_author.text=show.artistName
         }
+
+
+
     }
 
     // Return the size of your dataset (invoked by the layout manager)
