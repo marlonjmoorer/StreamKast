@@ -1,30 +1,20 @@
 package com.example.marlonmoorer.streamkast.adapters
 
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.viewModels.ListDialogViewModel
 import kotlinx.android.synthetic.main.item_section.view.*
-import android.animation.AnimatorListenerAdapter
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
-import android.animation.ObjectAnimator
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
-
-
-
+import com.example.marlonmoorer.streamkast.viewModels.FeatureViewModel
 
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class SectionListAdapter(private var collections:MutableList<SectionModel>,val viewModel: ListDialogViewModel): RecyclerView.Adapter<SectionListAdapter.ViewHolder>() {
+class SectionListAdapter(private var collections:MutableList<SectionModel>,val viewModel: FeatureViewModel): RecyclerView.Adapter<SectionListAdapter.ViewHolder>() {
 
 
     private var layoutManager: RecyclerView.LayoutManager? = null

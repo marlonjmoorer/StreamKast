@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        
 
         navigation.setOnNavigationItemReselectedListener { item ->
            val fragament= when(item.itemId){

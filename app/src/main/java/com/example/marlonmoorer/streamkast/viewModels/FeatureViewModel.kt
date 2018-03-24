@@ -11,13 +11,20 @@ import com.example.marlonmoorer.streamkast.async
 
 
 class FeatureViewModel : ViewModel() {
-    var topPodcastList: MutableLiveData<List<MediaItem>>?=null
-    var showByGenre =mutableMapOf<MediaGenre,MutableLiveData<List<MediaItem>?>>()
-    var limit=6
-    var itunesRepository:ItunesRepository
+    private var topPodcastList: MutableLiveData<List<MediaItem>>?=null
+    private var showByGenre =mutableMapOf<MediaGenre,MutableLiveData<List<MediaItem>?>>()
+    private var podcastList = MutableLiveData<List<MediaItem>>()
+    private val loading=MutableLiveData<Boolean>()
+    private var limit=6
+    private var itunesRepository:ItunesRepository
+
+
+    val podcast
+        get() = podcastList
+    val isLoading
+        get()=loading
     init {
         itunesRepository= ItunesRepository()
-
     }
 
     fun getFeatured(): MutableLiveData<List<MediaItem>>? {
@@ -45,5 +52,17 @@ class FeatureViewModel : ViewModel() {
         val podcast= itunesRepository.getShowsByGenre(genre,limit)
         showByGenre[genre]?.postValue(podcast)
     }
+
+    fun loadMore(genre: MediaGenre?)=async{
+        loading.postValue(true)
+        var podcast=genre?.let {
+            itunesRepository.getShowsByGenre(genre,limit = 50)!!
+        }?:run{
+            itunesRepository.topPodCast(limit = 50)
+        }
+        loading.postValue(false)
+        this.podcastList?.postValue(podcast)
+    }
+
 
 }

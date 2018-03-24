@@ -15,7 +15,6 @@ import com.example.marlonmoorer.streamkast.adapters.SectionListAdapter
 import com.example.marlonmoorer.streamkast.adapters.SectionModel
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.viewModels.FeatureViewModel
-import com.example.marlonmoorer.streamkast.viewModels.ListDialogViewModel
 import kotlinx.android.synthetic.main.fragment_featured.*
 
 
@@ -34,9 +33,8 @@ class FeaturedFragment : Fragment() {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         val featureViewModel = ViewModelProviders.of(activity!!).get(FeatureViewModel::class.java!!)
-        val listViewModel=ViewModelProviders.of(activity!!).get(ListDialogViewModel::class.java!!)
         var sections= mutableListOf<SectionModel>()
-        adapter= SectionListAdapter(sections,listViewModel)
+        adapter= SectionListAdapter(sections,featureViewModel)
         featureViewModel.getFeatured()?.observe(this, Observer{ podcast->
             podcast?.let {
                 adapter.prependSection(SectionModel(it,title = "Featured") )
@@ -49,22 +47,16 @@ class FeaturedFragment : Fragment() {
                 }
             })
         }
-        listViewModel.isLoading.observe(this,Observer{loading->
+        featureViewModel.isLoading.observe(this,Observer{loading->
            if (loading!!) {
                fragmentManager?.let{
                    it.beginTransaction()
                            .setCustomAnimations(
                                    R.anim.design_bottom_sheet_slide_in,
                                    R.anim.design_bottom_sheet_slide_out)
-//                           .setCustomAnimations(
-//                                   R.anim.card_flip_right_in,
-//                                   R.anim.card_flip_right_out,
-//                                   R.anim.card_flip_left_in,
-//                                   R.anim.card_flip_left_out)
                            .addToBackStack("list")
                            .add(android.R.id.content,ListDialogFragment())
                            .commit()
-                   //  ListDialogFragment().show(fragmentManager,"list")
                }
            }
         })

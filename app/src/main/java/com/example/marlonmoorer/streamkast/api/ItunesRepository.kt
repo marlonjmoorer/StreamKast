@@ -4,6 +4,7 @@ import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.FeedResult
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.github.magneticflux.rss.createRssPersister
+import com.github.magneticflux.rss.namespaces.standard.elements.Channel
 import com.github.magneticflux.rss.namespaces.standard.elements.Rss
 import okhttp3.internal.Internal
 import retrofit2.Retrofit
@@ -43,10 +44,10 @@ class ItunesRepository {
         return emptyList()
     }
 
-    fun ParseFeed(url:String):Rss{
+    fun ParseFeed(url:String):Channel{
         val persister = createRssPersister()
         val input=URL(url).readText()
-        return persister.read(Rss::class.java,input)
+        return persister.read(Rss::class.java,input).channel
     }
 
     fun topPodCast(limit:Int=10): List<MediaItem>? {
