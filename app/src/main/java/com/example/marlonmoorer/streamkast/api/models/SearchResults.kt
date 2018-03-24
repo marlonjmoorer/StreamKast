@@ -16,7 +16,7 @@ class SearchResults{
 
 }
 
-class MediaItem {
+class MediaItem{
 
     @SerializedName("wrapperType")
     @Expose
@@ -27,6 +27,10 @@ class MediaItem {
     @SerializedName("collectionId")
     @Expose
     var collectionId: Long? = null
+
+    @SerializedName("artistId")
+    @Expose
+    var artistId: String? = null
     @SerializedName("trackId")
     @Expose
     var trackId: Long? = null

@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        navigation.selectedItemId=R.id.menu_home
+        //navigation.selectedItemId=R.id.menu_home
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
