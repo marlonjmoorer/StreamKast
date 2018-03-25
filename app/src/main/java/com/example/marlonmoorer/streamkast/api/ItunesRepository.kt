@@ -10,6 +10,7 @@ import okhttp3.internal.Internal
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URL
+import javax.security.auth.callback.Callback
 
 
 /**
@@ -36,7 +37,6 @@ class ItunesRepository {
 
 
     fun search(query:Map<String, String>): List<MediaItem>? {
-       // if (!qurey.containsKey("limit")) qurey.set("limit",10)
         var response=this.service.search(query).execute().body()
         response?.let {
           return  it.results

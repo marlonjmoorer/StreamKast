@@ -1,54 +1,51 @@
 package com.example.marlonmoorer.streamkast.adapters
 
+import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.MediaItem
+import com.example.marlonmoorer.streamkast.databinding.ItemPodcastTileBinding
 
-import android.widget.LinearLayout
 import com.example.marlonmoorer.streamkast.load
-import kotlinx.android.synthetic.main.item_podcast_tile2.view.*
-import org.jetbrains.anko.dip
+import kotlinx.android.synthetic.main.item_podcast_tile.view.*
 
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-open class SectionAdapter(private val data: List<MediaItem>) :
-        RecyclerView.Adapter<SectionAdapter.ViewHolder>() {
+open class SectionAdapter(private val model:SectionModel) :
+        RecyclerView.Adapter<DataViewHolder<ItemPodcastTileBinding>>() {
 
 
 
-    class ViewHolder(val view:View) : RecyclerView.ViewHolder(view)
+
 
     override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_podcast_tile2, parent, false)
+                                    viewType: Int): DataViewHolder<ItemPodcastTileBinding> {
+        val viewBinding:ItemPodcastTileBinding= DataBindingUtil.inflate(LayoutInflater.from(parent.context)
+                ,R.layout.item_podcast_tile, parent, false)
 
-        return ViewHolder(view)
+        return DataViewHolder(viewBinding)
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DataViewHolder<ItemPodcastTileBinding>, position: Int) {
 
-        var show=   data[position]
-        holder.view?.apply {
-            //show_title.text= show.collectionName
+        var show=  model.items[position]
+        holder.binding?.apply {
+            section=model
+            media=show
             show.artworkUrl100?.let {
-                show_image.load(it)
+               showImage.load(it)
             }
-           // show_author.text=show.artistName
+
         }
 
-
-
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = data.size
+
+    override fun getItemCount() = model.items.size
 }
 
 
