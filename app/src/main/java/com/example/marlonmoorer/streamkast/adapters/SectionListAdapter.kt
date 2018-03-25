@@ -9,14 +9,13 @@ import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.databinding.ItemSectionBinding
-import kotlinx.android.synthetic.main.item_section.view.*
-import com.example.marlonmoorer.streamkast.viewModels.FeatureViewModel
+
 
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class SectionListAdapter(private var collections:MutableList<SectionModel>): RecyclerView.Adapter<DataViewHolder<ItemSectionBinding>>() {
+class SectionListAdapter(private var collections:MutableList<SectionModel> = mutableListOf<SectionModel>()): RecyclerView.Adapter<DataViewHolder<ItemSectionBinding>>() {
 
 
     private var layoutManager: RecyclerView.LayoutManager? = null
@@ -30,9 +29,9 @@ class SectionListAdapter(private var collections:MutableList<SectionModel>): Rec
         var collection=  collections[position]
         holder?.binding?.apply {
             if(section.layoutManager==null)section?.layoutManager=layoutManager
-            section?.adapter=SectionAdapter(collection.items)
-
+            section?.adapter=SectionAdapter(collection)
             setSection(collection)
+
         }
     }
 
