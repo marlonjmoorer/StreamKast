@@ -23,7 +23,7 @@ interface ItunesService {
     fun search(@QueryMap fields:Map<String, String> ): Call<SearchResults>
 
     @GET("lookup")
-    fun lookup(@FieldMap fields:Map<String, String> ): Call<List<ResponseBody>>
+    fun lookup(@QueryMap fields:Map<String, String> ): Call<SearchResults>
 
 }
 

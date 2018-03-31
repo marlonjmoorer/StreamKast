@@ -34,10 +34,12 @@ class FeaturedFragment : Fragment(),SectionListener {
         fragmentManager?.let{
             it.beginTransaction()
             .setCustomAnimations(
-                    R.anim.design_bottom_sheet_slide_in,
-                    R.anim.design_bottom_sheet_slide_out)
-            .addToBackStack("list")
+                    R.anim.enter_right,
+                    R.anim.exit_right,
+                    R.anim.enter_right,
+                    R.anim.exit_right)
             .add(android.R.id.content,ListDialogFragment())
+            .addToBackStack("list")
             .commit()
         }
         viewModel.loadMore(genre)
@@ -47,6 +49,8 @@ class FeaturedFragment : Fragment(),SectionListener {
         fragmentManager?.let{
             it.beginTransaction()
                     .setCustomAnimations(
+                            R.anim.design_bottom_sheet_slide_in,
+                            R.anim.design_bottom_sheet_slide_out,
                             R.anim.design_bottom_sheet_slide_in,
                             R.anim.design_bottom_sheet_slide_out)
                     .addToBackStack("list")

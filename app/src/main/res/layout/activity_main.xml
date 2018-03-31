@@ -12,15 +12,16 @@
         android:layout_height="wrap_content"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             app:title="@string/app_name"
-            app:titleTextColor="@color/white"
-            android:visibility="visible">
+            app:titleTextColor="@color/white">
 
         </android.support.v7.widget.Toolbar>
 

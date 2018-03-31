@@ -1,16 +1,33 @@
 package com.example.marlonmoorer.streamkast.api
 
-import com.example.marlonmoorer.streamkast.api.models.MediaItem
-import com.example.marlonmoorer.streamkast.api.models.FeedResult
-import com.example.marlonmoorer.streamkast.api.models.MediaGenre
-import com.github.magneticflux.rss.createRssPersister
-import com.github.magneticflux.rss.namespaces.standard.elements.Channel
-import com.github.magneticflux.rss.namespaces.standard.elements.Rss
-import okhttp3.internal.Internal
+
+
+import android.util.Log
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URL
-import javax.security.auth.callback.Callback
+
+
+import com.example.marlonmoorer.streamkast.api.models.*
+import com.example.marlonmoorer.streamkast.async
+
+
+import com.google.gson.Gson
+import org.json.XML
+
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.StringReader
+import java.nio.charset.Charset
+import javax.xml.parsers.DocumentBuilderFactory
+
+
+//import org.simpleframework.xml.core.Persister
+
+
 
 
 /**
@@ -19,6 +36,7 @@ import javax.security.auth.callback.Callback
 class ItunesRepository {
     val service:ItunesService
     val rssService:ItunesRssService
+    var topPodcastIds= emptyList<String?>()
 
     init {
         val builder= Retrofit.Builder()
@@ -33,6 +51,16 @@ class ItunesRepository {
                 .baseUrl(ItunesRssService.baseUrl)
                 .build()
                 .create(ItunesRssService::class.java)
+
+            async {
+                topPodcastIds= this.rssService.topPodcast(200).execute().body()?.feed?.results?.map {
+                    it.id
+                }!!
+            }
+
+
+
+
     }
 
 
@@ -43,27 +71,42 @@ class ItunesRepository {
         }
         return emptyList()
     }
-
-    fun ParseFeed(url:String):Channel{
-        val persister = createRssPersister()
-        val input=URL(url).readText()
-        return persister.read(Rss::class.java,input).channel
+    fun lookup(query:Map<String, String>): List<MediaItem>? {
+        var response=this.service.lookup(query).execute().body()
+        response?.let {
+            return  it.results
+        }
+        return emptyList()
     }
 
-    fun topPodCast(limit:Int=10): List<MediaItem>? {
-        val items= this.rssService.topPodcast(limit).execute().body()
-        return items?.feed?.results?.map {
-            MediaItem().apply {
-                kind= it.kind
-                collectionName=it.name
-                artistName=it.artistName
-                artworkUrl100=it.artworkUrl100
-                collectionId= it.id?.toLong()
-                feedUrl=it.url
-                genreIds= it.genres?.map { it.genreId!! }
-                artistId=it.artistId
-            }
+
+    fun ParseFeed(url:String):Channel?{
+        try {
+            var xml= URL(url).readText()
+            val json = XML.toJSONObject(xml).toString(4)
+            var feed= Gson().fromJson(json,RssFeed::class.java)
+            return feed.rss!!.channel
         }
+       catch (ex:Exception){
+           ex.printStackTrace()
+           Log.e("help",ex.message)
+       }
+        return null
+    }
+
+
+
+
+    fun topPodCast(limit:Int=10): List<MediaItem>? {
+        topPodcastIds= this.rssService.topPodcast(200).execute().body()?.feed?.results?.map {
+            it.id
+        }!!
+        val items= topPodcastIds.take(limit)!!
+        var query=mapOf(
+                "id" to items.joinToString(",")
+                //"limit" to limit.toString(),
+        )
+        return lookup(query)
     }
     fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<MediaItem>? {
         var query=mapOf(
