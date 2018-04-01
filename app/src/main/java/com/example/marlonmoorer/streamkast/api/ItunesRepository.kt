@@ -98,6 +98,7 @@ class ItunesRepository {
 
 
     fun topPodCast(limit:Int=10): List<MediaItem>? {
+        
         topPodcastIds= this.rssService.topPodcast(200).execute().body()?.feed?.results?.map {
             it.id
         }!!

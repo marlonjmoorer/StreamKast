@@ -13,8 +13,10 @@ fun ImageView.load(url:String){
             //.apply(RequestOptions().fitCenter())
             .into(this);
 }
-fun Any.async(fn:()->Unit){
-    Thread({
+fun Any.async(fn:()->Unit):Thread{
+   val thread= Thread({
         fn()
-    }).start()
+    })
+    thread.start()
+    return thread
 }

@@ -4,10 +4,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
         <data>
-                <variable
-                    name="section"
-                    type="com.example.marlonmoorer.streamkast.adapters.SectionModel"/>
-                <variable
+               <variable
+                  name="viewModel"
+                  type="com.example.marlonmoorer.streamkast.viewModels.SectionViewModel"/>
+               <variable
                     name="media"
                     type="com.example.marlonmoorer.streamkast.api.models.MediaItem"/>
         </data>
@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:onClick="@{()->section.selectItem(media)}"
+            android:onClick="@{()->viewModel.selectPodcast(media)}"
             android:padding="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -11,7 +11,7 @@ import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
 /**
  * Created by marlonmoorer on 3/29/18.
  */
-class EpisodeListAdapter(val episodes:List<Episode>):RecyclerView.Adapter<DataViewHolder<ItemEpisodeBinding>> (){
+class EpisodeListAdapter(val episodes:List<Episode>):DataBoundAdapter<ItemEpisodeBinding> (){
 
     override fun getItemCount()=  episodes.size
 
@@ -24,8 +24,8 @@ class EpisodeListAdapter(val episodes:List<Episode>):RecyclerView.Adapter<DataVi
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder<ItemEpisodeBinding> {
-
         val viewDataBinding:ItemEpisodeBinding= DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_episode, parent, false)
+
         return DataViewHolder(viewDataBinding)
     }
 

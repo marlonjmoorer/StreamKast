@@ -11,7 +11,7 @@ import android.view.*
 import com.example.marlonmoorer.streamkast.R
 import kotlinx.android.synthetic.main.fragment_list_dialog.*
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
-import com.example.marlonmoorer.streamkast.viewModels.FeatureViewModel
+import com.example.marlonmoorer.streamkast.viewModels.SectionViewModel
 
 
 /**
@@ -23,11 +23,10 @@ class ListDialogFragment: Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        adapter= PodcastListAdapter(listOf())
-        val model = ViewModelProviders.of(activity!!).get(FeatureViewModel::class.java!!)
-
-        model.podcast?.observe(this, Observer { podcast->
-                adapter= podcast?.let { PodcastListAdapter(it) }!!
+        val model = ViewModelProviders.of(activity!!).get(SectionViewModel::class.java!!)
+        adapter= PodcastListAdapter(listOf(),model)
+        model.podcasts?.observe(this, Observer { podcast->
+                adapter= podcast?.let { PodcastListAdapter(it,model) }!!
                 selection.swapAdapter(adapter,true)
         })
         model.isLoading.observe(this, Observer { loading->
@@ -36,6 +35,7 @@ class ListDialogFragment: Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
         return inflater?.inflate(R.layout.fragment_list_dialog, container, false)
     }
 
@@ -53,14 +53,10 @@ class ListDialogFragment: Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true);
 
-    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.bottom_nav_items, menu)
+        inflater.inflate(R.menu.menu_main, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 

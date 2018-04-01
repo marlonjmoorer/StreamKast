@@ -119,4 +119,6 @@ class MediaItem{
     @Expose
     var genres: List<String>? = null
 
+
+
 }

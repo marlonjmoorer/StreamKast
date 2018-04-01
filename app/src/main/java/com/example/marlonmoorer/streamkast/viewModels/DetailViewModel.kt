@@ -26,15 +26,15 @@ class DetailViewModel :ViewModel() {
         get() = episodes
 
 
-    fun selectShow(podcast:MediaItem){
+    fun selectShow(podcast:MediaItem)=async{
         load(podcast.feedUrl!!)
        // this.podcast.postValue(podcast)
     }
 
     fun load(url:String)=async {
-       var channel=itunesRepository.ParseFeed(url)
+        var channel=itunesRepository.ParseFeed(url)
         podcast.postValue(channel)
-       episodes.postValue(channel?.item)
+        episodes.postValue(channel?.item)
     }
 
 

@@ -15,6 +15,7 @@ import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
 import com.example.marlonmoorer.streamkast.load
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import kotlinx.android.synthetic.main.fragment_details.*
 
 /**
  * Created by marlonmoorer on 3/24/18.
@@ -25,11 +26,12 @@ class DetailFragment: Fragment() {
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding= FragmentDetailsBinding.inflate(inflater,container,false)
+        binding = FragmentDetailsBinding.inflate(inflater,container,false)
 
         detailModel.selectedPodcast?.observe(this, Observer { podcast->
             binding.channel=podcast
             podcast?.image?.url?.let { binding.mainBackdrop.load(it) }
+            loading_screen.visibility=View.GONE
         })
         detailModel.getEpisodes.observe(this, Observer { episodes->
             var adapter= EpisodeListAdapter(episodes!!)
@@ -40,6 +42,11 @@ class DetailFragment: Fragment() {
 
         })
         return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+       // binding.loadingScreen.visibility=View.VISIBLE
     }
 
     override fun onDestroyView() {

@@ -2,12 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
-            name="section"
+            name="sectionModel"
             type="com.example.marlonmoorer.streamkast.adapters.SectionModel"/>
+        <variable
+            name="viewModel"
+            type="com.example.marlonmoorer.streamkast.viewModels.SectionViewModel"/>
     </data>
     <FrameLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -30,7 +32,7 @@
                     android:layout_weight="5"
                     android:gravity="center_vertical"
                     android:paddingStart="16dp"
-                    android:text="@{section.header}"
+                    android:text="@{sectionModel.header}"
                     android:textSize="20sp"
                     app:layout_constraintBottom_toTopOf="@+id/section"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +62,7 @@
                     android:layout_below="@+id/section"
                     android:clickable="true"
                     android:gravity="right"
-                    android:onClick="@{()->section.showMore()}"
+                    android:onClick="@{()->viewModel.loadMore(sectionModel.key)}"
                     android:padding="7dp"
                     android:background="@color/black"
                     android:text="More"
@@ -74,7 +76,6 @@
                     app:layout_constraintVertical_bias="0.0" />
 
             </android.support.constraint.ConstraintLayout>
-
 
         </android.support.v7.widget.CardView>
 

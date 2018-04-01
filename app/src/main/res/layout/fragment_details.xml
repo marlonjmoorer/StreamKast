@@ -10,8 +10,7 @@
     </data>
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/main_appbar"
@@ -126,6 +125,9 @@
             app:layout_anchor="@id/main_appbar"
             app:layout_anchorGravity="bottom|right|end"
             />
-
+        <include
+            android:id="@+id/loading_screen"
+            layout="@layout/partial_loading_screen"
+            android:visibility="visible" />
     </android.support.design.widget.CoordinatorLayout>
 </layout>

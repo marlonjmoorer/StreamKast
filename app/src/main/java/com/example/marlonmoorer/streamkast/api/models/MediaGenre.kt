@@ -1,9 +1,13 @@
 package com.example.marlonmoorer.streamkast.api.models
 
+import android.util.Log
+
 /**
  * Created by marlonmoorer on 3/22/18.
  */
 enum class MediaGenre(private val value:String){
+
+
     Arts("1301"){
         override fun displayname()="Art"
         //override fun imageResource(): Int? = R.drawable.icons8_art_prices_filled
@@ -73,8 +77,21 @@ enum class MediaGenre(private val value:String){
     };
 
     abstract fun displayname(): String
-    //abstract fun imageResource(): Int?
+
     val id :String
         get() = this.value
 
+    companion object {
+        private val map= MediaGenre.values().associateBy{it.id}
+
+        fun parse(value:String):MediaGenre?{
+            try {
+                return map[value]
+            }
+            catch (ex:Exception){
+                Log.e("",ex.message,ex)
+                return null
+            }
+        }
+    }
 }
