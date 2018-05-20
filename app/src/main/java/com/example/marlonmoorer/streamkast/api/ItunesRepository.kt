@@ -9,6 +9,7 @@ import java.net.URL
 
 
 import com.example.marlonmoorer.streamkast.api.models.*
+import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.async
 
 
@@ -35,28 +36,18 @@ import javax.xml.parsers.DocumentBuilderFactory
  */
 class ItunesRepository {
     val service:ItunesService
-    val rssService:ItunesRssService
-    var topPodcastIds= emptyList<String?>()
+
 
     init {
-        val builder= Retrofit.Builder()
-                .addConverterFactory(GsonConverterFactory.create())
 
-        service= builder
+
+
+        service= Retrofit.Builder()
                 .baseUrl(ItunesService.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ItunesService::class.java)
 
-        rssService=builder
-                .baseUrl(ItunesRssService.baseUrl)
-                .build()
-                .create(ItunesRssService::class.java)
-
-            async {
-                topPodcastIds= this.rssService.topPodcast(200).execute().body()?.feed?.results?.map {
-                    it.id
-                }!!
-            }
 
 
 
@@ -94,21 +85,14 @@ class ItunesRepository {
         return null
     }
 
+    fun topPodCast(limit:Int=10,genre: MediaGenre?=null): List<PodcastEntry>?{
 
-
-
-    fun topPodCast(limit:Int=10): List<MediaItem>? {
-        
-        topPodcastIds= this.rssService.topPodcast(200).execute().body()?.feed?.results?.map {
-            it.id
-        }!!
-        val items= topPodcastIds.take(limit)!!
-        var query=mapOf(
-                "id" to items.joinToString(",")
-                //"limit" to limit.toString(),
-        )
-        return lookup(query)
+        genre?.let {
+            return service.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
+        }
+        return service.topPodcast(limit).execute().body()?.rss?.entries
     }
+
     fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<MediaItem>? {
         var query=mapOf(
                 "term" to "podcast",

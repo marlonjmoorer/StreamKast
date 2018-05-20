@@ -2,6 +2,10 @@ package com.example.marlonmoorer.streamkast.api.models.chart
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import android.databinding.BindingAdapter
+import android.widget.ImageView
+import com.example.marlonmoorer.streamkast.load
+
 
 /**
  * Created by marlonmoorer on 4/1/18.
@@ -17,7 +21,7 @@ class Feed{
 
     @SerializedName("entry")
     @Expose
-    var entries:List<Entry>?=null
+    var entries:List<PodcastEntry>?=null
 
 }
 
@@ -26,7 +30,7 @@ class Field{
     var attributes:Map<String,String>?=null
 }
 
-class Entry{
+class PodcastEntry{
     @SerializedName("im:name")
     @Expose
     var _name:Field?=null
@@ -55,8 +59,8 @@ class Entry{
     val Name
         get() = _name?.label
 
-    val Images
-        get() = _images?.map { it.label }
+    val Image
+        get() = _images?.map {it.label}!!.last()
 
     val Summary
         get() = _summary?.label
@@ -69,6 +73,9 @@ class Entry{
 
     val LastUpdateDate
         get() = _date?.label
+
+
+
 }
 
 

@@ -47,12 +47,12 @@ class SectionListAdapter(
 
     fun addSection(section: SectionModel){
         collections.add(section)
-        adpaters.set(section.key, SectionAdapter(section.items,model))
+       // adpaters.set(section.key, SectionAdapter(section.items,model))
         notifyDataSetChanged()
     }
     fun prependSection(section: SectionModel){
         collections= (listOf(section)+collections).toMutableList()
-        adpaters.set(section.key,SectionAdapter(section.items,model))
+       // adpaters.set(section.key,SectionAdapter(section.items,model))
         notifyDataSetChanged()
     }
 

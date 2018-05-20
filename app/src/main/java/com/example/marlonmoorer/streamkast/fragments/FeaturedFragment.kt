@@ -9,14 +9,14 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
+import com.example.marlonmoorer.streamkast.adapters.SectionAdapter
 import com.example.marlonmoorer.streamkast.adapters.SectionListAdapter
-import com.example.marlonmoorer.streamkast.adapters.SectionModel
-import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SectionViewModel
-import kotlinx.android.synthetic.main.fragment_featured.*
+import kotlinx.android.synthetic.main.fragment_featured.view.*
 
 
 /**
@@ -31,8 +31,37 @@ class FeaturedFragment : Fragment(){
     lateinit var viewModel: SectionViewModel
     lateinit var detailModel: DetailViewModel
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_featured,
-                container, false)
+        val view=inflater?.inflate(R.layout.fragment_featured, container, false)
+        view?.apply {
+            featured.layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
+            categories.layoutManager=GridLayoutManager(activity,2)
+            categories.adapter=CategoryAdapter()
+        }
+
+        viewModel.apply {
+            getSection(SectionViewModel.FEATURED)?.observe(this@FeaturedFragment, Observer{ podcast->
+                podcast?.let {
+                    view.featured.adapter =SectionAdapter(podcast,this)
+                }
+            })
+//            MediaGenre.values().forEach { genre->
+//                getSection(genre.id)?.observe(this@FeaturedFragment, Observer{ podcast->
+//                    podcast?.let {
+//                        adapter.addSection(SectionModel(it,genre) )
+//                    }
+//                })
+//            }
+//            isLoading.observe(this@FeaturedFragment, Observer { loading->
+//                if(loading!!){
+//                    loadFragment(ListDialogFragment())
+//                }
+//            })
+//            selectedPodcast.observe(this@FeaturedFragment, Observer { podcast->
+//                loadFragment(DetailFragment())
+//                podcast?.let { detailModel.selectShow(it) }
+//            })
+        }
+        return view
     }
 
 
@@ -42,29 +71,7 @@ class FeaturedFragment : Fragment(){
         viewModel = ViewModelProviders.of(activity!!).get(SectionViewModel::class.java!!)
         detailModel = ViewModelProviders.of(activity!!).get(DetailViewModel::class.java!!)
         adapter= SectionListAdapter(model = viewModel)
-        viewModel.apply {
-//            getSections(SectionViewModel.FEATURED)?.observe(this@FeaturedFragment, Observer{ podcast->
-//                podcast?.let {
-//                    adapter.prependSection(SectionModel(it,title = SectionViewModel.FEATURED) )
-//                }
-//            })
-            MediaGenre.values().forEach { genre->
-                getSections(genre.id)?.observe(this@FeaturedFragment, Observer{ podcast->
-                    podcast?.let {
-                        adapter.addSection(SectionModel(it,genre) )
-                    }
-                })
-            }
-            isLoading.observe(this@FeaturedFragment, Observer { loading->
-                if(loading!!){
-                    loadFragment(ListDialogFragment())
-                }
-            })
-            selectedPodcast.observe(this@FeaturedFragment, Observer { podcast->
-                loadFragment(DetailFragment())
-                podcast?.let { detailModel.selectShow(it) }
-            })
-        }
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,8 +80,7 @@ class FeaturedFragment : Fragment(){
 
     override fun onStart() {
         super.onStart()
-        contentList.layoutManager= LinearLayoutManager(activity) as RecyclerView.LayoutManager?
-        contentList.adapter=adapter
+
 
     }
 

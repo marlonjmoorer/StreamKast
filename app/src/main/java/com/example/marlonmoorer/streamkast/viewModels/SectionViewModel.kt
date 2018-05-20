@@ -8,6 +8,7 @@ import com.example.marlonmoorer.streamkast.api.ItunesRepository
 import com.example.marlonmoorer.streamkast.api.models.FeedResult
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
+import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.async
 
 
@@ -17,7 +18,7 @@ class SectionViewModel : ViewModel() {
     private val loading=MutableLiveData<Boolean>()
     private var limit=6
     private var itunesRepository:ItunesRepository
-    private var sections= mutableMapOf<String,MutableLiveData<List<MediaItem>?>>()
+    private var sections= mutableMapOf<String,MutableLiveData<List<PodcastEntry>?>>()
     var selectedPodcast= MutableLiveData<MediaItem>()
 
     companion object {
@@ -37,21 +38,21 @@ class SectionViewModel : ViewModel() {
 
 
 
-    fun getSections(key:String): MutableLiveData<List<MediaItem>?>? {
+    fun getSection(key:String): MutableLiveData<List<PodcastEntry>?>? {
         if(sections[key]==null){
-            sections[key]=MutableLiveData<List<MediaItem>?>()
+            sections[key]=MutableLiveData<List<PodcastEntry>?>()
             async { sections[key]!!.postValue(this.loadPodcast(key)) }
         }
         return sections[key]
     }
 
-   private fun loadPodcast(key: String,limit:Int=6):List<MediaItem>{
+   private fun loadPodcast(key: String,limit:Int=6):List<PodcastEntry>{
         var genre=MediaGenre.parse(key)
         return genre?.let {
-            return@let itunesRepository.getShowsByGenre(it,limit)
+            return  itunesRepository.topPodCast(limit,it)!!
         }?:when(key){
             FEATURED -> itunesRepository.topPodCast(limit)!!
-            else-> emptyList<MediaItem>()
+            else-> emptyList<PodcastEntry>()
         }
     }
 
@@ -59,7 +60,7 @@ class SectionViewModel : ViewModel() {
 
     fun loadMore(key:String)=async{
         loading.postValue(true)
-        this.podcastList?.postValue(this.loadPodcast(key,50))
+       // this.podcastList?.postValue(this.loadPodcast(key,50))
         loading.postValue(false)
     }
 

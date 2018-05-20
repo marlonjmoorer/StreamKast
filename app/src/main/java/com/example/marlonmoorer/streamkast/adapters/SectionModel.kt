@@ -14,7 +14,7 @@ data class SectionModel(
         val title:String=""){
 
     val header
-        get()=genre?.displayname()?:title
+        get()=genre?.displayname?:title
     val key
         get()= genre?.id ?:title
 
