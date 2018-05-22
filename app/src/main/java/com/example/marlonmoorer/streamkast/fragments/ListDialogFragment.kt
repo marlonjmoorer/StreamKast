@@ -11,7 +11,7 @@ import android.view.*
 import com.example.marlonmoorer.streamkast.R
 import kotlinx.android.synthetic.main.fragment_list_dialog.*
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
-import com.example.marlonmoorer.streamkast.viewModels.SectionViewModel
+import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 
 /**
@@ -23,7 +23,7 @@ class ListDialogFragment: Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        val model = ViewModelProviders.of(activity!!).get(SectionViewModel::class.java!!)
+        val model = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
         adapter= PodcastListAdapter(listOf(),model)
         model.podcasts?.observe(this, Observer { podcast->
                 adapter= podcast?.let { PodcastListAdapter(it,model) }!!

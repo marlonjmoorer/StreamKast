@@ -6,7 +6,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.MediaItem"/>
         <variable
             name="viewModel"
-            type="com.example.marlonmoorer.streamkast.viewModels.SectionViewModel"/>
+            type="com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel"/>
     </data>
     <android.support.constraint.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"

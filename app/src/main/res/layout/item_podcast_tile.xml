@@ -5,9 +5,6 @@
 
         <data>
                <variable
-                  name="viewModel"
-                  type="com.example.marlonmoorer.streamkast.viewModels.SectionViewModel"/>
-               <variable
                     name="media"
                     type="com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry"/>
         </data>

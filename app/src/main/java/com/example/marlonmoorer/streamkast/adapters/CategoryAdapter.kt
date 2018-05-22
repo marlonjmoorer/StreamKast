@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.adapters
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
@@ -15,6 +16,11 @@ class CategoryAdapter:DataBoundAdapter<ItemCategoryBinding>() {
     var categories=MediaGenre.values()
     override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>?, position: Int) {
         holder!!.binding.categoryIcon.load(categories[position].imageId)
+        holder.binding.genre=categories[position]
+        listener.let {
+           // holder.itemView.tag=categories[position]
+            holder.itemView.setOnClickListener(listener)
+        }
     }
 
     override fun getItemCount()= categories.size

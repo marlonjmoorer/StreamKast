@@ -88,7 +88,8 @@ class ItunesRepository {
     fun topPodCast(limit:Int=10,genre: MediaGenre?=null): List<PodcastEntry>?{
 
         genre?.let {
-            return service.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
+            var ls=service.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
+            return ls
         }
         return service.topPodcast(limit).execute().body()?.rss?.entries
     }

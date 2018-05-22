@@ -14,53 +14,49 @@ import android.support.v7.widget.LinearLayoutManager
 import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
 import com.example.marlonmoorer.streamkast.adapters.SectionAdapter
 import com.example.marlonmoorer.streamkast.adapters.SectionListAdapter
+import com.example.marlonmoorer.streamkast.api.models.Genre
+import com.example.marlonmoorer.streamkast.api.models.MediaGenre
+import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
-import com.example.marlonmoorer.streamkast.viewModels.SectionViewModel
-import kotlinx.android.synthetic.main.fragment_featured.view.*
+import kotlinx.android.synthetic.main.fragment_browse.view.*
 
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class FeaturedFragment : Fragment(){
-
-
-
+class BrowseFragment : Fragment(),View.OnClickListener {
 
     lateinit var adapter: SectionListAdapter
-    lateinit var viewModel: SectionViewModel
+    lateinit var viewModel: BrowseViewModel
     lateinit var detailModel: DetailViewModel
+
+
+    override fun onClick(view: View) {
+        val item= view.tag
+        if(item is MediaGenre){
+            val fragment= SectionFragment.newInstance(item.id)
+            this.loadFragment(fragment)
+        }
+    }
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view=inflater?.inflate(R.layout.fragment_featured, container, false)
+        val view=inflater.inflate(R.layout.fragment_browse, container, false)
         view?.apply {
             featured.layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
             categories.layoutManager=GridLayoutManager(activity,2)
-            categories.adapter=CategoryAdapter()
+            val adapter=CategoryAdapter()
+            adapter.listener=this@BrowseFragment
+            categories.adapter=adapter
+            categories.setNestedScrollingEnabled(false);
         }
 
-        viewModel.apply {
-            getSection(SectionViewModel.FEATURED)?.observe(this@FeaturedFragment, Observer{ podcast->
-                podcast?.let {
-                    view.featured.adapter =SectionAdapter(podcast,this)
-                }
-            })
-//            MediaGenre.values().forEach { genre->
-//                getSection(genre.id)?.observe(this@FeaturedFragment, Observer{ podcast->
-//                    podcast?.let {
-//                        adapter.addSection(SectionModel(it,genre) )
-//                    }
-//                })
-//            }
-//            isLoading.observe(this@FeaturedFragment, Observer { loading->
-//                if(loading!!){
-//                    loadFragment(ListDialogFragment())
-//                }
-//            })
-//            selectedPodcast.observe(this@FeaturedFragment, Observer { podcast->
-//                loadFragment(DetailFragment())
-//                podcast?.let { detailModel.selectShow(it) }
-//            })
-        }
+        viewModel.getSection(BrowseViewModel.FEATURED)?.observe(this@BrowseFragment, Observer{ podcast->
+            podcast?.let {
+                view.featured.adapter =SectionAdapter(podcast)
+            }
+        })
+
         return view
     }
 
@@ -68,7 +64,7 @@ class FeaturedFragment : Fragment(){
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        viewModel = ViewModelProviders.of(activity!!).get(SectionViewModel::class.java!!)
+        viewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
         detailModel = ViewModelProviders.of(activity!!).get(DetailViewModel::class.java!!)
         adapter= SectionListAdapter(model = viewModel)
 
@@ -85,19 +81,18 @@ class FeaturedFragment : Fragment(){
     }
 
     fun loadFragment(fragment: Fragment){
-        fragmentManager?.let{
-            it.beginTransaction()
+        fragmentManager!!.beginTransaction()
                     .setCustomAnimations(
                             R.anim.enter_right,
                             R.anim.exit_right,
                             R.anim.enter_right,
                             R.anim.exit_right)
                     //.remove(it.findFragmentByTag("over"))
-                    .replace(R.id.main,fragment,"over")
+                    //.replace(R.id.main,fragment,"over")
+                    .replace(R.id.container,fragment)
                     .addToBackStack("over")
                     .commit()
         }
     }
 
 
-}

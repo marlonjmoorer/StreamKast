@@ -12,11 +12,11 @@ import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.async
 
 
-class SectionViewModel : ViewModel() {
+class  BrowseViewModel: ViewModel() {
 
     private var podcastList = MutableLiveData<List<MediaItem>>()
     private val loading=MutableLiveData<Boolean>()
-    private var limit=6
+    private var DEFAULT_COUNT=10;
     private var itunesRepository:ItunesRepository
     private var sections= mutableMapOf<String,MutableLiveData<List<PodcastEntry>?>>()
     var selectedPodcast= MutableLiveData<MediaItem>()
@@ -28,7 +28,6 @@ class SectionViewModel : ViewModel() {
     val podcasts
         get() = podcastList
 
-
     val isLoading
         get()=loading
     init {
@@ -38,21 +37,25 @@ class SectionViewModel : ViewModel() {
 
 
 
-    fun getSection(key:String): MutableLiveData<List<PodcastEntry>?>? {
-        if(sections[key]==null){
-            sections[key]=MutableLiveData<List<PodcastEntry>?>()
-            async { sections[key]!!.postValue(this.loadPodcast(key)) }
+    fun getSection(key:String,count:Int=DEFAULT_COUNT): MutableLiveData<List<PodcastEntry>?>? {
+        var section=sections[key]
+        if(section==null){
+            section=MutableLiveData()
+            sections[key]=section
+            async {
+                sections[key]?.postValue(this.loadPodcast(key,count))
+            }
         }
         return sections[key]
     }
 
-   private fun loadPodcast(key: String,limit:Int=6):List<PodcastEntry>{
+   private fun loadPodcast(key: String,limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
         var genre=MediaGenre.parse(key)
         return genre?.let {
             return  itunesRepository.topPodCast(limit,it)!!
         }?:when(key){
             FEATURED -> itunesRepository.topPodCast(limit)!!
-            else-> emptyList<PodcastEntry>()
+            else-> emptyList()
         }
     }
 

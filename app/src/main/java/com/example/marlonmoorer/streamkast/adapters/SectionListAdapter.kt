@@ -9,7 +9,7 @@ import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.databinding.ItemSectionBinding
-import com.example.marlonmoorer.streamkast.viewModels.SectionViewModel
+import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 
 /**
@@ -17,7 +17,7 @@ import com.example.marlonmoorer.streamkast.viewModels.SectionViewModel
  */
 class SectionListAdapter(
         private var collections:MutableList<SectionModel> = mutableListOf<SectionModel>(),
-        private val model: SectionViewModel
+        private val model: BrowseViewModel
 ): DataBoundAdapter<ItemSectionBinding>() {
 
     init {
@@ -41,7 +41,7 @@ class SectionListAdapter(
         layoutManager= GridLayoutManager(parent!!.context,3)
         val viewBinding:ItemSectionBinding= DataBindingUtil.inflate(LayoutInflater.from(parent.context),R.layout.item_section,parent,false)
         viewBinding.section.layoutManager=layoutManager
-        viewBinding.viewModel=model
+        //viewBinding.viewModel=model
         return DataViewHolder(viewBinding)
     }
 

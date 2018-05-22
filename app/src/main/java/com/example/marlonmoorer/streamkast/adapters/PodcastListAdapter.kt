@@ -8,10 +8,10 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.databinding.ItemPodcastBinding
 import com.example.marlonmoorer.streamkast.load
-import com.example.marlonmoorer.streamkast.viewModels.SectionViewModel
+import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 
-class PodcastListAdapter(private val showList: List<MediaItem>,val model: SectionViewModel):DataBoundAdapter<ItemPodcastBinding>(){
+class PodcastListAdapter(private val showList: List<MediaItem>,val model: BrowseViewModel):DataBoundAdapter<ItemPodcastBinding>(){
 
 
 
