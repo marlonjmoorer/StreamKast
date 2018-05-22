@@ -8,9 +8,11 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.databinding.ItemPodcastBinding
 import com.example.marlonmoorer.streamkast.load
+import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 
-class PodcastListAdapter(private val showList: List<MediaItem>):RecyclerView.Adapter<DataViewHolder<ItemPodcastBinding>>(){
+class PodcastListAdapter(private val showList: List<MediaItem>,val model: BrowseViewModel):DataBoundAdapter<ItemPodcastBinding>(){
+
 
 
     override fun getItemCount()= showList.size
@@ -25,10 +27,9 @@ class PodcastListAdapter(private val showList: List<MediaItem>):RecyclerView.Ada
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder<ItemPodcastBinding> {
-            val view = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_podcast, parent, false)
-            val viewDataBinding: ItemPodcastBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_podcast, parent, false)
-            return DataViewHolder(viewDataBinding)
+        val viewDataBinding: ItemPodcastBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_podcast, parent, false)
+        viewDataBinding.viewModel= model
+        return DataViewHolder(viewDataBinding)
     }
 
 

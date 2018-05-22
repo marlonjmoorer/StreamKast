@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.example.marlonmoorer.streamkast.fragments.FeaturedFragment
+import com.example.marlonmoorer.streamkast.fragments.BrowseFragment
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemReselectedListener { item ->
            val fragament= when(item.itemId){
-                R.id.menu_home-> FeaturedFragment()
+                R.id.menu_home-> BrowseFragment()
                 else->null
             }
             getSupportFragmentManager().beginTransaction().
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
             return@setOnNavigationItemReselectedListener
         }
         getSupportFragmentManager().beginTransaction().
-                  replace(R.id.container, FeaturedFragment()).commit();
+                  replace(R.id.container, BrowseFragment()).commit();
     }
 
     override fun onStart() {
