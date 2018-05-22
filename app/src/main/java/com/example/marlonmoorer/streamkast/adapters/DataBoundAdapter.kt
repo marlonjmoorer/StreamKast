@@ -11,6 +11,5 @@ import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
 abstract class DataBoundAdapter<T>:RecyclerView.Adapter<DataViewHolder<T>>() where T:ViewDataBinding {
 
     var listener:View.OnClickListener?=null
-
-
+    
 }

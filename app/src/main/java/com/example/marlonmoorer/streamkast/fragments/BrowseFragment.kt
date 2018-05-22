@@ -12,9 +12,7 @@ import android.content.Context
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
-import com.example.marlonmoorer.streamkast.adapters.SectionAdapter
-import com.example.marlonmoorer.streamkast.adapters.SectionListAdapter
-import com.example.marlonmoorer.streamkast.api.models.Genre
+import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
@@ -26,7 +24,7 @@ import kotlinx.android.synthetic.main.fragment_browse.view.*
  */
 class BrowseFragment : Fragment(),View.OnClickListener {
 
-    lateinit var adapter: SectionListAdapter
+
     lateinit var viewModel: BrowseViewModel
     lateinit var detailModel: DetailViewModel
 
@@ -51,9 +49,9 @@ class BrowseFragment : Fragment(),View.OnClickListener {
             categories.setNestedScrollingEnabled(false);
         }
 
-        viewModel.getSection(BrowseViewModel.FEATURED)?.observe(this@BrowseFragment, Observer{ podcast->
+        viewModel.getFeaturedByGenre(BrowseViewModel.FEATURED)?.observe(this@BrowseFragment, Observer{ podcast->
             podcast?.let {
-                view.featured.adapter =SectionAdapter(podcast)
+                view.featured.adapter =FeaturedPodcastAdapter(podcast)
             }
         })
 
@@ -66,7 +64,6 @@ class BrowseFragment : Fragment(),View.OnClickListener {
         super.onAttach(context)
         viewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
         detailModel = ViewModelProviders.of(activity!!).get(DetailViewModel::class.java!!)
-        adapter= SectionListAdapter(model = viewModel)
 
     }
 

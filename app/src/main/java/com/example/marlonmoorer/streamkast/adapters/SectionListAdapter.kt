@@ -3,38 +3,34 @@ package com.example.marlonmoorer.streamkast.adapters
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.R
+import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.databinding.ItemSectionBinding
-import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class SectionListAdapter(
-        private var collections:MutableList<SectionModel> = mutableListOf<SectionModel>(),
-        private val model: BrowseViewModel
-): DataBoundAdapter<ItemSectionBinding>() {
+class SectionListAdapter(private val shows:List<PodcastEntry>): DataBoundAdapter<ItemSectionBinding>() {
 
     init {
 
 
     }
     private var layoutManager: RecyclerView.LayoutManager? = null
-    private var adpaters= mutableMapOf<String,SectionAdapter>()
-    override fun getItemCount()= collections.size
+    private var adpaters= mutableMapOf<String,FeaturedPodcastAdapter>()
+    override fun getItemCount()= shows.size
 
     override fun onBindViewHolder(holder: DataViewHolder<ItemSectionBinding>, position: Int) {
 
-        var collection=  collections[position]
-        holder?.binding?.apply {
-            section.adapter=adpaters[collection.key]
-            sectionModel=collection
-        }
+//        var collection=  shows[position]
+//        holder?.binding?.apply {
+//            section.adapter=adpaters[collection.key]
+//            sectionModel=collection
+//        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DataViewHolder<ItemSectionBinding> {
@@ -46,13 +42,13 @@ class SectionListAdapter(
     }
 
     fun addSection(section: SectionModel){
-        collections.add(section)
-       // adpaters.set(section.key, SectionAdapter(section.items,model))
+        //collections.add(section)
+       // adpaters.set(section.key, FeaturedPodcastAdapter(section.items,model))
         notifyDataSetChanged()
     }
     fun prependSection(section: SectionModel){
-        collections= (listOf(section)+collections).toMutableList()
-       // adpaters.set(section.key,SectionAdapter(section.items,model))
+        //collections= (listOf(section)+collections).toMutableList()
+       // adpaters.set(section.key,FeaturedPodcastAdapter(section.items,model))
         notifyDataSetChanged()
     }
 

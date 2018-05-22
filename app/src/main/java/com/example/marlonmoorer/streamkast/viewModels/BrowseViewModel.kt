@@ -2,10 +2,8 @@ package com.example.marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.example.marlonmoorer.streamkast.adapters.SectionModel
 
 import com.example.marlonmoorer.streamkast.api.ItunesRepository
-import com.example.marlonmoorer.streamkast.api.models.FeedResult
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
@@ -37,19 +35,19 @@ class  BrowseViewModel: ViewModel() {
 
 
 
-    fun getSection(key:String,count:Int=DEFAULT_COUNT): MutableLiveData<List<PodcastEntry>?>? {
+    fun getFeaturedByGenre(key:String, count:Int=DEFAULT_COUNT): MutableLiveData<List<PodcastEntry>?>? {
         var section=sections[key]
         if(section==null){
             section=MutableLiveData()
             sections[key]=section
             async {
-                sections[key]?.postValue(this.loadPodcast(key,count))
+                sections[key]?.postValue(this.loadFeaturedPodcasts(key,count))
             }
         }
         return sections[key]
     }
 
-   private fun loadPodcast(key: String,limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
+   private fun loadFeaturedPodcasts(key: String, limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
         var genre=MediaGenre.parse(key)
         return genre?.let {
             return  itunesRepository.topPodCast(limit,it)!!
@@ -63,7 +61,7 @@ class  BrowseViewModel: ViewModel() {
 
     fun loadMore(key:String)=async{
         loading.postValue(true)
-       // this.podcastList?.postValue(this.loadPodcast(key,50))
+       // this.podcastList?.postValue(this.loadFeaturedPodcasts(key,50))
         loading.postValue(false)
     }
 

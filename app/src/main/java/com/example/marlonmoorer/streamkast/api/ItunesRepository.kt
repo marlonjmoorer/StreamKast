@@ -39,18 +39,11 @@ class ItunesRepository {
 
 
     init {
-
-
-
         service= Retrofit.Builder()
                 .baseUrl(ItunesService.baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ItunesService::class.java)
-
-
-
-
 
     }
 

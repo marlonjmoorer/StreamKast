@@ -12,22 +12,18 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
-import com.example.marlonmoorer.streamkast.adapters.SectionAdapter
+import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
-import kotlinx.android.synthetic.main.fragment_browse.view.*
 import kotlinx.android.synthetic.main.fragment_section.view.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 private const val KEY = "SECTION_NAME"
 
 
 class SectionFragment : Fragment() {
 
     private var genreId: String? = null
-    private var listener: OnFragmentInteractionListener? = null
     lateinit var viewModel: BrowseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +37,9 @@ class SectionFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_section, container, false)
         view.section_title.text=MediaGenre.parse(genreId!!)?.displayname
-        viewModel.getSection(genreId!!,20)?.observe(this, Observer {podcast->
+        viewModel.getFeaturedByGenre(genreId!!,20)?.observe(this, Observer { podcast->
              podcast?.let {
-                var adapter=  SectionAdapter(it)
+                var adapter=  FeaturedPodcastAdapter(it)
                  view.section_items.layoutManager= GridLayoutManager(activity,2)
                  view.section_items.adapter=adapter
                  view.section_items.setNestedScrollingEnabled(false);
@@ -60,15 +56,7 @@ class SectionFragment : Fragment() {
         viewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
 
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
-    }
 
     companion object {
         @JvmStatic
