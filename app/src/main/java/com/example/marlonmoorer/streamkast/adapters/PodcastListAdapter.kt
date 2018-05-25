@@ -11,7 +11,7 @@ import com.example.marlonmoorer.streamkast.load
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 
-class PodcastListAdapter(private val showList: List<MediaItem>,val model: BrowseViewModel):DataBoundAdapter<ItemPodcastBinding>(){
+class PodcastListAdapter(private val showList: List<MediaItem>):DataBoundAdapter<ItemPodcastBinding>(){
 
 
 
@@ -28,7 +28,7 @@ class PodcastListAdapter(private val showList: List<MediaItem>,val model: Browse
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder<ItemPodcastBinding> {
         val viewDataBinding: ItemPodcastBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_podcast, parent, false)
-        viewDataBinding.viewModel= model
+       // viewDataBinding.browseViewModel= model
         return DataViewHolder(viewDataBinding)
     }
 

@@ -66,7 +66,7 @@ class PodcastEntry{
         get() = _summary?.label
 
     val Id
-        get() = _id?.label
+        get() = _id?.attributes!!["im:id"]
 
     val Artist
         get() = _artist?.label

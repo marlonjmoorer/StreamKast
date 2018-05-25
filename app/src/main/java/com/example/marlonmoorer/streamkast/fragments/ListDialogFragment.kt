@@ -24,11 +24,11 @@ class ListDialogFragment: Fragment() {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         val model = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
-        adapter= PodcastListAdapter(listOf(),model)
-        model.podcasts?.observe(this, Observer { podcast->
-                adapter= podcast?.let { PodcastListAdapter(it,model) }!!
-                selection.swapAdapter(adapter,true)
-        })
+        adapter= PodcastListAdapter(listOf())
+//        model.podcasts?.observe(this, Observer { podcast->
+//                adapter= podcast?.let { PodcastListAdapter(it) }!!
+//                selection.swapAdapter(adapter,true)
+//        })
         model.isLoading.observe(this, Observer { loading->
             loading_screen.visibility=  if (loading!!) View.VISIBLE else View.GONE
         })

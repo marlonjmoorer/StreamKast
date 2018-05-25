@@ -7,6 +7,9 @@
         <variable
             name="genre"
             type="com.example.marlonmoorer.streamkast.api.models.MediaGenre"/>
+        <variable
+            name="handler"
+            type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
     </data>
 
     <FrameLayout
@@ -15,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:background="@drawable/outlined_tile"
-        android:tag="@{genre}"
+        android:onClick="@{e->handler.onGenreSelect(genre)}"
         android:padding="10dp">
 
         <android.support.constraint.ConstraintLayout

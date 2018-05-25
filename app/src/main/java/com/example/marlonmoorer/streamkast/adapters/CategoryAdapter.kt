@@ -17,10 +17,8 @@ class CategoryAdapter:DataBoundAdapter<ItemCategoryBinding>() {
     override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>?, position: Int) {
         holder!!.binding.categoryIcon.load(categories[position].imageId)
         holder.binding.genre=categories[position]
-        listener.let {
-           // holder.itemView.tag=categories[position]
-            holder.itemView.setOnClickListener(listener)
-        }
+        holder.binding.handler=this.handler
+
     }
 
     override fun getItemCount()= categories.size

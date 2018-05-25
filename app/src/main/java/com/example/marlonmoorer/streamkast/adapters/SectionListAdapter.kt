@@ -37,7 +37,7 @@ class SectionListAdapter(private val shows:List<PodcastEntry>): DataBoundAdapter
         layoutManager= GridLayoutManager(parent!!.context,3)
         val viewBinding:ItemSectionBinding= DataBindingUtil.inflate(LayoutInflater.from(parent.context),R.layout.item_section,parent,false)
         viewBinding.section.layoutManager=layoutManager
-        //viewBinding.viewModel=model
+        //viewBinding.browseViewModel=model
         return DataViewHolder(viewBinding)
     }
 

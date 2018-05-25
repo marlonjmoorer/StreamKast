@@ -1,95 +1,80 @@
 package com.example.marlonmoorer.streamkast.fragments
 
+
 import android.arch.lifecycle.Observer
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.Toast
+import com.example.marlonmoorer.streamkast.ISelectHandler
 import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
 import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
-import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import kotlinx.android.synthetic.main.fragment_browse.view.*
 
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class BrowseFragment : Fragment(),View.OnClickListener {
+class BrowseFragment : Fragment() {
 
 
-    lateinit var viewModel: BrowseViewModel
-    lateinit var detailModel: DetailViewModel
+    lateinit var browseViewModel: BrowseViewModel
 
+    var handler = object : ISelectHandler {
+        override fun onPodcastSelect(id: String) {
+            Toast.makeText(activity, "Hey ${id}", Toast.LENGTH_LONG).show()
+        }
 
-    override fun onClick(view: View) {
-        val item= view.tag
-        if(item is MediaGenre){
-            val fragment= SectionFragment.newInstance(item.id)
-            this.loadFragment(fragment)
+        override fun onGenreSelect(genre: MediaGenre) {
+            Toast.makeText(activity, "Hey ${genre.displayname}", Toast.LENGTH_LONG).show()
+            browseViewModel.selectGenre(genre)
         }
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view=inflater.inflate(R.layout.fragment_browse, container, false)
+        val view = inflater.inflate(R.layout.fragment_browse, container, false)
         view?.apply {
-            featured.layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
-            categories.layoutManager=GridLayoutManager(activity,2)
-            val adapter=CategoryAdapter()
-            adapter.listener=this@BrowseFragment
-            categories.adapter=adapter
+            featured.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            categories.layoutManager = GridLayoutManager(activity, 2)
+            val adapter = CategoryAdapter()
+            adapter.handler = this@BrowseFragment.handler
+            categories.adapter = adapter
             categories.setNestedScrollingEnabled(false);
         }
 
-        viewModel.getFeaturedByGenre(BrowseViewModel.FEATURED)?.observe(this@BrowseFragment, Observer{ podcast->
+        browseViewModel.getFeaturedByGenre(BrowseViewModel.FEATURED)?.observe(this@BrowseFragment, Observer { podcast ->
             podcast?.let {
-                view.featured.adapter =FeaturedPodcastAdapter(podcast)
+                val adapter = FeaturedPodcastAdapter(podcast)
+                adapter.handler = this.handler
+                view.featured.adapter = adapter
             }
         })
+        activity?.actionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setHomeButtonEnabled(false)
+            title = "Browse"
+        }
 
         return view
     }
 
 
-
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        viewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
-        detailModel = ViewModelProviders.of(activity!!).get(DetailViewModel::class.java!!)
-
+        browseViewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
-    override fun onStart() {
-        super.onStart()
-
-
-    }
-
-    fun loadFragment(fragment: Fragment){
-        fragmentManager!!.beginTransaction()
-                    .setCustomAnimations(
-                            R.anim.enter_right,
-                            R.anim.exit_right,
-                            R.anim.enter_right,
-                            R.anim.exit_right)
-                    //.remove(it.findFragmentByTag("over"))
-                    //.replace(R.id.main,fragment,"over")
-                    .replace(R.id.container,fragment)
-                    .addToBackStack("over")
-                    .commit()
-        }
-    }
+}
 
 

@@ -7,15 +7,19 @@
                <variable
                     name="media"
                     type="com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry"/>
+            <variable
+                name="selector"
+                type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
         </data>
 
 
   <LinearLayout
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:background="@color/green_300"
+      android:background="@color/grey_400"
       android:layout_margin="8dp"
-      android:orientation="vertical">
+      android:orientation="vertical"
+      android:onClick="@{e->selector.onPodcastSelect(media.id)}">
 
       <ImageView
           android:id="@+id/podcast_image"

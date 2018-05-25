@@ -4,6 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 
 import com.example.marlonmoorer.streamkast.api.ItunesRepository
+import com.example.marlonmoorer.streamkast.api.models.Genre
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
@@ -18,13 +19,10 @@ class  BrowseViewModel: ViewModel() {
     private var itunesRepository:ItunesRepository
     private var sections= mutableMapOf<String,MutableLiveData<List<PodcastEntry>?>>()
     var selectedPodcast= MutableLiveData<MediaItem>()
-
+    var selectedGenre= MutableLiveData<MediaGenre>()
     companion object {
         var FEATURED="Featured"
     }
-
-    val podcasts
-        get() = podcastList
 
     val isLoading
         get()=loading
@@ -32,6 +30,7 @@ class  BrowseViewModel: ViewModel() {
         itunesRepository= ItunesRepository()
     }
 
+    fun selectGenre(genre: MediaGenre)=this.selectedGenre.postValue(genre)
 
 
 
@@ -59,10 +58,13 @@ class  BrowseViewModel: ViewModel() {
 
 
 
-    fun loadMore(key:String)=async{
+    fun getPodcastByGenre(genre: MediaGenre):MutableLiveData<List<MediaItem>>{
         loading.postValue(true)
-       // this.podcastList?.postValue(this.loadFeaturedPodcasts(key,50))
+        async {
+           this.podcastList.postValue(itunesRepository.getShowsByGenre(genre))
+        }
         loading.postValue(false)
+        return  this.podcastList
     }
 
     fun selectPodcast(podcast:MediaItem){

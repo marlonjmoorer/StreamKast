@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.marlonmoorer.streamkast.ISelectHandler
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
@@ -29,7 +30,9 @@ open class FeaturedPodcastAdapter(private val shows:List<PodcastEntry>) :
         val show=  shows[position]!!
         holder.binding?.apply{
             media=show
+            selector= handler
         }
+
     }
 
 
