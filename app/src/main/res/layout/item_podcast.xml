@@ -4,7 +4,9 @@
         <variable
             name="show"
             type="com.example.marlonmoorer.streamkast.api.models.MediaItem"/>
-
+        <variable
+            name="handler"
+            type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
     </data>
     <android.support.constraint.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,6 +16,7 @@
         android:clickable="true"
         android:background="@drawable/outlined_tile"
         android:layout_marginBottom="4dp"
+        android:onClick="@{e -> handler.onPodcastSelect(show.collectionId)}"
         >
 
 
@@ -32,7 +35,8 @@
             <ImageView
                 android:id="@+id/item_image"
                 android:layout_width="64dp"
-                android:layout_height="64dp" />
+                android:layout_height="64dp"
+                app:src="@{show.artworkUrl100}"/>
         </FrameLayout>
 
         <Button

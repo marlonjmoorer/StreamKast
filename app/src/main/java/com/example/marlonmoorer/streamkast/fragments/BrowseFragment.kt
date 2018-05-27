@@ -29,16 +29,7 @@ class BrowseFragment : Fragment() {
 
     lateinit var browseViewModel: BrowseViewModel
 
-    var handler = object : ISelectHandler {
-        override fun onPodcastSelect(id: String) {
-            Toast.makeText(activity, "Hey ${id}", Toast.LENGTH_LONG).show()
-        }
 
-        override fun onGenreSelect(genre: MediaGenre) {
-            Toast.makeText(activity, "Hey ${genre.displayname}", Toast.LENGTH_LONG).show()
-            browseViewModel.selectGenre(genre)
-        }
-    }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,7 +38,7 @@ class BrowseFragment : Fragment() {
             featured.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             categories.layoutManager = GridLayoutManager(activity, 2)
             val adapter = CategoryAdapter()
-            adapter.handler = this@BrowseFragment.handler
+            adapter.handler = browseViewModel.handler
             categories.adapter = adapter
             categories.setNestedScrollingEnabled(false);
         }
@@ -55,7 +46,7 @@ class BrowseFragment : Fragment() {
         browseViewModel.getFeaturedByGenre(BrowseViewModel.FEATURED)?.observe(this@BrowseFragment, Observer { podcast ->
             podcast?.let {
                 val adapter = FeaturedPodcastAdapter(podcast)
-                adapter.handler = this.handler
+                adapter.handler = browseViewModel.handler
                 view.featured.adapter = adapter
             }
         })

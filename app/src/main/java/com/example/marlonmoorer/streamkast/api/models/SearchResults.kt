@@ -26,8 +26,8 @@ class MediaItem{
     var kind: String? = null
     @SerializedName("collectionId")
     @Expose
-    var collectionId: Long? = null
-
+    //var collectionId: Long? = null
+    var collectionId: String? = null
     @SerializedName("artistId")
     @Expose
     var artistId: String? = null

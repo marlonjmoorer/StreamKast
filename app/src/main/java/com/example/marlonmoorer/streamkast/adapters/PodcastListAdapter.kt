@@ -18,17 +18,14 @@ class PodcastListAdapter(private val showList: List<MediaItem>):DataBoundAdapter
     override fun getItemCount()= showList.size
 
     override fun onBindViewHolder(holder: DataViewHolder<ItemPodcastBinding>, position: Int) {
-
-        var data= showList[position]
         holder?.binding.apply {
-            show=data
-            itemImage.load(data.artworkUrl100!!)
+            show=showList[position]
+            handler=this@PodcastListAdapter.handler
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder<ItemPodcastBinding> {
         val viewDataBinding: ItemPodcastBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_podcast, parent, false)
-       // viewDataBinding.browseViewModel= model
         return DataViewHolder(viewDataBinding)
     }
 

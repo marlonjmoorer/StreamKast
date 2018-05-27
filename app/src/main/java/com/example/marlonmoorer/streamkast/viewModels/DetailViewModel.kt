@@ -10,9 +10,10 @@ import com.example.marlonmoorer.streamkast.async
  * Created by marlonmoorer on 3/22/18.
  */
 class DetailViewModel :ViewModel() {
-    private var podcast= MutableLiveData<Channel>()
+    private var podcast= MutableLiveData<MediaItem>()
+    val channel=MutableLiveData<Channel>()
     private val loading=MutableLiveData<Boolean>()
-    private  val  episodes=MutableLiveData<List<Episode>>()
+    val  episodes=MutableLiveData<List<Episode>>()
     var itunesRepository: ItunesRepository
     init {
         itunesRepository= ItunesRepository()
@@ -20,22 +21,18 @@ class DetailViewModel :ViewModel() {
 
     val selectedPodcast
         get() = podcast
-    val isLoading
-        get()=loading
-    val getEpisodes
-        get() = episodes
 
-
-    fun selectShow(podcast:MediaItem)=async{
-        load(podcast.feedUrl!!)
-       // this.podcast.postValue(podcast)
+    fun loadPodcast(id:String): MutableLiveData<MediaItem> {
+        async {
+            var result= itunesRepository.getPodcastById(id)
+            this.podcast.postValue(result)
+            var channel= itunesRepository.parseFeed(result?.feedUrl!!)
+            this.channel.postValue(channel)
+           /// episodes.postValue(channel?.episodes)
+        }
+        return podcast
     }
 
-    fun load(url:String)=async {
-        var channel=itunesRepository.ParseFeed(url)
-        podcast.postValue(channel)
-        episodes.postValue(channel?.item)
-    }
 
 
 

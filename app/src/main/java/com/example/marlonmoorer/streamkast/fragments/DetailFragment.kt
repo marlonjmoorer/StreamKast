@@ -10,12 +10,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
-import com.example.marlonmoorer.streamkast.load
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
-import kotlinx.android.synthetic.main.fragment_details.*
 
 /**
  * Created by marlonmoorer on 3/24/18.
@@ -25,34 +22,42 @@ class DetailFragment: Fragment() {
 
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
+    private  var Id:String=""
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        arguments?.let {
+            Id=it.getString(KEY)
+        }
+
+
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentDetailsBinding.inflate(inflater,container,false)
-
-        detailModel.selectedPodcast?.observe(this, Observer { podcast->
-            binding.channel=podcast
-            podcast?.image?.url?.let { binding.mainBackdrop.load(it) }
-            loading_screen.visibility=View.GONE
-        })
-        detailModel.getEpisodes.observe(this, Observer { episodes->
-            var adapter= EpisodeListAdapter(episodes!!)
+        detailModel.channel.observe(this, Observer { channel->
+            var adapter= EpisodeListAdapter(channel?.episodes!!)
             binding.episodes.apply {
                 layoutManager=LinearLayoutManager(this@DetailFragment.context)
                 setAdapter(adapter)
             }
+            binding.channel=channel
+        })
+
+        detailModel.loadPodcast(Id).observe(this, Observer {podcast->
+            binding.podcast=podcast
 
         })
+
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-       // binding.loadingScreen.visibility=View.VISIBLE
-    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         detailModel.selectedPodcast.removeObservers(this)
-        detailModel.getEpisodes.removeObservers(this)
+        detailModel.episodes.removeObservers(this)
 
     }
 
@@ -60,6 +65,16 @@ class DetailFragment: Fragment() {
         super.onAttach(context)
         detailModel = ViewModelProviders.of(activity!!).get(DetailViewModel::class.java!!)
 
+    }
+    companion object {
+        private const val KEY = "PODCAST_ID"
+        @JvmStatic
+        fun newInstance(podcastId:String) =
+                DetailFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(KEY,podcastId)
+                    }
+                }
     }
 
 

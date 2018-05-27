@@ -43,14 +43,18 @@ class SectionFragment : Fragment() {
         podcasts?.let {
             view?.apply {
                 featured_items.layoutManager= LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
-                featured_items.adapter=FeaturedPodcastAdapter(podcasts)
+                featured_items.adapter=FeaturedPodcastAdapter(podcasts).apply {
+                    handler =viewModel.handler
+                }
             }
         }
     }
     val podcastObserver= Observer<List<MediaItem>> { podcasts->
         view?.apply {
             section_items.layoutManager= LinearLayoutManager(activity)
-            section_items.adapter=PodcastListAdapter(podcasts!!)
+            section_items.adapter=PodcastListAdapter(podcasts!!).apply {
+                handler=viewModel.handler
+            }
             section_items.setNestedScrollingEnabled(false);
         }
     }
@@ -66,15 +70,10 @@ class SectionFragment : Fragment() {
         return view
     }
 
-    override fun onDetach() {
-        super.onDetach()
-
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         viewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
-
     }
 
 

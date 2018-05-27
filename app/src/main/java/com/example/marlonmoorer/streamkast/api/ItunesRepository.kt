@@ -62,9 +62,11 @@ class ItunesRepository {
         }
         return emptyList()
     }
+    fun getPodcastById(id:String):MediaItem?{
+        return lookup(mapOf("id" to id))?.firstOrNull()
+    }
 
-
-    fun ParseFeed(url:String):Channel?{
+    fun parseFeed(url:String):Channel?{
         try {
             var xml= URL(url).readText()
             val json = XML.toJSONObject(xml).toString(4)

@@ -1,6 +1,6 @@
 package com.example.marlonmoorer.streamkast.api
 
-import com.example.marlonmoorer.streamkast.api.models.ItunesRssFeed
+
 import com.example.marlonmoorer.streamkast.api.models.SearchResults
 import com.example.marlonmoorer.streamkast.api.models.chart.ChartResult
 import okhttp3.ResponseBody
@@ -18,8 +18,7 @@ interface ItunesService {
 
 
     companion object {
-        val baseUrl: String
-            get() = "https://itunes.apple.com/"
+        val baseUrl: String = "https://itunes.apple.com/"
         val LIMIT=25
     }
 
@@ -37,15 +36,3 @@ interface ItunesService {
 
 }
 
-interface ItunesRssService {
-
-    companion object {
-        val baseUrl: String
-            get() = "https://rss.itunes.apple.com/api/v1/us/podcasts/"
-    }
-    @GET("top-podcasts/all/{limit}/explicit.json")
-    fun topPodcast(@Path("limit") limit:Int): Call<ItunesRssFeed>
-
-
-
-}

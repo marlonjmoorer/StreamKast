@@ -2,7 +2,8 @@ package com.example.marlonmoorer.streamkast.api.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -38,7 +39,7 @@ class Channel {
 
     @SerializedName("item")
     @Expose
-    var item: List<Episode>? = null
+    var episodes: List<Episode>? = null
 
     @SerializedName("link")
     @Expose
@@ -66,6 +67,11 @@ class Episode {
     @Expose
     var pubDate: String? = null
 
+    val publishedDate:String
+        get() {
+            val date=SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z",Locale.US).parse(pubDate)
+            return SimpleDateFormat("EEE, MMM dd, yyyy",Locale.US).format(date)
+        }
     @SerializedName("title")
     @Expose
     var title: String? = null
@@ -81,6 +87,7 @@ class Episode {
     @SerializedName("link")
     @Expose
     var link: String? = null
+
 
 }
 

@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import com.example.marlonmoorer.streamkast.fragments.BrowseFragment
-import com.example.marlonmoorer.streamkast.R
+import com.example.marlonmoorer.streamkast.fragments.DetailFragment
 import com.example.marlonmoorer.streamkast.fragments.SectionFragment
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,15 +29,15 @@ class MainActivity : AppCompatActivity() {
            val fragment= when(item.itemId){
                 R.id.menu_home-> BrowseFragment()
                 else->null
-            }
+           }
             this.loadFragment(fragment!!)
-            return@setOnNavigationItemReselectedListener
         }
-        browseViewModel?.selectedPodcast?.observe(this, Observer { podcast->
-
+        browseViewModel?.selectedPodcastId?.observe(this, Observer { id->
+            val fragment= DetailFragment.newInstance(id!!)
+            this.loadFragment(fragment)
         })
         browseViewModel?.selectedGenre?.observe(this, Observer {genre->
-            var sectionFragment  =SectionFragment.newInstance(genre!!.id!!)
+            val sectionFragment  =SectionFragment.newInstance(genre!!.id!!)
             this.loadFragment(sectionFragment)
         })
         this.loadFragment(BrowseFragment())

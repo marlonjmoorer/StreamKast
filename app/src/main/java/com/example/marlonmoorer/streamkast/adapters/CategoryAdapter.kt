@@ -15,10 +15,10 @@ class CategoryAdapter:DataBoundAdapter<ItemCategoryBinding>() {
 
     var categories=MediaGenre.values()
     override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>?, position: Int) {
-        holder!!.binding.categoryIcon.load(categories[position].imageId)
-        holder.binding.genre=categories[position]
-        holder.binding.handler=this.handler
-
+        holder?.binding?.apply {
+            genre=categories[position]
+            handler=this@CategoryAdapter.handler
+        }
     }
 
     override fun getItemCount()= categories.size
