@@ -6,29 +6,7 @@
     android:layout_height="match_parent"
     tools:context="com.example.marlonmoorer.streamkast.MainActivity">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-        <!--android:id="@+id/appbar"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:visibility="visible"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintHorizontal_bias="0.0"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent">-->
 
-        <!--<android.support.v7.widget.Toolbar-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="?android:attr/actionBarSize"-->
-            <!--android:visibility="visible"-->
-            <!--app:title="@string/app_name"-->
-            <!--android:id="@+id/tool_bar"-->
-            <!--app:titleTextColor="@color/white"-->
-            <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
-            <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light">-->
-
-        <!--</android.support.v7.widget.Toolbar>-->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
 
     <Toolbar
         android:id="@+id/appbar"

@@ -2,6 +2,7 @@ package com.example.marlonmoorer.streamkast.api
 
 
 
+import android.net.Uri
 import android.util.Log
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -66,11 +67,15 @@ class ItunesRepository {
         return lookup(mapOf("id" to id))?.firstOrNull()
     }
 
-    fun parseFeed(url:String):Channel?{
+    fun parseFeed(url:String,page:String="1"):Channel?{
         try {
-            var xml= URL(url).readText()
+            val uri = Uri.parse(url)
+                    .buildUpon()
+                    .appendQueryParameter("page",page)
+                    .build().toString()
+            val xml= URL(uri).readText()
             val json = XML.toJSONObject(xml).toString(4)
-            var feed= Gson().fromJson(json,RssFeed::class.java)
+            val feed= Gson().fromJson(json,RssFeed::class.java)
             return feed.rss!!.channel
         }
        catch (ex:Exception){
@@ -92,7 +97,6 @@ class ItunesRepository {
     fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<MediaItem>? {
         var query=mapOf(
                 "term" to "podcast",
-                //"limit" to limit.toString(),
                 "genreId" to genre.id,
                 "entity" to "podcast"
         )

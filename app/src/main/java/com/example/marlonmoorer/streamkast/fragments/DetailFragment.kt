@@ -6,12 +6,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
+import com.example.marlonmoorer.streamkast.databinding.FragmentShowDetailsBinding
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 /**
@@ -21,7 +23,7 @@ class DetailFragment: Fragment() {
 
 
     lateinit var detailModel: DetailViewModel
-    lateinit var binding:FragmentDetailsBinding
+    lateinit var binding:FragmentShowDetailsBinding
     private  var Id:String=""
 
 
@@ -34,19 +36,31 @@ class DetailFragment: Fragment() {
 
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentDetailsBinding.inflate(inflater,container,false)
+        binding =FragmentShowDetailsBinding.inflate(inflater,container,false)
         detailModel.channel.observe(this, Observer { channel->
             var adapter= EpisodeListAdapter(channel?.episodes!!)
             binding.episodes.apply {
                 layoutManager=LinearLayoutManager(this@DetailFragment.context)
                 setAdapter(adapter)
+
+                setNestedScrollingEnabled(false);
             }
             binding.channel=channel
+
         })
+        if(activity is AppCompatActivity){
+            (activity as AppCompatActivity).apply {
+                setSupportActionBar(binding.toolbar)
+                supportActionBar?.apply {
+                    setDisplayHomeAsUpEnabled(true)
+                    setHomeButtonEnabled(true)
+                }
+            }
+        }
+
 
         detailModel.loadPodcast(Id).observe(this, Observer {podcast->
             binding.podcast=podcast
-
         })
 
         return binding.root

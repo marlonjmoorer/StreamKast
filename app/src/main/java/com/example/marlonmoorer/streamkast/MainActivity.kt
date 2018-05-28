@@ -22,42 +22,37 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setActionBar(appbar)
-        browseViewModel = ViewModelProviders.of(this).get(BrowseViewModel::class.java!!)
-        supportActionBar?.setDisplayHomeAsUpEnabled(false);
+       // setActionBar(appbar)
+        browseViewModel = ViewModelProviders.of(this).get(BrowseViewModel::class.java)
+        //supportActionBar?.setDisplayHomeAsUpEnabled(false)
         navigation.setOnNavigationItemReselectedListener { item ->
-           val fragment= when(item.itemId){
+           val fragment = when(item.itemId){
                 R.id.menu_home-> BrowseFragment()
                 else->null
            }
             this.loadFragment(fragment!!)
         }
         browseViewModel?.selectedPodcastId?.observe(this, Observer { id->
-            val fragment= DetailFragment.newInstance(id!!)
+            val fragment = DetailFragment.newInstance(id!!)
             this.loadFragment(fragment)
         })
         browseViewModel?.selectedGenre?.observe(this, Observer {genre->
-            val sectionFragment  =SectionFragment.newInstance(genre!!.id!!)
+            val sectionFragment  =SectionFragment.newInstance(genre!!.id)
             this.loadFragment(sectionFragment)
         })
         this.loadFragment(BrowseFragment())
     }
 
-     fun loadFragment(fragment: Fragment){
-        supportFragmentManager!!.beginTransaction()
-//                .setCustomAnimations(
-//                        R.anim.enter_right,
-//                        R.anim.exit_right,
-//                        R.anim.enter_right,
-//                        R.anim.exit_right)/
-        .add(R.id.container,fragment)
-        .addToBackStack("over")
-        .commit()
-    }
+     fun loadFragment(fragment: Fragment)= supportFragmentManager!!
+             .beginTransaction()
+            .add(R.id.container,fragment)
+            .addToBackStack("over")
+            .commit()
+
 
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
