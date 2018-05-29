@@ -20,6 +20,7 @@ class EpisodeListAdapter(val episodes:List<Episode>):DataBoundAdapter<ItemEpisod
         var data= episodes[position]
         holder?.binding.apply {
             episode=data
+            handler=this@EpisodeListAdapter.handler
         }
     }
 

@@ -9,9 +9,12 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.marlonmoorer.streamkast.fragments.BrowseFragment
 import com.example.marlonmoorer.streamkast.fragments.DetailFragment
+import com.example.marlonmoorer.streamkast.fragments.EpisodeFragment
 import com.example.marlonmoorer.streamkast.fragments.SectionFragment
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
+import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,11 +22,14 @@ class MainActivity : AppCompatActivity() {
 
     private var browseViewModel: BrowseViewModel?=null
 
+    private var detailViewModel: DetailViewModel?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
        // setActionBar(appbar)
         browseViewModel = ViewModelProviders.of(this).get(BrowseViewModel::class.java)
+        detailViewModel= ViewModelProviders.of(this).get(DetailViewModel::class.java)
         //supportActionBar?.setDisplayHomeAsUpEnabled(false)
         navigation.setOnNavigationItemReselectedListener { item ->
            val fragment = when(item.itemId){
@@ -40,12 +46,16 @@ class MainActivity : AppCompatActivity() {
             val sectionFragment  =SectionFragment.newInstance(genre!!.id)
             this.loadFragment(sectionFragment)
         })
+        detailViewModel?.selectedEpisode?.observe(this, Observer {episode->
+            EpisodeFragment.newInstance(episode!!).show(supportFragmentManager,"")
+        })
+
         this.loadFragment(BrowseFragment())
     }
 
      fun loadFragment(fragment: Fragment)= supportFragmentManager!!
              .beginTransaction()
-            .add(R.id.container,fragment)
+            .add(R.id.main,fragment)
             .addToBackStack("over")
             .commit()
 

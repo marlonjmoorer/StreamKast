@@ -6,6 +6,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 
 object BindingAdapters{
@@ -47,7 +48,7 @@ interface ISelectHandler{
     fun onPodcastSelect(id:String){
 
     }
-    fun onEpisodeSelect(id:String){
+    fun onEpisodeSelect(episode: Episode){
 
     }
     fun onGenreSelect(genre: MediaGenre){

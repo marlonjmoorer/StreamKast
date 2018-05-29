@@ -9,7 +9,6 @@
         <variable
             name="channel"
             type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
-
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -61,5 +60,7 @@
                     android:scrollbars="none"/>
 
         </android.support.v4.widget.NestedScrollView>
+
     </android.support.design.widget.CoordinatorLayout>
+
 </layout>

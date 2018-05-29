@@ -2,6 +2,7 @@ package com.example.marlonmoorer.streamkast.api.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,9 +22,6 @@ class Rss {
     @SerializedName("channel")
     @Expose
     var channel: Channel? = null
-
-//    @field:Attribute
-//    var version: String? = null
 
 }
 
@@ -48,10 +46,7 @@ class Channel {
     @SerializedName("itunes:author")
     @Expose
     var author: String? = null
-    //@Element
-   // var language: String? = null
 
-    //var copyright: String? = null
     @SerializedName("image")
     @Expose
     var image: Image? = null
@@ -60,7 +55,7 @@ class Channel {
 
 }
 
-class Episode {
+class Episode : Serializable {
 
 
     @SerializedName("pubDate")

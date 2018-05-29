@@ -2,6 +2,7 @@ package com.example.marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import com.example.marlonmoorer.streamkast.ISelectHandler
 import com.example.marlonmoorer.streamkast.api.ItunesRepository
 import com.example.marlonmoorer.streamkast.api.models.*
 import com.example.marlonmoorer.streamkast.async
@@ -14,6 +15,7 @@ class DetailViewModel :ViewModel() {
     val channel=MutableLiveData<Channel>()
     private val loading=MutableLiveData<Boolean>()
     val  episodes=MutableLiveData<List<Episode>>()
+    val  selectedEpisode=MutableLiveData<Episode>()
     var itunesRepository: ItunesRepository
     init {
         itunesRepository= ItunesRepository()
@@ -24,15 +26,19 @@ class DetailViewModel :ViewModel() {
 
     fun loadPodcast(id:String): MutableLiveData<MediaItem> {
         async {
-            var result= itunesRepository.getPodcastById(id)
+            val result= itunesRepository.getPodcastById(id)
             this.podcast.postValue(result)
-            var channel= itunesRepository.parseFeed(result?.feedUrl!!)
+            val channel= itunesRepository.parseFeed(result?.feedUrl!!)
             this.channel.postValue(channel)
-           /// episodes.postValue(channel?.episodes)
         }
         return podcast
     }
 
+    val handler= object  :ISelectHandler{
+        override fun onEpisodeSelect(episode: Episode) {
+           this@DetailViewModel.selectedEpisode.postValue(episode)
+        }
+    }
 
 
 
