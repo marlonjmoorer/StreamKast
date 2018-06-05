@@ -35,6 +35,13 @@ object BindingAdapters{
            view.movementMethod= LinkMovementMethod.getInstance()
        }
     }
+    @JvmStatic
+    @BindingAdapter("html")
+    fun setHtml(view: TextView, text: String?){
+        text?.let {
+            view.text= Html.fromHtml(text)
+        }
+    }
 
     @JvmStatic
     @BindingAdapter("android:visibility")
@@ -45,13 +52,8 @@ object BindingAdapters{
 }
 
 interface ISelectHandler{
-    fun onPodcastSelect(id:String){
-
-    }
-    fun onEpisodeSelect(episode: Episode){
-
-    }
-    fun onGenreSelect(genre: MediaGenre){
-
-    }
+    fun onPodcastSelect(id:String){}
+    fun onEpisodeSelect(episode: Episode){}
+    fun onGenreSelect(genre: MediaGenre){}
+    fun queueEpisode(episode: Episode){}
 }

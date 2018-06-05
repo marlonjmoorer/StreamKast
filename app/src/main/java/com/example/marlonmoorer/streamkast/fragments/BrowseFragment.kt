@@ -16,7 +16,9 @@ import android.widget.Toast
 import com.example.marlonmoorer.streamkast.ISelectHandler
 import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
 import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
+import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
+import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import kotlinx.android.synthetic.main.fragment_browse.view.*
 
@@ -31,23 +33,22 @@ class BrowseFragment : Fragment() {
 
 
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_browse, container, false)
         view?.apply {
             featured.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             categories.layoutManager = GridLayoutManager(activity, 2)
             val adapter = CategoryAdapter()
-            adapter.handler = browseViewModel.handler
+            adapter.handler = browseViewModel
             categories.adapter = adapter
-            categories.setNestedScrollingEnabled(false);
+            categories.setNestedScrollingEnabled(false)
         }
 
         browseViewModel.getFeaturedByGenre(BrowseViewModel.FEATURED)?.observe(this@BrowseFragment, Observer { podcast ->
             podcast?.let {
-                val adapter = FeaturedPodcastAdapter(podcast)
-                adapter.handler = browseViewModel.handler
-                view.featured.adapter = adapter
+                view.featured.adapter =FeaturedPodcastAdapter(podcast).apply {
+                    handler = browseViewModel
+                }
             }
         })
         activity?.actionBar?.apply {
@@ -62,7 +63,7 @@ class BrowseFragment : Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        browseViewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
+        browseViewModel = createViewModel()
     }
 
 

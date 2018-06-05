@@ -1,8 +1,11 @@
 package com.example.marlonmoorer.streamkast
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -13,6 +16,7 @@ import com.example.marlonmoorer.streamkast.fragments.EpisodeFragment
 import com.example.marlonmoorer.streamkast.fragments.SectionFragment
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -21,22 +25,36 @@ class MainActivity : AppCompatActivity() {
 
 
     private var browseViewModel: BrowseViewModel?=null
-
     private var detailViewModel: DetailViewModel?=null
+    private var service:MediaService?=null
+    private val isBound
+        get() = service!=null
+    private val serviceConnection= object:ServiceConnection{
+        override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
+            if (binder is MediaService.MediaBinder){
+                service=binder.getService()
+            }
+        }
+
+        override fun onServiceDisconnected(className: ComponentName?) {
+           service=null
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-       // setActionBar(appbar)
-        browseViewModel = ViewModelProviders.of(this).get(BrowseViewModel::class.java)
-        detailViewModel= ViewModelProviders.of(this).get(DetailViewModel::class.java)
-        //supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
+        browseViewModel = createViewModel()
+        detailViewModel = createViewModel()
+
         navigation.setOnNavigationItemReselectedListener { item ->
-           val fragment = when(item.itemId){
+            val fragment = when(item.itemId){
                 R.id.menu_home-> BrowseFragment()
                 else->null
-           }
-            this.loadFragment(fragment!!)
+            }
+            fragment?.let { this.loadFragment(it) }
         }
         browseViewModel?.selectedPodcastId?.observe(this, Observer { id->
             val fragment = DetailFragment.newInstance(id!!)
@@ -50,6 +68,13 @@ class MainActivity : AppCompatActivity() {
             EpisodeFragment.newInstance(episode!!).show(supportFragmentManager,"")
         })
 
+        detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
+            episode?.let {
+                val intent=Intent(this,MediaService::class.java)
+                bindService(intent,serviceConnection, BIND_AUTO_CREATE)
+                service?.start()
+            }
+        })
         this.loadFragment(BrowseFragment())
     }
 

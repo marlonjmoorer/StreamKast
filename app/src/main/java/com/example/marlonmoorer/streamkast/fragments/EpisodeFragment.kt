@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.Episode
+import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentEpisodeBinding
+import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 class EpisodeFragment: BottomSheetDialogFragment() {
 
@@ -23,6 +25,7 @@ class EpisodeFragment: BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentEpisodeBinding.inflate(inflater)
         binding.episode=episode
+        binding.handler=createViewModel<DetailViewModel>()
         return  binding.root
     }
     companion object {

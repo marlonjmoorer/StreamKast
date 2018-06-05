@@ -9,71 +9,58 @@
         <variable
             name="channel"
             type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
-
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black">
+        android:layout_height="match_parent">
 
-       <ImageView
-           android:id="@+id/podcast_image"
-           android:layout_width="80dp"
-           android:layout_height="80dp"
-           android:layout_marginStart="8dp"
-           android:layout_marginTop="8dp"
-           app:src="@{podcast.artworkUrl100}"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent"
-           app:srcCompat="@mipmap/ic_launcher" />
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:title="@{podcast.collectionName}"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:contentScrim="?attr/colorPrimary"
+                app:expandedTitleMarginStart="48dp"
+                app:expandedTitleMarginEnd="64dp"
 
-       <TextView
-           android:id="@+id/podcast_name"
-           android:layout_width="0dp"
-           android:layout_height="wrap_content"
-           android:layout_marginEnd="8dp"
-           android:layout_marginStart="8dp"
-           android:layout_marginTop="16dp"
-           android:text="@{podcast.collectionName}"
-           android:textColor="@color/white"
-           android:textSize="24sp"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toEndOf="@+id/podcast_image"
-           app:layout_constraintTop_toTopOf="parent" />
+                app:expandedTitleTextAppearance="@style/ExpandedAppBar">
 
-       <TextView
-           android:id="@+id/viewText"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_marginBottom="8dp"
-           android:layout_marginEnd="8dp"
-           android:layout_marginStart="8dp"
-           android:layout_marginTop="16dp"
-           app:href="@{channel.link}"
-           android:textColor="@color/accent"
-           app:layout_constraintBottom_toBottomOf="@+id/podcast_image"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintHorizontal_bias="0.952"
-           app:layout_constraintStart_toEndOf="@+id/podcast_image"
-           app:layout_constraintTop_toBottomOf="@+id/podcast_name"
-           app:layout_constraintVertical_bias="1.0" />
+                <include layout="@layout/_title_area"
+                    app:podcast="@{podcast}" />
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?android:attr/actionBarSize"
+                    app:layout_collapseMode="pin">
 
-       <android.support.v7.widget.RecyclerView
-           android:id="@+id/episodes"
-           android:layout_width="0dp"
-           android:layout_height="0dp"
-           android:layout_marginBottom="8dp"
-           android:layout_marginEnd="8dp"
-           android:layout_marginStart="8dp"
-           android:layout_marginTop="16dp"
-           app:layout_constraintBottom_toBottomOf="@+id/loading_screen"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toBottomOf="@+id/podcast_image" />
-       <include
-           android:id="@+id/loading_screen"
-           layout="@layout/partial_loading_screen"
-           android:visibility="@{podcast==null}" />
-   </android.support.constraint.ConstraintLayout>
+                </android.support.v7.widget.Toolbar>
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:background="@color/black"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:scrollbars="vertical"
+            >
+
+                <android.support.v7.widget.RecyclerView
+
+                    android:divider="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/episodes"
+                    android:scrollbars="none"/>
+
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.design.widget.CoordinatorLayout>
+
 </layout>

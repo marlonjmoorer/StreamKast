@@ -10,12 +10,13 @@ import com.example.marlonmoorer.streamkast.async
 /**
  * Created by marlonmoorer on 3/22/18.
  */
-class DetailViewModel :ViewModel() {
+class DetailViewModel :ViewModel(),ISelectHandler {
     private var podcast= MutableLiveData<MediaItem>()
     val channel=MutableLiveData<Channel>()
-    private val loading=MutableLiveData<Boolean>()
-    val  episodes=MutableLiveData<List<Episode>>()
-    val  selectedEpisode=MutableLiveData<Episode>()
+    val episodes=MutableLiveData<List<Episode>>()
+    val selectedEpisode=MutableLiveData<Episode>()
+    val queuedEpisode=MutableLiveData<Episode>()
+
     var itunesRepository: ItunesRepository
     init {
         itunesRepository= ItunesRepository()
@@ -34,11 +35,12 @@ class DetailViewModel :ViewModel() {
         return podcast
     }
 
-    val handler= object  :ISelectHandler{
-        override fun onEpisodeSelect(episode: Episode) {
-           this@DetailViewModel.selectedEpisode.postValue(episode)
-        }
-    }
+
+    override fun onEpisodeSelect(episode: Episode)=selectedEpisode.postValue(episode)
+
+    override fun queueEpisode(episode: Episode) = queuedEpisode.postValue(episode)
+
+
 
 
 

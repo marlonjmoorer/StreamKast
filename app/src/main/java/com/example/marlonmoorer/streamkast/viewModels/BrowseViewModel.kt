@@ -12,7 +12,7 @@ import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.async
 
 
-class  BrowseViewModel: ViewModel() {
+class  BrowseViewModel: ViewModel(),ISelectHandler{
 
     private var podcastList = MutableLiveData<List<MediaItem>>()
     private val loading=MutableLiveData<Boolean>()
@@ -25,15 +25,6 @@ class  BrowseViewModel: ViewModel() {
         var FEATURED="Featured"
     }
 
-    val handler =  object : ISelectHandler {
-            override fun onPodcastSelect(id: String) {
-                this@BrowseViewModel.selectPodcast(id)
-            }
-
-            override fun onGenreSelect(genre: MediaGenre) {
-                this@BrowseViewModel.selectGenre(genre)
-            }
-    }
 
     val isLoading
         get()=loading
@@ -44,6 +35,9 @@ class  BrowseViewModel: ViewModel() {
     }
 
     fun selectGenre(genre: MediaGenre)=this.selectedGenre.postValue(genre)
+
+    override fun onPodcastSelect(id: String) =selectPodcast(id)
+    override fun onGenreSelect(genre: MediaGenre)=selectGenre(genre)
 
 
 
@@ -59,7 +53,7 @@ class  BrowseViewModel: ViewModel() {
         return sections[key]
     }
 
-   private fun loadFeaturedPodcasts(key: String, limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
+    private fun loadFeaturedPodcasts(key: String, limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
         var genre=MediaGenre.parse(key)
         return genre?.let {
             return  itunesRepository.topPodCast(limit,it)!!
@@ -70,13 +64,10 @@ class  BrowseViewModel: ViewModel() {
     }
 
 
-
     fun getPodcastByGenre(genre: MediaGenre):MutableLiveData<List<MediaItem>>{
-        loading.postValue(true)
         async {
            this.podcastList.postValue(itunesRepository.getShowsByGenre(genre))
         }
-        loading.postValue(false)
         return  this.podcastList
     }
 

@@ -11,10 +11,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.marlonmoorer.streamkast.ISelectHandler
+
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
+import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
-import com.example.marlonmoorer.streamkast.databinding.FragmentShowDetailsBinding
+
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 /**
@@ -24,7 +25,7 @@ class DetailFragment: Fragment() {
 
 
     lateinit var detailModel: DetailViewModel
-    lateinit var binding:FragmentShowDetailsBinding
+    lateinit var binding:FragmentDetailsBinding
     private  var Id:String=""
 
 
@@ -37,12 +38,12 @@ class DetailFragment: Fragment() {
 
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding =FragmentShowDetailsBinding.inflate(inflater,container,false)
+        binding =FragmentDetailsBinding.inflate(inflater,container,false)
         detailModel.channel.observe(this, Observer { channel->
             binding.episodes.apply {
                 layoutManager=LinearLayoutManager(this@DetailFragment.context)
                 adapter=EpisodeListAdapter(channel?.episodes!!).apply {
-                    handler=detailModel.handler
+                    handler=detailModel
                 }
                 setNestedScrollingEnabled(false);
             }
@@ -74,12 +75,11 @@ class DetailFragment: Fragment() {
         super.onDestroyView()
         detailModel.selectedPodcast.removeObservers(this)
         detailModel.episodes.removeObservers(this)
-
     }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        detailModel = ViewModelProviders.of(activity!!).get(DetailViewModel::class.java!!)
+        detailModel = createViewModel()
 
     }
     companion object {

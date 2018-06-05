@@ -16,6 +16,7 @@ import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
+import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import kotlinx.android.synthetic.main.fragment_section.view.*
 
@@ -44,7 +45,7 @@ class SectionFragment : Fragment() {
             view?.apply {
                 featured_items.layoutManager= LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
                 featured_items.adapter=FeaturedPodcastAdapter(podcasts).apply {
-                    handler =viewModel.handler
+                    handler =viewModel
                 }
             }
         }
@@ -53,7 +54,7 @@ class SectionFragment : Fragment() {
         view?.apply {
             section_items.layoutManager= LinearLayoutManager(activity)
             section_items.adapter=PodcastListAdapter(podcasts!!).apply {
-                handler=viewModel.handler
+                handler=viewModel
             }
             section_items.setNestedScrollingEnabled(false);
         }
@@ -73,7 +74,7 @@ class SectionFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        viewModel = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
+        viewModel = createViewModel()
     }
 
 

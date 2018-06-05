@@ -7,64 +7,73 @@
         <variable
             name="episode"
             type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
+        <variable
+            name="handler"
+            type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
     </data>
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="600dp">
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:orientation="vertical">
 
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <ScrollView
-                android:id="@+id/scrollView2"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView3">
+                <LinearLayout
+                    android:id="@+id/main"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:gravity="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/detail_description"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{episode.title}" />
+                </LinearLayout>
+
+                <ScrollView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="16dp"
-                    android:text="@{episode.description}"
-                    android:textColor="@color/white" />
-            </ScrollView>
+                    android:minHeight="200dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/main">
 
-            <TextView
-                android:id="@+id/textView6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@{episode.title}"
-                app:layout_constraintBottom_toTopOf="@+id/scrollView2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </android.support.constraint.ConstraintLayout>
+                    <TextView
+                        android:layout_marginTop="16dp"
+                        android:id="@+id/textView10"
+                        android:textColor="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:html="@{episode.description}" />
+                </ScrollView>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/detail_play"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_margin="16dp"
-            android:clickable="true"
+            </android.support.constraint.ConstraintLayout>
 
-            android:src="@drawable/icons8_art"
-            app:backgroundTint="@color/colorAccent"
-            app:layout_anchor="@id/scrollView2"
-            app:layout_anchorGravity="top|right" />
-    </android.support.design.widget.CoordinatorLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/detail_play"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_margin="16dp"
+                android:src="@drawable/icons8_play"
+                app:backgroundTint="@color/colorAccent"
+                app:layout_anchor="@id/main"
+                app:layout_anchorGravity="bottom|right|end"
+                android:onClick="@{e->handler.queueEpisode(episode)}"/>
 
+        </android.support.design.widget.CoordinatorLayout>
 </layout>
