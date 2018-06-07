@@ -92,6 +92,10 @@ class Enclosure {
     @Expose
     var url:String?=null
 
+    @SerializedName("length")
+    @Expose
+    var length:Long?=null
+
 }
 class Image{
     @SerializedName("url")

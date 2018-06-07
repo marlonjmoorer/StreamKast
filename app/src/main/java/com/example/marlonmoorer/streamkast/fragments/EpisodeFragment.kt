@@ -1,5 +1,6 @@
 package com.example.marlonmoorer.streamkast.fragments
 
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
@@ -25,7 +26,11 @@ class EpisodeFragment: BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentEpisodeBinding.inflate(inflater)
         binding.episode=episode
-        binding.handler=createViewModel<DetailViewModel>()
+        binding.handler=createViewModel<DetailViewModel>().apply {
+            queuedEpisode?.observe(this@EpisodeFragment, Observer {episode->
+                this@EpisodeFragment.dismiss()
+            })
+        }
         return  binding.root
     }
     companion object {

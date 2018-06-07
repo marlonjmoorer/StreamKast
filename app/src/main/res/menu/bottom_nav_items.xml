@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_home"
-        android:title="Charts"
+        android:id="@+id/menu_browse"
+        android:title="Browse"
+        android:icon="@drawable/icons8_browse_page"
 
         />
     <item
         android:id="@+id/menu_search"
         android:title="Search"
-
+android:icon="@drawable/icons8_search"
         />
 
     <item
-        android:id="@+id/menu_notifications"
-        android:title="Notifications"
+        android:id="@+id/menu_library"
+        android:title="Subscriptions"
+        android:icon="@drawable/icons8_library"
         />
+
 </menu>

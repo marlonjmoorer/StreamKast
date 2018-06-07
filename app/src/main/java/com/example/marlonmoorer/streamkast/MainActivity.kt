@@ -10,13 +10,12 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import com.example.marlonmoorer.streamkast.fragments.BrowseFragment
-import com.example.marlonmoorer.streamkast.fragments.DetailFragment
-import com.example.marlonmoorer.streamkast.fragments.EpisodeFragment
-import com.example.marlonmoorer.streamkast.fragments.SectionFragment
+import android.view.View
+import com.example.marlonmoorer.streamkast.fragments.*
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
+import kotlinx.android.synthetic.main._mini_player.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -26,20 +25,9 @@ class MainActivity : AppCompatActivity() {
 
     private var browseViewModel: BrowseViewModel?=null
     private var detailViewModel: DetailViewModel?=null
-    private var service:MediaService?=null
-    private val isBound
-        get() = service!=null
-    private val serviceConnection= object:ServiceConnection{
-        override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
-            if (binder is MediaService.MediaBinder){
-                service=binder.getService()
-            }
-        }
 
-        override fun onServiceDisconnected(className: ComponentName?) {
-           service=null
-        }
-    }
+    private val miniPlayer
+                get()= mini_player as MiniPlayerFragment
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         navigation.setOnNavigationItemReselectedListener { item ->
             val fragment = when(item.itemId){
-                R.id.menu_home-> BrowseFragment()
+                R.id.menu_browse-> BrowseFragment()
                 else->null
             }
             fragment?.let { this.loadFragment(it) }
@@ -68,13 +56,12 @@ class MainActivity : AppCompatActivity() {
             EpisodeFragment.newInstance(episode!!).show(supportFragmentManager,"")
         })
 
-        detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
-            episode?.let {
-                val intent=Intent(this,MediaService::class.java)
-                bindService(intent,serviceConnection, BIND_AUTO_CREATE)
-                service?.start()
-            }
-        })
+//        detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
+//            episode?.let {
+//                miniPlayer.show()
+//            }
+//        })
+
         this.loadFragment(BrowseFragment())
     }
 
