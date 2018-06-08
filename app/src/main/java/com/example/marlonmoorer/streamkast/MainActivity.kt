@@ -1,21 +1,14 @@
 package com.example.marlonmoorer.streamkast
 
 import android.arch.lifecycle.Observer
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import com.example.marlonmoorer.streamkast.fragments.*
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
-import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
-import kotlinx.android.synthetic.main._mini_player.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -53,14 +46,8 @@ class MainActivity : AppCompatActivity() {
             this.loadFragment(sectionFragment)
         })
         detailViewModel?.selectedEpisode?.observe(this, Observer {episode->
-            EpisodeFragment.newInstance(episode!!).show(supportFragmentManager,"")
+            EpisodeFragment().show(supportFragmentManager,"")
         })
-
-//        detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
-//            episode?.let {
-//                miniPlayer.show()
-//            }
-//        })
 
         this.loadFragment(BrowseFragment())
     }

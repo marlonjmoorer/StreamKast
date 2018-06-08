@@ -5,7 +5,7 @@
     <data>
         <variable
             name="episode"
-            type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
+            type="com.github.magneticflux.rss.namespaces.standard.elements.Item"/>
         <variable
             name="handler"
             type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
@@ -43,7 +43,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@{episode.publishedDate}"
+
             android:textColor="@color/white"
             android:textSize="12dp"
             app:layout_constraintBottom_toBottomOf="parent"

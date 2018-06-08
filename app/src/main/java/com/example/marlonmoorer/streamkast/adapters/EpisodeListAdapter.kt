@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.*
+
 import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
+import com.github.magneticflux.rss.namespaces.standard.elements.Item
 
 /**
  * Created by marlonmoorer on 3/29/18.
  */
-class EpisodeListAdapter(val episodes:List<Episode>):DataBoundAdapter<ItemEpisodeBinding> (){
+class EpisodeListAdapter(val episodes:List<Item>):DataBoundAdapter<ItemEpisodeBinding> (){
 
     override fun getItemCount()=  episodes.size
 

@@ -42,7 +42,7 @@ class DetailFragment: Fragment() {
         detailModel.channel.observe(this, Observer { channel->
             binding.episodes.apply {
                 layoutManager=LinearLayoutManager(this@DetailFragment.context)
-                adapter=EpisodeListAdapter(channel?.episodes!!).apply {
+                adapter=EpisodeListAdapter(channel?.items!!).apply {
                     handler=detailModel
                 }
                 setNestedScrollingEnabled(false);
@@ -63,7 +63,7 @@ class DetailFragment: Fragment() {
         }
 
         detailModel.loadPodcast(Id).observe(this, Observer {podcast->
-            binding.podcast=podcast
+           // binding.podcast=podcast
         })
 
         return binding.root

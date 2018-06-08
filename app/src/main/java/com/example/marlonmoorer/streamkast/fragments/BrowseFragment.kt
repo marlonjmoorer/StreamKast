@@ -16,7 +16,7 @@ import android.widget.Toast
 import com.example.marlonmoorer.streamkast.ISelectHandler
 import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
 import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
-import com.example.marlonmoorer.streamkast.api.models.Episode
+
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel

@@ -6,7 +6,7 @@
     <data>
         <variable
             name="episode"
-            type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
+            type="com.github.magneticflux.rss.namespaces.standard.elements.Item"/>
         <variable
             name="handler"
             type="com.example.marlonmoorer.streamkast.ISelectHandler"/>

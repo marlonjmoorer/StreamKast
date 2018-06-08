@@ -10,21 +10,16 @@ import java.net.URL
 
 
 import com.example.marlonmoorer.streamkast.api.models.*
+
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
-import com.example.marlonmoorer.streamkast.async
+import com.github.magneticflux.rss.createRssPersister
+import com.github.magneticflux.rss.namespaces.standard.elements.Channel
+import com.github.magneticflux.rss.namespaces.standard.elements.Rss
 
 
-import com.google.gson.Gson
-import org.json.XML
+import org.simpleframework.xml.core.Persister
 
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import java.io.ByteArrayInputStream
-import java.io.File
-import java.io.StringReader
-import java.nio.charset.Charset
-import javax.xml.parsers.DocumentBuilderFactory
+
 
 
 //import org.simpleframework.xml.core.Persister
@@ -37,6 +32,7 @@ import javax.xml.parsers.DocumentBuilderFactory
  */
 class ItunesRepository {
     val service:ItunesService
+    val serializer:Persister
 
 
     init {
@@ -45,6 +41,7 @@ class ItunesRepository {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ItunesService::class.java)
+        serializer= createRssPersister()
 
     }
 
@@ -67,16 +64,16 @@ class ItunesRepository {
         return lookup(mapOf("id" to id))?.firstOrNull()
     }
 
-    fun parseFeed(url:String,page:String="1"):Channel?{
+    fun parseFeed(url:String,page:String="1"): Channel?{
         try {
+
+
             val uri = Uri.parse(url)
                     .buildUpon()
                     .appendQueryParameter("page",page)
                     .build().toString()
             val xml= URL(uri).readText()
-            val json = XML.toJSONObject(xml).toString(4)
-            val feed= Gson().fromJson(json,RssFeed::class.java)
-            return feed.rss!!.channel
+            return serializer.read(Rss::class.java, xml).channel
         }
        catch (ex:Exception){
            ex.printStackTrace()
@@ -106,4 +103,7 @@ class ItunesRepository {
 
     }
 
+
 }
+
+

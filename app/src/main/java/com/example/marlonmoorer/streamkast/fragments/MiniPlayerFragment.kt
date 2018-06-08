@@ -27,9 +27,6 @@ class MiniPlayerFragment:Fragment() {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             if (binder is MediaService.MediaBinder){
                 service=binder.getService()
-                service?.currentEpisode?.observe(this@MiniPlayerFragment, Observer { e->
-                    service?.start()
-                })
             }
         }
         override fun onServiceDisconnected(className: ComponentName?) {
@@ -46,6 +43,7 @@ class MiniPlayerFragment:Fragment() {
                this.show()
             }
             service?.setPlayList(listOf(episode!!))
+
         })
 
         val intent= Intent(activity,MediaService::class.java)

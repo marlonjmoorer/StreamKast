@@ -4,11 +4,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
-            name="podcast"
-            type="com.example.marlonmoorer.streamkast.api.models.MediaItem"/>
-        <variable
             name="channel"
-            type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
+            type="com.github.magneticflux.rss.namespaces.standard.elements.Channel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -22,16 +19,16 @@
             <android.support.design.widget.CollapsingToolbarLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:title="@{podcast.collectionName}"
+                app:title="@{channel.title}"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                app:contentScrim="?attr/colorPrimary"
+                app:contentScrim="@color/colorPrimary"
                 app:expandedTitleMarginStart="48dp"
                 app:expandedTitleMarginEnd="64dp"
 
                 app:expandedTitleTextAppearance="@style/ExpandedAppBar">
 
                 <include layout="@layout/_title_area"
-                    app:podcast="@{podcast}" />
+                    app:channel="@{channel}" />
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
