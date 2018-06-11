@@ -11,7 +11,8 @@ import android.os.Binder
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import android.widget.RemoteViews
-import com.github.magneticflux.rss.namespaces.standard.elements.Item
+import com.example.marlonmoorer.streamkast.api.models.Episode
+
 
 
 const val NOFICATION_ID=8888
@@ -62,8 +63,8 @@ class MediaService:Service(),MediaPlayer.OnPreparedListener  {
     }
 
     var mediaPlayer: MediaPlayer?=null
-    var playlist:List<Item> =ArrayList()
-    var currentEpisode= MutableLiveData<Item>()
+    var playlist:List<Episode> =ArrayList()
+    var currentEpisode= MutableLiveData<Episode>()
     init {
         mediaPlayer= MediaPlayer()
         mediaPlayer?.setOnPreparedListener(this)
@@ -82,13 +83,13 @@ class MediaService:Service(),MediaPlayer.OnPreparedListener  {
 
     }
     fun start(){
-        val url= currentEpisode.value?.enclosure?.url.toString()
+        val url= currentEpisode.value?.enclosure?.link
         mediaPlayer?.reset()
         mediaPlayer?.setDataSource(url!!)
         mediaPlayer?.prepareAsync()
         startForeground(NOFICATION_ID,notification)
     }
-    fun setPlayList(list: List<Item>){
+    fun setPlayList(list: List<Episode>){
         playlist=list
         currentEpisode.postValue(playlist.first())
     }

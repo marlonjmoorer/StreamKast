@@ -24,7 +24,7 @@ class ListDialogFragment: Fragment() {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         val model = ViewModelProviders.of(activity!!).get(BrowseViewModel::class.java!!)
-        adapter= PodcastListAdapter(listOf())
+        adapter= PodcastListAdapter()
 //        model.podcasts?.observe(this, Observer { podcast->
 //                adapter= podcast?.let { PodcastListAdapter(it) }!!
 //                selection.swapAdapter(adapter,true)

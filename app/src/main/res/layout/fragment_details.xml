@@ -5,7 +5,7 @@
     <data>
         <variable
             name="channel"
-            type="com.github.magneticflux.rss.namespaces.standard.elements.Channel"/>
+            type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
     </data>
 
     <android.support.design.widget.CoordinatorLayout

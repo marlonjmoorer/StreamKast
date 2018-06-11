@@ -17,57 +17,70 @@ import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.createViewModel
+import com.example.marlonmoorer.streamkast.listeners.OnPodcastClick
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
+
 import kotlinx.android.synthetic.main.fragment_section.view.*
 
 
 private const val KEY = "SECTION_NAME"
 
 
-class SectionFragment : Fragment() {
+class SectionFragment : Fragment(),OnPodcastClick {
 
-    private var genre: MediaGenre? = null
+    private var title:String?=null
     lateinit var viewModel: BrowseViewModel
+    private var podcastAdapter:PodcastListAdapter?=null
+    private var featuredPodcastAdapter:FeaturedPodcastAdapter?=null
 
+    override fun onClick(podcastId: String) {
+        viewModel.setPodcast(podcastId)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        podcastAdapter= PodcastListAdapter(this)
+        featuredPodcastAdapter= FeaturedPodcastAdapter(this)
         arguments?.let {
-            genre=MediaGenre.parse(it.getString(KEY))
+            MediaGenre.parse(it.getString(KEY))?.let { genre->
+                viewModel.getFeaturedByGenre(genre.id,20).observe(this,featuredObserver)
+                viewModel.getPodcastByGenre(genre).observe(this,podcastObserver)
+                this.title=genre.displayname
+            }
         }
-        viewModel.getFeaturedByGenre(genre!!.id,20)?.observe(this,featuredObserver)
-        viewModel.getPodcastByGenre(genre!!).observe(this,podcastObserver)
-
     }
 
     val featuredObserver= Observer<List<PodcastEntry>?> { podcasts->
         podcasts?.let {
-            view?.apply {
-                featured_items.layoutManager= LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
-                featured_items.adapter=FeaturedPodcastAdapter(podcasts).apply {
-                    handler =viewModel
-                }
-            }
+           featuredPodcastAdapter?.setPodCasts(podcasts)
         }
     }
     val podcastObserver= Observer<List<MediaItem>> { podcasts->
-        view?.apply {
-            section_items.layoutManager= LinearLayoutManager(activity)
-            section_items.adapter=PodcastListAdapter(podcasts!!).apply {
-                handler=viewModel
-            }
-            section_items.setNestedScrollingEnabled(false);
-        }
+       podcasts?.let {
+           podcastAdapter?.setPostcasts(podcasts)
+       }
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_section, container, false)
-        setHasOptionsMenu(true)
+        view.apply {
+            section_items.apply {
+                layoutManager= LinearLayoutManager(activity)
+                adapter=podcastAdapter
+                setNestedScrollingEnabled(false);
+            }
+            featured_items.apply {
+                layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
+                adapter=featuredPodcastAdapter
+            }
+        }
+
         activity?.actionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setHomeButtonEnabled(true)
-            title=genre?.displayname
+            title=this@SectionFragment.title
         }
+        setHasOptionsMenu(true)
         return view
     }
 

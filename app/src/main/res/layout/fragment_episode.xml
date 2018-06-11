@@ -6,10 +6,10 @@
     <data>
         <variable
             name="episode"
-            type="com.github.magneticflux.rss.namespaces.standard.elements.Item"/>
+            type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
+            type="com.example.marlonmoorer.streamkast.listeners.OnEpisodeClick"/>
     </data>
 
         <android.support.design.widget.CoordinatorLayout
@@ -73,7 +73,7 @@
                 app:backgroundTint="@color/colorAccent"
                 app:layout_anchor="@id/main"
                 app:layout_anchorGravity="bottom|right|end"
-                android:onClick="@{e->handler.queueEpisode(episode)}"/>
+                android:onClick="@{e->handler.onClick(episode)}"/>
 
         </android.support.design.widget.CoordinatorLayout>
 </layout>

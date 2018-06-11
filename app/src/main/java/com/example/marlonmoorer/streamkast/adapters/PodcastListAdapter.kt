@@ -7,20 +7,21 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.databinding.ItemPodcastBinding
+import com.example.marlonmoorer.streamkast.listeners.OnPodcastClick
 import com.example.marlonmoorer.streamkast.load
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 
-class PodcastListAdapter(private val showList: List<MediaItem>):DataBoundAdapter<ItemPodcastBinding>(){
+class PodcastListAdapter(private val listener:OnPodcastClick?=null):DataBoundAdapter<ItemPodcastBinding>(){
 
 
-
-    override fun getItemCount()= showList.size
+    private var showList: List<MediaItem>?=null
+    override fun getItemCount()= showList?.size?:0
 
     override fun onBindViewHolder(holder: DataViewHolder<ItemPodcastBinding>, position: Int) {
-        holder?.binding.apply {
-            show=showList[position]
-            handler=this@PodcastListAdapter.handler
+        holder.binding.apply {
+            show=showList?.get(position)
+            handler=listener
         }
     }
 
@@ -29,6 +30,10 @@ class PodcastListAdapter(private val showList: List<MediaItem>):DataBoundAdapter
         return DataViewHolder(viewDataBinding)
     }
 
+    fun setPostcasts(podcasts:List<MediaItem>){
+        this.showList=podcasts
+        notifyDataSetChanged()
+    }
 
 
 }

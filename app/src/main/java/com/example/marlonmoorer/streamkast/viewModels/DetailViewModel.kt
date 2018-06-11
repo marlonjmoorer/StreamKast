@@ -1,49 +1,50 @@
 package com.example.marlonmoorer.streamkast.viewModels
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.marlonmoorer.streamkast.ISelectHandler
-import com.example.marlonmoorer.streamkast.api.ItunesRepository
+import com.example.marlonmoorer.streamkast.api.Repository
+import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
-import com.github.magneticflux.rss.namespaces.standard.elements.Channel
-import com.github.magneticflux.rss.namespaces.standard.elements.Item
+
 
 /**
  * Created by marlonmoorer on 3/22/18.
  */
 class DetailViewModel :ViewModel(),ISelectHandler {
-    private var podcast= MutableLiveData<MediaItem>()
-    val channel=MutableLiveData<Channel>()
-    val episodes=MutableLiveData<List<Item>>()
-    val selectedEpisode=MutableLiveData<Item>()
-    val queuedEpisode=MutableLiveData<Item>()
 
-    var itunesRepository: ItunesRepository
+    private val channel=MutableLiveData<Channel>()
+    private val episodes=MutableLiveData<List<Episode>>()
+    private  val selectedEpisode=MutableLiveData<Episode>()
+    val queuedEpisode=MutableLiveData<Episode>()
+
+    var repository: Repository
     init {
-        itunesRepository= ItunesRepository()
+        repository= Repository()
     }
 
-    val selectedPodcast
-        get() = podcast
-    val currentEpisode
-            get()=selectedEpisode.value
+    fun getPodcast():LiveData<Channel> = channel
+    fun getCurrentEpisode():LiveData<Episode> = selectedEpisode
+    fun getEpisodes():LiveData<List<Episode>> = episodes
 
-
-    fun loadPodcast(id:String): MutableLiveData<Channel> {
+    fun setEpisode(episode: Episode)=selectedEpisode.postValue(episode)
+    fun loadPodcast(id:String): LiveData<Channel> {
         async {
-            val result= itunesRepository.getPodcastById(id)
-            val channel= itunesRepository.parseFeed(result?.feedUrl!!)
-            this.channel.postValue(channel)
+            val result= repository.getPodcastById(id)
+            val feed= repository.parseFeed(result?.feedUrl!!)
+            this.channel.postValue(feed?.channel)
+            this.episodes.postValue(feed?.episodes)
         }
         return channel
     }
 
 
-    override fun onEpisodeSelect(episode:Item)=selectedEpisode.postValue(episode)
+    override fun onEpisodeSelect(episode:Episode)=selectedEpisode.postValue(episode)
 
-    override fun queueEpisode(episode: Item) = queuedEpisode.postValue(episode)
+    override fun queueEpisode(episode: Episode) = queuedEpisode.postValue(episode)
 
 
 

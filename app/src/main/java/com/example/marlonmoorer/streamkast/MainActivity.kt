@@ -41,11 +41,13 @@ class MainActivity : AppCompatActivity() {
             val fragment = DetailFragment.newInstance(id!!)
             this.loadFragment(fragment)
         })
-        browseViewModel?.selectedGenre?.observe(this, Observer {genre->
-            val sectionFragment  =SectionFragment.newInstance(genre!!.id)
-            this.loadFragment(sectionFragment)
+        browseViewModel?.getCurrentGenre()?.observe(this, Observer {genre->
+           genre?.let {
+               val sectionFragment  =SectionFragment.newInstance(genre.id)
+               this.loadFragment(sectionFragment)
+           }
         })
-        detailViewModel?.selectedEpisode?.observe(this, Observer {episode->
+        detailViewModel?.getCurrentEpisode()?.observe(this, Observer {episode->
             EpisodeFragment().show(supportFragmentManager,"")
         })
 

@@ -4,12 +4,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
         <data>
-               <variable
-                    name="media"
-                    type="com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry"/>
             <variable
-                name="selector"
-                type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
+                name="media"
+                type="com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry"/>
+            <variable
+                name="handler"
+                type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClick"/>
         </data>
 
 
@@ -19,7 +19,7 @@
       android:background="@color/grey_400"
       android:layout_margin="8dp"
       android:orientation="vertical"
-      android:onClick="@{e->selector.onPodcastSelect(media.id)}">
+      android:onClick="@{e->handler.onClick(media.id)}">
 
       <ImageView
           android:id="@+id/podcast_image"

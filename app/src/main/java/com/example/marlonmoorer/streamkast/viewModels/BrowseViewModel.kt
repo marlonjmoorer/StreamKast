@@ -1,11 +1,11 @@
 package com.example.marlonmoorer.streamkast.viewModels
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import android.widget.Toast
 import com.example.marlonmoorer.streamkast.ISelectHandler
 
-import com.example.marlonmoorer.streamkast.api.ItunesRepository
+import com.example.marlonmoorer.streamkast.api.Repository
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
@@ -17,10 +17,11 @@ class  BrowseViewModel: ViewModel(),ISelectHandler{
     private var podcastList = MutableLiveData<List<MediaItem>>()
     private val loading=MutableLiveData<Boolean>()
     private var DEFAULT_COUNT=10;
-    private var itunesRepository:ItunesRepository
+    private var repository:Repository
     private var sections= mutableMapOf<String,MutableLiveData<List<PodcastEntry>?>>()
     var selectedPodcastId= MutableLiveData<String>()
-    var selectedGenre= MutableLiveData<MediaGenre>()
+    private var selectedGenre= MutableLiveData<MediaGenre>()
+
     companion object {
         var FEATURED="Featured"
     }
@@ -30,18 +31,18 @@ class  BrowseViewModel: ViewModel(),ISelectHandler{
         get()=loading
 
     init {
-        itunesRepository= ItunesRepository()
+        repository= Repository()
 
     }
 
-    fun selectGenre(genre: MediaGenre)=this.selectedGenre.postValue(genre)
+    fun setGenre(genre: MediaGenre)=this.selectedGenre.postValue(genre)
 
-    override fun onPodcastSelect(id: String) =selectPodcast(id)
-    override fun onGenreSelect(genre: MediaGenre)=selectGenre(genre)
+    override fun onPodcastSelect(id: String) =setPodcast(id)
+    override fun onGenreSelect(genre: MediaGenre)=setGenre(genre)
 
+    fun getCurrentGenre():LiveData<MediaGenre> = selectedGenre
 
-
-    fun getFeaturedByGenre(key:String, count:Int=DEFAULT_COUNT): MutableLiveData<List<PodcastEntry>?>? {
+    fun getFeaturedByGenre(key:String, count:Int=DEFAULT_COUNT): LiveData<List<PodcastEntry>?> {
         var section=sections[key]
         if(section==null){
             section=MutableLiveData()
@@ -50,28 +51,28 @@ class  BrowseViewModel: ViewModel(),ISelectHandler{
                 sections[key]?.postValue(this.loadFeaturedPodcasts(key,count))
             }
         }
-        return sections[key]
+        return sections[key]!!
     }
 
     private fun loadFeaturedPodcasts(key: String, limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
-        var genre=MediaGenre.parse(key)
+        val genre=MediaGenre.parse(key)
         return genre?.let {
-            return  itunesRepository.topPodCast(limit,it)!!
+            return  repository.topPodCast(limit,it)!!
         }?:when(key){
-            FEATURED -> itunesRepository.topPodCast(limit)!!
+            FEATURED -> repository.topPodCast(limit)!!
             else-> emptyList()
         }
     }
 
 
-    fun getPodcastByGenre(genre: MediaGenre):MutableLiveData<List<MediaItem>>{
+    fun getPodcastByGenre(genre: MediaGenre):LiveData<List<MediaItem>>{
         async {
-           this.podcastList.postValue(itunesRepository.getShowsByGenre(genre))
+           this.podcastList.postValue(repository.getShowsByGenre(genre))
         }
         return  this.podcastList
     }
 
-    fun selectPodcast(podcastId:String)=this.selectedPodcastId.postValue(podcastId)
+    fun setPodcast(podcastId:String)=this.selectedPodcastId.postValue(podcastId)
 
 
 }

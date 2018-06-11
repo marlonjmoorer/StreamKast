@@ -13,22 +13,27 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
+import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
+import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClick
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import kotlinx.android.synthetic.main.fragment_details.*
 
 /**
  * Created by marlonmoorer on 3/24/18.
  */
-class DetailFragment: Fragment() {
+class DetailFragment: Fragment(),OnEpisodeClick {
 
 
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
     private  var Id:String=""
 
-
+    override fun onClick(episode: Episode) {
+        detailModel.setEpisode(episode)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -39,16 +44,17 @@ class DetailFragment: Fragment() {
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding =FragmentDetailsBinding.inflate(inflater,container,false)
-        detailModel.channel.observe(this, Observer { channel->
-            binding.episodes.apply {
-                layoutManager=LinearLayoutManager(this@DetailFragment.context)
-                adapter=EpisodeListAdapter(channel?.items!!).apply {
-                    handler=detailModel
-                }
-                setNestedScrollingEnabled(false);
-            }
+        val episodeListAdapter=EpisodeListAdapter(this)
+        binding.episodes.apply {
+            layoutManager=LinearLayoutManager(this@DetailFragment.context)
+            adapter= episodeListAdapter
+            setNestedScrollingEnabled(false);
+        }
+        detailModel.getEpisodes().observe(this, Observer { episodes->
+            episodes?.let { episodeListAdapter.setEpisodes(it) }
+        })
+        detailModel.getPodcast().observe(this, Observer { channel->
             binding.channel=channel
-
         })
 
         (activity as AppCompatActivity).apply {
@@ -61,11 +67,7 @@ class DetailFragment: Fragment() {
                 this.onBackPressed()
             }
         }
-
-        detailModel.loadPodcast(Id).observe(this, Observer {podcast->
-           // binding.podcast=podcast
-        })
-
+        detailModel.loadPodcast(Id)
         return binding.root
     }
 
@@ -73,8 +75,8 @@ class DetailFragment: Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        detailModel.selectedPodcast.removeObservers(this)
-        detailModel.episodes.removeObservers(this)
+        detailModel.getPodcast().removeObservers(this)
+        detailModel.getEpisodes().removeObservers(this)
     }
 
     override fun onAttach(context: Context?) {

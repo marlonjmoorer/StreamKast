@@ -8,21 +8,20 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
-import com.github.magneticflux.rss.namespaces.standard.elements.Item
+import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClick
+
 
 /**
  * Created by marlonmoorer on 3/29/18.
  */
-class EpisodeListAdapter(val episodes:List<Item>):DataBoundAdapter<ItemEpisodeBinding> (){
-
-    override fun getItemCount()=  episodes.size
+class EpisodeListAdapter(val listener:OnEpisodeClick):DataBoundAdapter<ItemEpisodeBinding> (){
+    private var episodes:List<Episode>? = null
+    override fun getItemCount()=  episodes?.size?:0
 
     override fun onBindViewHolder(holder: DataViewHolder<ItemEpisodeBinding>, position: Int) {
-
-        var data= episodes[position]
-        holder?.binding.apply {
-            episode=data
-            handler=this@EpisodeListAdapter.handler
+        holder.binding.apply {
+            episode=episodes?.get(position)
+            handler=listener
         }
     }
 
@@ -30,6 +29,11 @@ class EpisodeListAdapter(val episodes:List<Item>):DataBoundAdapter<ItemEpisodeBi
         val viewDataBinding:ItemEpisodeBinding= DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_episode, parent, false)
 
         return DataViewHolder(viewDataBinding)
+    }
+
+    fun setEpisodes(episodes: List<Episode>){
+        this.episodes=episodes
+        notifyDataSetChanged()
     }
 
 }

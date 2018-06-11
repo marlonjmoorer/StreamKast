@@ -55,10 +55,11 @@ dependencies {
     compile 'com.android.support:cardview-v7:21.0.+'
     compile 'net.steamcrafted:materialiconlib:1.1.5'
 
-    implementation 'com.github.magneticflux:kotlin-simplexml-rss:1.1.2'
+
     // https://mvnrepository.com/artifact/org.json/json
     compile group: 'org.json', name: 'json', version: '20180130'
-    compile 'org.simpleframework:simple-xml:2.7.1'
+
 
 
 }
+

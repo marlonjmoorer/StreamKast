@@ -22,13 +22,8 @@ fun ImageView.load(url:String){
             //.apply(RequestOptions().fitCenter())
             .into(this);
 }
-fun ImageView.load(id:Int){
-  this.image= ResourcesCompat.getDrawable(context.resources,id,null)
-}
-fun Any.async(fn:()->Unit):Thread{
-    return Thread({ fn() }).apply {
-        start()
-    }
+fun ImageView.load(id:Int) {
+    this.image = ResourcesCompat.getDrawable(context.resources, id, null)
 }
 
 inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): T {

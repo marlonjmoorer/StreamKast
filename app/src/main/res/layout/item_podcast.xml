@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout  xmlns:android="http://schemas.android.com/apk/res/android">
+<layout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="show"
             type="com.example.marlonmoorer.streamkast.api.models.MediaItem"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
+            type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClick"/>
     </data>
     <android.support.constraint.ConstraintLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:background="@drawable/outlined_tile"
         android:layout_marginBottom="4dp"
-        android:onClick="@{e -> handler.onPodcastSelect(show.collectionId)}"
+        android:onClick="@{e -> handler.onClick(show.collectionId)}"
         >
 
 

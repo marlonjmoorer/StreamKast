@@ -12,12 +12,10 @@ import java.net.URL
 import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
-import com.github.magneticflux.rss.createRssPersister
-import com.github.magneticflux.rss.namespaces.standard.elements.Channel
-import com.github.magneticflux.rss.namespaces.standard.elements.Rss
 
 
-import org.simpleframework.xml.core.Persister
+
+
 
 
 
@@ -30,9 +28,10 @@ import org.simpleframework.xml.core.Persister
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class ItunesRepository {
+class Repository {
     val service:ItunesService
-    val serializer:Persister
+
+    val parseService:RssToJsonService
 
 
     init {
@@ -41,20 +40,26 @@ class ItunesRepository {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(ItunesService::class.java)
-        serializer= createRssPersister()
+
+
+        parseService=Retrofit.Builder()
+                .baseUrl(RssToJsonService.baseUrl)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(RssToJsonService::class.java)
 
     }
 
 
     fun search(query:Map<String, String>): List<MediaItem>? {
-        var response=this.service.search(query).execute().body()
+        val response=this.service.search(query).execute().body()
         response?.let {
           return  it.results
         }
         return emptyList()
     }
     fun lookup(query:Map<String, String>): List<MediaItem>? {
-        var response=this.service.lookup(query).execute().body()
+        val response=this.service.lookup(query).execute().body()
         response?.let {
             return  it.results
         }
@@ -64,16 +69,14 @@ class ItunesRepository {
         return lookup(mapOf("id" to id))?.firstOrNull()
     }
 
-    fun parseFeed(url:String,page:String="1"): Channel?{
+    fun parseFeed(feedUrl:String,page:String="1"): RssResult?{
         try {
-
-
-            val uri = Uri.parse(url)
+             val url = Uri.parse(feedUrl)
                     .buildUpon()
                     .appendQueryParameter("page",page)
                     .build().toString()
-            val xml= URL(uri).readText()
-            return serializer.read(Rss::class.java, xml).channel
+            val result=parseService.parseFeed(feedUrl).execute().body()
+            return result
         }
        catch (ex:Exception){
            ex.printStackTrace()

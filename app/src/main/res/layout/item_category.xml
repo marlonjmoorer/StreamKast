@@ -9,7 +9,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.MediaGenre"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.ISelectHandler"/>
+            type="com.example.marlonmoorer.streamkast.listeners.OnGenreClick"/>
     </data>
 
     <FrameLayout
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:background="@drawable/outlined_tile"
-        android:onClick="@{e->handler.onGenreSelect(genre)}"
+        android:onClick="@{e->handler.onClick(genre)}"
         android:clickable="true"
         android:padding="10dp">
 
@@ -56,8 +56,6 @@
                 app:layout_constraintVertical_bias="0.0"
                 android:src="@{genre.imageId}"
                 />
-
-            <!--android:onClick="@{e->handler.onGenreSelect(genre)}"-->
         </android.support.constraint.ConstraintLayout>
 
     </FrameLayout>

@@ -6,9 +6,10 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.marlonmoorer.streamkast.api.models.Episode
 
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
-import com.github.magneticflux.rss.namespaces.standard.elements.Item
+
 
 object BindingAdapters{
 
@@ -54,7 +55,7 @@ object BindingAdapters{
 
 interface ISelectHandler{
     fun onPodcastSelect(id:String){}
-    fun onEpisodeSelect(episode: Item){}
+    fun onEpisodeSelect(episode: Episode){}
     fun onGenreSelect(genre: MediaGenre){}
-    fun queueEpisode(episode: Item){}
+    fun queueEpisode(episode: Episode){}
 }
