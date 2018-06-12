@@ -9,7 +9,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.MediaGenre"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.OnGenreClick"/>
+            type="com.example.marlonmoorer.streamkast.listeners.OnGenreClickListener"/>
     </data>
 
     <FrameLayout

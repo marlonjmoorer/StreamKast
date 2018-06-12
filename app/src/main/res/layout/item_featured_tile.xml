@@ -9,7 +9,7 @@
                 type="com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry"/>
             <variable
                 name="handler"
-                type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClick"/>
+                type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener"/>
         </data>
 
 

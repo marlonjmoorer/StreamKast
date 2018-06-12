@@ -3,18 +3,16 @@ package com.example.marlonmoorer.streamkast.viewModels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.example.marlonmoorer.streamkast.ISelectHandler
 import com.example.marlonmoorer.streamkast.api.Repository
 import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.async
-import com.example.marlonmoorer.streamkast.api.models.MediaItem
 
 
 /**
  * Created by marlonmoorer on 3/22/18.
  */
-class DetailViewModel :ViewModel(),ISelectHandler {
+class DetailViewModel :ViewModel() {
 
     private val channel=MutableLiveData<Channel>()
     private val episodes=MutableLiveData<List<Episode>>()
@@ -42,9 +40,6 @@ class DetailViewModel :ViewModel(),ISelectHandler {
     }
 
 
-    override fun onEpisodeSelect(episode:Episode)=selectedEpisode.postValue(episode)
-
-    override fun queueEpisode(episode: Episode) = queuedEpisode.postValue(episode)
 
 
 

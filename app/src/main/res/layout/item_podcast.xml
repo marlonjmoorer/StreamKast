@@ -7,7 +7,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.MediaItem"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClick"/>
+            type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener"/>
     </data>
     <android.support.constraint.ConstraintLayout
 

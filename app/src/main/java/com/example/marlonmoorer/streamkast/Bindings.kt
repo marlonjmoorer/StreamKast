@@ -53,9 +53,3 @@ object BindingAdapters{
 
 }
 
-interface ISelectHandler{
-    fun onPodcastSelect(id:String){}
-    fun onEpisodeSelect(episode: Episode){}
-    fun onGenreSelect(genre: MediaGenre){}
-    fun queueEpisode(episode: Episode){}
-}

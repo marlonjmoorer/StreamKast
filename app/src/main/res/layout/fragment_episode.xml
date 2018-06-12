@@ -9,7 +9,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.OnEpisodeClick"/>
+            type="com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener"/>
     </data>
 
         <android.support.design.widget.CoordinatorLayout

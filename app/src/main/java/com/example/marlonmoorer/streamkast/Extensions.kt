@@ -32,7 +32,3 @@ inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): T {
 inline fun <reified T : ViewModel> Fragment.createViewModel(): T {
     return ViewModelProviders.of(this.activity!!).get(T::class.java)
 }
-
-//inline fun <reified T : ViewModel> Service.createViewModel(): T {
-//    return ViewModelProviders.of(this).get(T::class.java)
-//}

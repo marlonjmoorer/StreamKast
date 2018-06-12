@@ -29,10 +29,10 @@ class ListDialogFragment: Fragment() {
 //                adapter= podcast?.let { PodcastListAdapter(it) }!!
 //                selection.swapAdapter(adapter,true)
 //        })
-        model.isLoading.observe(this, Observer { loading->
-            loading_screen.visibility=  if (loading!!) View.VISIBLE else View.GONE
-        })
-    }
+//        model.isLoading.observe(this, Observer { loading->
+//            loading_screen.visibility=  if (loading!!) View.VISIBLE else View.GONE
+//        })
+   }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         setHasOptionsMenu(true)

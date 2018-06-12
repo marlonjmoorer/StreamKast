@@ -1,21 +1,16 @@
 package com.example.marlonmoorer.streamkast.adapters
 
-import android.databinding.DataBindingUtil
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import com.example.marlonmoorer.streamkast.ISelectHandler
-import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.databinding.ItemFeaturedTileBinding
-import com.example.marlonmoorer.streamkast.listeners.OnPodcastClick
+import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 
 
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-open class FeaturedPodcastAdapter(val listener:OnPodcastClick?=null) :
+open class FeaturedPodcastAdapter(val listener:OnPodcastClickListener?=null) :
         DataBoundAdapter<ItemFeaturedTileBinding>() {
     private var shows:List<PodcastEntry>?=null
     fun setPodCasts(podcasts:List<PodcastEntry>){

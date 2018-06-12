@@ -1,18 +1,15 @@
 package com.example.marlonmoorer.streamkast.adapters
 
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.databinding.ItemCategoryBinding
-import com.example.marlonmoorer.streamkast.listeners.OnGenreClick
-import com.example.marlonmoorer.streamkast.load
+import com.example.marlonmoorer.streamkast.listeners.OnGenreClickListener
 
 /**
  * Created by marlonmoorer on 4/2/18.
  */
-class CategoryAdapter(val listener: OnGenreClick?=null):DataBoundAdapter<ItemCategoryBinding>() {
+class CategoryAdapter(val listener: OnGenreClickListener?=null):DataBoundAdapter<ItemCategoryBinding>() {
 
     var categories=MediaGenre.values()
     override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>?, position: Int) {

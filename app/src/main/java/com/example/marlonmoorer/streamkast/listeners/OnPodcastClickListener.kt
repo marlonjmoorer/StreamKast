@@ -1,6 +1,6 @@
 package com.example.marlonmoorer.streamkast.listeners
 
-interface OnPodcastClick {
+interface OnPodcastClickListener {
 
     fun onClick(podcastId:String)
 }

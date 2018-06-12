@@ -1,12 +1,9 @@
 package com.example.marlonmoorer.streamkast.fragments
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 
@@ -17,7 +14,7 @@ import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.createViewModel
-import com.example.marlonmoorer.streamkast.listeners.OnPodcastClick
+import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 import kotlinx.android.synthetic.main.fragment_section.view.*
@@ -26,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_section.view.*
 private const val KEY = "SECTION_NAME"
 
 
-class SectionFragment : Fragment(),OnPodcastClick {
+class SectionFragment : Fragment(),OnPodcastClickListener {
 
     private var title:String?=null
     lateinit var viewModel: BrowseViewModel

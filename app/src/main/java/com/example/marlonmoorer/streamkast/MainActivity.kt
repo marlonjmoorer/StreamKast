@@ -37,9 +37,10 @@ class MainActivity : AppCompatActivity() {
             }
             fragment?.let { this.loadFragment(it) }
         }
-        browseViewModel?.selectedPodcastId?.observe(this, Observer { id->
-            val fragment = DetailFragment.newInstance(id!!)
+        browseViewModel?.getSelectedPodCastId()?.observe(this, Observer { id->
+           id?.let { val fragment = DetailFragment.newInstance(id)
             this.loadFragment(fragment)
+           }
         })
         browseViewModel?.getCurrentGenre()?.observe(this, Observer {genre->
            genre?.let {

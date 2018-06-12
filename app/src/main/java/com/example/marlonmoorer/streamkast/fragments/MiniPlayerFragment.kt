@@ -12,25 +12,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.MediaService
-import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.createViewModel
+import com.example.marlonmoorer.streamkast.databinding.MiniPlayerBinding
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 
 class MiniPlayerFragment:Fragment() {
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout._mini_player,container,false)
+        binding=MiniPlayerBinding.inflate(inflater)
+
+        return  binding?.root
     }
     private var detailViewModel: DetailViewModel?=null
-    private var service:MediaService?=null
+    private var episodeModel:MediaService.EpisodeModel?=null
+    private var binding:MiniPlayerBinding?=null
     private val serviceConnection= object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             if (binder is MediaService.MediaBinder){
-                service=binder.getService()
+                episodeModel=binder.getModel()
+                binding?.model=episodeModel
+                binding?.executePendingBindings()
             }
         }
         override fun onServiceDisconnected(className: ComponentName?) {
-            service=null
+            episodeModel=null
         }
     }
 
@@ -40,11 +46,28 @@ class MiniPlayerFragment:Fragment() {
         detailViewModel=createViewModel()
         detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
             episode?.let {
-               this.show()
+                this.show()
+                episodeModel?.setEpisode(episode)
+                episodeModel?.prepare()
             }
-            service?.setPlayList(listOf(episode!!))
+            binding?.playPause?.setOnClickListener {
+               episodeModel?.play_pause()
+            }
 
+
+
+//            service?.setPlayList(listOf(episode!!))
+//            service?.IsPlaying?.observe(this, Observer {playing->
+//                play_pause.backgroundResource= if(playing!!)R.drawable.icons8_play else R.drawable.icons8_art
+//            })
+//            play_pause.setOnClickListener {
+//                service?.play_pause()
+//            }
+//            service?.currentEpisode?.observe(this, Observer {
+//                service?.start()
+//            })
         })
+
 
         val intent= Intent(activity,MediaService::class.java)
         activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)

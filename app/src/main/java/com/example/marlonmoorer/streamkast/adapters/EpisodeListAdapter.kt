@@ -1,20 +1,19 @@
 package com.example.marlonmoorer.streamkast.adapters
 
 import android.databinding.DataBindingUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
-import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClick
+import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener
 
 
 /**
  * Created by marlonmoorer on 3/29/18.
  */
-class EpisodeListAdapter(val listener:OnEpisodeClick):DataBoundAdapter<ItemEpisodeBinding> (){
+class EpisodeListAdapter(val listener:OnEpisodeClickListener):DataBoundAdapter<ItemEpisodeBinding> (){
     private var episodes:List<Episode>? = null
     override fun getItemCount()=  episodes?.size?:0
 

@@ -1,18 +1,15 @@
 package com.example.marlonmoorer.streamkast.adapters
 
 import android.databinding.DataBindingUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.databinding.ItemPodcastBinding
-import com.example.marlonmoorer.streamkast.listeners.OnPodcastClick
-import com.example.marlonmoorer.streamkast.load
-import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
+import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 
 
-class PodcastListAdapter(private val listener:OnPodcastClick?=null):DataBoundAdapter<ItemPodcastBinding>(){
+class PodcastListAdapter(private val listener:OnPodcastClickListener?=null):DataBoundAdapter<ItemPodcastBinding>(){
 
 
     private var showList: List<MediaItem>?=null

@@ -2,7 +2,6 @@ package com.example.marlonmoorer.streamkast.fragments
 
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -16,15 +15,14 @@ import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
-import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClick
+import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
-import kotlinx.android.synthetic.main.fragment_details.*
 
 /**
  * Created by marlonmoorer on 3/24/18.
  */
-class DetailFragment: Fragment(),OnEpisodeClick {
+class DetailFragment: Fragment(),OnEpisodeClickListener {
 
 
     lateinit var detailModel: DetailViewModel
@@ -32,6 +30,9 @@ class DetailFragment: Fragment(),OnEpisodeClick {
     private  var Id:String=""
 
     override fun onClick(episode: Episode) {
+        if(episode.thumbnail.isNullOrEmpty()){
+            episode.thumbnail= binding.channel?.image
+        }
         detailModel.setEpisode(episode)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
