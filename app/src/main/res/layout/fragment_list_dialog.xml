@@ -41,6 +41,6 @@
 
     <include
         android:id="@+id/loading_screen"
-        layout="@layout/partial_loading_screen"
+        layout="@layout/_loading_screen"
         android:visibility="gone" />
 </RelativeLayout>

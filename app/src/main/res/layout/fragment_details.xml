@@ -8,7 +8,10 @@
             type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -58,6 +61,9 @@
 
         </android.support.v4.widget.NestedScrollView>
 
-    </android.support.design.widget.CoordinatorLayout>
+        </android.support.design.widget.CoordinatorLayout>
+        <include android:id="@+id/loading_screen" layout="@layout/_loading_screen"
+            android:visibility="gone"/>
+    </FrameLayout>
 
 </layout>

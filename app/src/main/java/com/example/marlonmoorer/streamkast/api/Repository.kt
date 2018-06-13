@@ -51,12 +51,8 @@ class Repository {
     }
 
 
-    fun search(query:Map<String, String>): List<MediaItem>? {
-        val response=this.service.search(query).execute().body()
-        response?.let {
-          return  it.results
-        }
-        return emptyList()
+    fun search(query:Map<String, String>): SearchResults? {
+      return this.service.search(query).execute().body()
     }
     fun lookup(query:Map<String, String>): List<MediaItem>? {
         val response=this.service.lookup(query).execute().body()
@@ -88,19 +84,19 @@ class Repository {
     fun topPodCast(limit:Int=10,genre: MediaGenre?=null): List<PodcastEntry>?{
 
         genre?.let {
-            var ls=service.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
-            return ls
+            return service.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
         }
         return service.topPodcast(limit).execute().body()?.rss?.entries
     }
 
     fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<MediaItem>? {
-        var query=mapOf(
+        val query=mapOf(
                 "term" to "podcast",
                 "genreId" to genre.id,
                 "entity" to "podcast"
         )
-        return search(query)?.sortedByDescending {
+
+        return search(query)?.results?.sortedByDescending {
             it.releaseDate
         }?.take(limit)
 

@@ -32,3 +32,18 @@ inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): T {
 inline fun <reified T : ViewModel> Fragment.createViewModel(): T {
     return ViewModelProviders.of(this.activity!!).get(T::class.java)
 }
+
+fun AppCompatActivity.addFragment(id:Int,fragment: Fragment){
+    supportFragmentManager!!
+   .beginTransaction()
+   .add(id,fragment)
+   .addToBackStack("over")
+   .commit()
+}
+fun AppCompatActivity.replaceFragment(id:Int,fragment: Fragment){
+    supportFragmentManager!!
+    .beginTransaction()
+    .replace(id,fragment)
+    .addToBackStack("over")
+    .commit()
+}

@@ -46,6 +46,7 @@ class DetailFragment: Fragment(),OnEpisodeClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding =FragmentDetailsBinding.inflate(inflater,container,false)
         val episodeListAdapter=EpisodeListAdapter(this)
+        binding.loadingScreen?.visibility=View.VISIBLE
         binding.episodes.apply {
             layoutManager=LinearLayoutManager(this@DetailFragment.context)
             adapter= episodeListAdapter
@@ -56,6 +57,8 @@ class DetailFragment: Fragment(),OnEpisodeClickListener {
         })
         detailModel.getPodcast().observe(this, Observer { channel->
             binding.channel=channel
+            channel?.let {   binding.loadingScreen?.visibility=View.GONE}
+            binding.executePendingBindings()
         })
 
         (activity as AppCompatActivity).apply {

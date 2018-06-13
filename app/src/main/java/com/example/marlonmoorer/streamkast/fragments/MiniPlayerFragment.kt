@@ -21,7 +21,8 @@ class MiniPlayerFragment:Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding=MiniPlayerBinding.inflate(inflater)
-
+        val intent= Intent(activity,MediaService::class.java)
+        activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
         return  binding?.root
     }
     private var detailViewModel: DetailViewModel?=null
@@ -53,24 +54,7 @@ class MiniPlayerFragment:Fragment() {
             binding?.playPause?.setOnClickListener {
                episodeModel?.play_pause()
             }
-
-
-
-//            service?.setPlayList(listOf(episode!!))
-//            service?.IsPlaying?.observe(this, Observer {playing->
-//                play_pause.backgroundResource= if(playing!!)R.drawable.icons8_play else R.drawable.icons8_art
-//            })
-//            play_pause.setOnClickListener {
-//                service?.play_pause()
-//            }
-//            service?.currentEpisode?.observe(this, Observer {
-//                service?.start()
-//            })
         })
-
-
-        val intent= Intent(activity,MediaService::class.java)
-        activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
     }
     fun hide(){
         fragmentManager?.beginTransaction()?.hide(this)?.commit()
