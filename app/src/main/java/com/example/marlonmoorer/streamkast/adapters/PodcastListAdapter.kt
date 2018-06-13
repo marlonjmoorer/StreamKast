@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
-import com.example.marlonmoorer.streamkast.async
-import com.example.marlonmoorer.streamkast.data.KastDatabase
-import com.example.marlonmoorer.streamkast.database
+
 import com.example.marlonmoorer.streamkast.databinding.ItemPodcastBinding
 import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 
