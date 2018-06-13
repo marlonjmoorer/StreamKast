@@ -7,11 +7,12 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.fragments.*
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
     private var browseViewModel: BrowseViewModel?=null
     private var detailViewModel: DetailViewModel?=null
     private val targetId:Int=R.id.main
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

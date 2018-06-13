@@ -11,11 +11,10 @@ import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.async
 
 
-class  BrowseViewModel: ViewModel() {
+class  BrowseViewModel:BaseViewModel() {
 
     private var podcastList = MutableLiveData<List<MediaItem>>()
     private var DEFAULT_COUNT=10;
-    private var repository:Repository
     private var sections= mutableMapOf<String,MutableLiveData<List<PodcastEntry>?>>()
     private var selectedPodcastId= MutableLiveData<String>()
     private var selectedGenre= MutableLiveData<MediaGenre>()
@@ -25,10 +24,6 @@ class  BrowseViewModel: ViewModel() {
     }
 
 
-
-    init {
-        repository= Repository()
-    }
 
     fun setGenre(genre: MediaGenre)=this.selectedGenre.postValue(genre)
 

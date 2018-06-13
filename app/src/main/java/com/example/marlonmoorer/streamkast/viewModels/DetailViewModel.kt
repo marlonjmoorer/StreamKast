@@ -12,17 +12,14 @@ import com.example.marlonmoorer.streamkast.async
 /**
  * Created by marlonmoorer on 3/22/18.
  */
-class DetailViewModel :ViewModel() {
+class DetailViewModel :BaseViewModel() {
 
     private val channel=MutableLiveData<Channel>()
     private val episodes=MutableLiveData<List<Episode>>()
     private  val selectedEpisode=MutableLiveData<Episode>()
     val queuedEpisode=MutableLiveData<Episode>()
 
-    var repository: Repository
-    init {
-        repository= Repository()
-    }
+
 
     fun getPodcast():LiveData<Channel> = channel
     fun getCurrentEpisode():LiveData<Episode> = selectedEpisode

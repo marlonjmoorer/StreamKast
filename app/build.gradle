@@ -51,6 +51,9 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:$archVersion"
     kapt "android.arch.persistence.room:compiler:$archVersion"
 
+    implementation'com.google.dagger:dagger:2.16'
+    kapt 'com.google.dagger:dagger-compiler:2.16'
+
     implementation "org.jetbrains.anko:anko-coroutines:0.10.4"
     implementation('com.github.bumptech.glide:glide:4.4.0') {
         exclude group: "com.android.support"

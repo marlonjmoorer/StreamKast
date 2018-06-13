@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
-import com.example.marlonmoorer.streamkast.database
+
 import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SearchViewModel

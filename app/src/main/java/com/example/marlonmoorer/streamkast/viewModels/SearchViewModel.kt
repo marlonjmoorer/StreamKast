@@ -8,14 +8,10 @@ import com.example.marlonmoorer.streamkast.api.models.SearchResults
 import com.example.marlonmoorer.streamkast.async
 import org.jetbrains.anko.doAsync
 
-class SearchViewModel:ViewModel() {
+class SearchViewModel:BaseViewModel() {
 
     val _searchResults:MutableLiveData<SearchResults> = MutableLiveData()
 
-    private var repository: Repository
-    init {
-        this.repository=Repository()
-    }
 
     val searchResults:LiveData<SearchResults>
         get() = _searchResults
