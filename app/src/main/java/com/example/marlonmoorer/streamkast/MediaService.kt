@@ -89,7 +89,6 @@ class MediaService:Service()  {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-       // startForeground(NOTIFICATION_ID,notification)
         when(intent!!.action){
             PLAY_PAUSE-> episodeModel.play_pause()
             DISMISS -> stopSelf()

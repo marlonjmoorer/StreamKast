@@ -5,6 +5,7 @@ import android.app.Service
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AppCompatActivity
@@ -12,6 +13,9 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import org.jetbrains.anko.image
+import android.arch.persistence.room.Room
+import com.example.marlonmoorer.streamkast.data.KastDatabase
+
 
 /**
  * Created by marlonmoorer on 3/21/18.
@@ -47,3 +51,6 @@ fun AppCompatActivity.replaceFragment(id:Int,fragment: Fragment){
     .addToBackStack("over")
     .commit()
 }
+
+
+
