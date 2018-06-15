@@ -22,7 +22,7 @@ class MiniPlayerFragment:Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding=MiniPlayerBinding.inflate(inflater)
         val intent= Intent(activity,MediaService::class.java)
-        activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
+       // activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
         return  binding?.root
     }
     private var detailViewModel: DetailViewModel?=null

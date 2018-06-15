@@ -48,7 +48,6 @@ fun AppCompatActivity.replaceFragment(id:Int,fragment: Fragment){
     supportFragmentManager!!
     .beginTransaction()
     .replace(id,fragment)
-    .addToBackStack("over")
     .commit()
 }
 

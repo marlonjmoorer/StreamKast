@@ -1,12 +1,13 @@
 package com.example.marlonmoorer.streamkast.data
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 
 
 @Entity
 class Subscription {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     var id:Int?=null
 
     @ColumnInfo(name = "showId")
@@ -24,11 +25,13 @@ class Subscription {
 interface SubscriptionDao {
 
     @get:Query("SELECT * FROM subscription")
-    val all: List<Subscription>
+    val all: LiveData<List<Subscription>>
 
+    @Query("SELECT * FROM subscription  WHERE  showId = :showId LIMIT 1")
+    fun getById(showId:String):Subscription
 
     @Query("SELECT EXISTS(SELECT 1  FROM subscription WHERE  showId = :showId)")
-    fun exist(showId:Int):Boolean
+    fun exist(showId:String):Boolean
 
     @Insert
     fun insert(subscription:Subscription)

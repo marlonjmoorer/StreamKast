@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         val fragment = when(item.itemId){
             R.id.menu_browse-> BrowseFragment()
             R.id.menu_search->SearchFragment()
+            R.id.menu_library->SubscriptionFragment()
             else-> Fragment()
         }
         fragment.let {

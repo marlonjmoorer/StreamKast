@@ -48,8 +48,8 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-
-            android:background="@drawable/icons8_add"
+            android:onClick="@{v->show.subscribe()}"
+            android:background="@{show.subscribed?@drawable/icons8_art:@drawable/icons8_add}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.52"
