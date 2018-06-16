@@ -17,7 +17,7 @@ class ExampleUnitTest {
         var cast=i.topPodCast()
         cast?.forEach {
             var feed=i.getPodcastById(it.Id!!)!!.feedUrl!!
-            val t=i.parseService.parseFeed(feed).execute().body()
+            val t=i.rssParseService.parseFeed(feed).execute().body()
             print("hi")
         }
 

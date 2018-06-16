@@ -11,7 +11,7 @@ import com.example.marlonmoorer.streamkast.listeners.OnGenreClickListener
  */
 class CategoryAdapter(val listener: OnGenreClickListener?=null):DataBoundAdapter<ItemCategoryBinding>() {
 
-    var categories=MediaGenre.values()
+    var categories=MediaGenre.categories
     override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>?, position: Int) {
         holder?.binding?.apply {
             genre=categories.get(position)

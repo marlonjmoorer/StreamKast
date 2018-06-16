@@ -8,6 +8,9 @@ import com.example.marlonmoorer.streamkast.R
  */
 enum class MediaGenre(private val value:String){
 
+    Featured("0"){
+
+    },
 
     Arts("1301"){
         override var displayname="Art"
@@ -78,14 +81,16 @@ enum class MediaGenre(private val value:String){
     };
 
     open var displayname: String=""
-    open  var imageId: Int=R.drawable.abc_btn_colored_material
+    open  var imageId: Int=0
     val id :String
         get() = this.value
 
     companion object {
-        private val map= MediaGenre.values().associateBy{it.id}
+        val categories=MediaGenre.values().filter {it.id!="0"}
+        private val map= categories.associateBy{it.id}
 
         fun parse(value:String):MediaGenre?{
+            if(value=="0") return Featured
             try {
                 return map[value]
             }

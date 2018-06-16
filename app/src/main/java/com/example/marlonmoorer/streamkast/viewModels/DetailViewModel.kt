@@ -27,13 +27,14 @@ class DetailViewModel :BaseViewModel() {
 
     fun setEpisode(episode: Episode)=selectedEpisode.postValue(episode)
     fun loadPodcast(id:String): LiveData<Channel> {
+        val data=MutableLiveData<Channel>()
         async {
             val result= repository.getPodcastById(id)
             val feed= repository.parseFeed(result?.feedUrl!!)
-            this.channel.postValue(feed?.channel)
+            data.postValue(feed?.channel)
             this.episodes.postValue(feed?.episodes)
         }
-        return channel
+        return data
     }
 
 

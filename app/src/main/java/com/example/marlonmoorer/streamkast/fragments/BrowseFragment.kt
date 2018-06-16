@@ -43,9 +43,9 @@ class BrowseFragment : Fragment(),OnGenreClickListener,OnPodcastClickListener {
             featured.adapter = featuredPodcastAdapter
         }
 
-        browseViewModel.getFeaturedByGenre(BrowseViewModel.FEATURED).observe(this@BrowseFragment, Observer { podcast ->
+        browseViewModel.getFeaturedByGenre(MediaGenre.Featured.id).observe(this, Observer { podcast ->
             podcast?.let {
-               featuredPodcastAdapter.setPodCasts(it)
+               featuredPodcastAdapter.setPodcasts(it)
             }
         })
         activity?.actionBar?.apply {

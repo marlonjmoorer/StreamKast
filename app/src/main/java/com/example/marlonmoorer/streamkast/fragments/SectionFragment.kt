@@ -12,8 +12,8 @@ import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
-import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.createViewModel
+import com.example.marlonmoorer.streamkast.data.Featured
 import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
@@ -40,16 +40,16 @@ class SectionFragment : Fragment(),OnPodcastClickListener {
         featuredPodcastAdapter= FeaturedPodcastAdapter(this)
         arguments?.let {
             MediaGenre.parse(it.getString(KEY))?.let { genre->
-                viewModel.getFeaturedByGenre(genre.id,20).observe(this,featuredObserver)
+                viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
                 viewModel.getPodcastByGenre(genre).observe(this,podcastObserver)
                 this.title=genre.displayname
             }
         }
     }
 
-    val featuredObserver= Observer<List<PodcastEntry>?> { podcasts->
+    val featuredObserver= Observer<List<Featured>?> { podcasts->
         podcasts?.let {
-           featuredPodcastAdapter?.setPodCasts(podcasts)
+          featuredPodcastAdapter?.setPodcasts(podcasts)
         }
     }
     val podcastObserver= Observer<List<MediaItem>> { podcasts->

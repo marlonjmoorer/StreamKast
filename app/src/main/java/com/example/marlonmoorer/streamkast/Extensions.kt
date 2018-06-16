@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions
 import org.jetbrains.anko.image
 import android.arch.persistence.room.Room
 import com.example.marlonmoorer.streamkast.data.KastDatabase
+import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
 
 
 /**
@@ -31,10 +32,10 @@ fun ImageView.load(id:Int) {
 }
 
 inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): T {
- return ViewModelProviders.of(this).get(T::class.java)
+ return ViewModelProviders.of(this, BaseViewModel.ViewModelFactory()).get(T::class.java)
 }
 inline fun <reified T : ViewModel> Fragment.createViewModel(): T {
-    return ViewModelProviders.of(this.activity!!).get(T::class.java)
+    return ViewModelProviders.of(this.activity!!, BaseViewModel.ViewModelFactory()).get(T::class.java)
 }
 
 fun AppCompatActivity.addFragment(id:Int,fragment: Fragment){

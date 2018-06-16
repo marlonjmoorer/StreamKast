@@ -10,6 +10,7 @@ import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.MediaItem
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.async
+import com.example.marlonmoorer.streamkast.data.Featured
 import com.example.marlonmoorer.streamkast.data.Subscription
 import com.example.marlonmoorer.streamkast.listeners.OnSubscribeListener
 
@@ -18,7 +19,6 @@ class  BrowseViewModel:BaseViewModel(),OnSubscribeListener {
 
     private var podcastList = MutableLiveData<List<MediaItem>>()
     private var DEFAULT_COUNT=10;
-    private var sections= mutableMapOf<String,MutableLiveData<List<PodcastEntry>?>>()
     private var selectedPodcastId= MutableLiveData<String>()
     private var selectedGenre= MutableLiveData<MediaGenre>()
 
@@ -26,31 +26,21 @@ class  BrowseViewModel:BaseViewModel(),OnSubscribeListener {
         var FEATURED="Featured"
     }
 
-    override fun toggleSubscription(podcast: MediaItem) {
-
-        async {
-
-            with(database.SubscriptionDao()){
-                if(podcast.subscribed){
-
-                    val sub=  getById(podcast.collectionId)
-                    delete(sub)
-                    podcast.subscribed=false
-                }
-                else{
-                    val sub=Subscription().apply {
-                        showId=podcast.collectionId.toInt()
-                        title=podcast.collectionName
-                        thumbnail=podcast.artworkUrl100
-                    }
-                    insert(sub)
-                }
-                podcast.subscribed=exist(podcast.collectionId)
-                podcast.notifyPropertyChanged(BR.subscribed)
-            }
-
+    override fun toggleSubscription(podcast: MediaItem) = async {
+        if(repository.isSubscribed(podcast.collectionId)){
+            repository.unsubscribe(podcast.collectionId)
+        }else{
+            repository.subscribe(Subscription().apply {
+                title=podcast.collectionName
+                thumbnail=podcast.artworkUrl100
+                podcastId=podcast.collectionId.toInt()
+            })
         }
+        podcast.subscribed=repository.isSubscribed(podcast.collectionId)
+        podcast.notifyPropertyChanged(BR.subscribed)
     }
+
+
 
 
     fun setGenre(genre: MediaGenre)=this.selectedGenre.postValue(genre)
@@ -61,16 +51,10 @@ class  BrowseViewModel:BaseViewModel(),OnSubscribeListener {
 
     fun getCurrentGenre():LiveData<MediaGenre> = selectedGenre
 
-    fun getFeaturedByGenre(key:String, count:Int=DEFAULT_COUNT): LiveData<List<PodcastEntry>?> {
-        var section=sections[key]
-        if(section==null){
-            section=MutableLiveData()
-            sections[key]=section
-            async {
-                sections[key]?.postValue(this.loadFeaturedPodcasts(key,count))
-            }
-        }
-        return sections[key]!!
+    fun getFeaturedByGenre(key:String, count:Int=DEFAULT_COUNT): LiveData<List<Featured>> {
+        val genre=MediaGenre.parse(key)!!
+        repository.syncFeatured(genre.id)
+        return  repository.getFeaturedPostcasts(genre.id)
     }
 
     private fun loadFeaturedPodcasts(key: String, limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
@@ -89,7 +73,7 @@ class  BrowseViewModel:BaseViewModel(),OnSubscribeListener {
             val results=repository.getShowsByGenre(genre)
             results?.forEach {
                 it.listener=this
-                it.subscribed= database.SubscriptionDao().exist(it.collectionId)
+               it.subscribed= repository.isSubscribed(it.collectionId)
             }
             this.podcastList.postValue(results)
         }

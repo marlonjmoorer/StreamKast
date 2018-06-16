@@ -7,16 +7,14 @@ import android.arch.persistence.room.*
 @Entity
 class Subscription {
 
-    @PrimaryKey(autoGenerate = true)
-    var id:Int?=null
 
-    @ColumnInfo(name = "showId")
-    var showId:Int?=null
+    @PrimaryKey()
+    var podcastId:Int?=null
 
-    @ColumnInfo(name="title")
+
     var title:String?=null
 
-    @ColumnInfo(name = "thumbnail")
+
     var thumbnail:String?=null
 
 }
@@ -27,11 +25,11 @@ interface SubscriptionDao {
     @get:Query("SELECT * FROM subscription")
     val all: LiveData<List<Subscription>>
 
-    @Query("SELECT * FROM subscription  WHERE  showId = :showId LIMIT 1")
-    fun getById(showId:String):Subscription
+    @Query("SELECT * FROM subscription  WHERE  podcastId = :id LIMIT 1")
+    fun getById(id:String):Subscription
 
-    @Query("SELECT EXISTS(SELECT 1  FROM subscription WHERE  showId = :showId)")
-    fun exist(showId:String):Boolean
+    @Query("SELECT EXISTS(SELECT 1  FROM subscription WHERE  podcastId = :id)")
+    fun exist(id :String):Boolean
 
     @Insert
     fun insert(subscription:Subscription)

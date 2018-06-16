@@ -2,22 +2,17 @@ package com.example.marlonmoorer.streamkast.api
 
 
 
+import android.arch.lifecycle.LiveData
 import android.net.Uri
 import android.util.Log
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.net.URL
 
 
 import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
-
-
-
-
-
-
+import com.example.marlonmoorer.streamkast.async
+import com.example.marlonmoorer.streamkast.data.*
+import javax.inject.Inject
 
 
 //import org.simpleframework.xml.core.Persister
@@ -28,34 +23,20 @@ import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class Repository {
-    val service:ItunesService
+class Repository @Inject constructor(database: KastDatabase,val itunesService: ItunesService, val rssParseService: RssToJsonService) {
 
-    val parseService:RssToJsonService
-
-
+    val subscriptions:SubscriptionDao
+    val featuredItems:FeaturedDao
     init {
-        service= Retrofit.Builder()
-                .baseUrl(ItunesService.baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(ItunesService::class.java)
-
-
-        parseService=Retrofit.Builder()
-                .baseUrl(RssToJsonService.baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(RssToJsonService::class.java)
-
+        subscriptions=database.SubscriptionDao()
+        featuredItems= database.FeaturedDao()
     }
-
 
     fun search(query:Map<String, String>): SearchResults? {
-      return this.service.search(query).execute().body()
+      return this.itunesService.search(query).execute().body()
     }
     fun lookup(query:Map<String, String>): List<MediaItem>? {
-        val response=this.service.lookup(query).execute().body()
+        val response=this.itunesService.lookup(query).execute().body()
         response?.let {
             return  it.results
         }
@@ -71,7 +52,7 @@ class Repository {
                     .buildUpon()
                     .appendQueryParameter("page",page)
                     .build().toString()
-            val result=parseService.parseFeed(feedUrl).execute().body()
+            val result=rssParseService.parseFeed(feedUrl).execute().body()
             return result
         }
        catch (ex:Exception){
@@ -81,12 +62,36 @@ class Repository {
         return null
     }
 
+    fun syncFeatured(id:String="0") = async{
+
+       if (!featuredItems.hasRows(id)){
+            val data=when(id){
+                "0"->itunesService.topPodcast().execute().body()?.rss?.entries
+                else->itunesService.topPodcastByGenre(id).execute().body()?.rss?.entries
+            }
+            val entries= data?.map {
+                Featured().apply {
+                    name=it.Name!!
+                    podcastId=it.Id!!
+                    imageUrl=it.Image!!
+                    author=it.Artist!!
+                    summary=it.Summary!!
+                    genreId=id
+                    //lastUpdateDate=it.LastUpdateDate!!
+                }
+            }
+            entries?.let { featuredItems.insertAll(it) }
+       }
+    }
+    fun getFeaturedPostcasts(id:String="0") = featuredItems.getByGenreId(id)
+
+
     fun topPodCast(limit:Int=10,genre: MediaGenre?=null): List<PodcastEntry>?{
 
         genre?.let {
-            return service.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
+            return itunesService.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
         }
-        return service.topPodcast(limit).execute().body()?.rss?.entries
+        return itunesService.topPodcast(limit).execute().body()?.rss?.entries
     }
 
     fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<MediaItem>? {
@@ -101,6 +106,17 @@ class Repository {
         }?.take(limit)
 
     }
+
+    fun isSubscribed(id: String)=subscriptions.exist(id)
+    fun unsubscribe(podcastId:String)= with(subscriptions){
+        val sub=  this.getById(podcastId)
+        this.delete(sub)
+    }
+    fun subscribe(subscription: Subscription)=subscriptions.insert(subscription)
+
+
+
+
 
 
 }

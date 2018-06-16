@@ -55,7 +55,7 @@ class DetailFragment: Fragment(),OnEpisodeClickListener {
         detailModel.getEpisodes().observe(this, Observer { episodes->
             episodes?.let { episodeListAdapter.setEpisodes(it) }
         })
-        detailModel.getPodcast().observe(this, Observer { channel->
+        detailModel.loadPodcast(Id).observe(this, Observer { channel->
             binding.channel=channel
             channel?.let {   binding.loadingScreen?.visibility=View.GONE}
             binding.executePendingBindings()
@@ -71,7 +71,7 @@ class DetailFragment: Fragment(),OnEpisodeClickListener {
                 this.onBackPressed()
             }
         }
-        detailModel.loadPodcast(Id)
+        //detailModel.loadPodcast(Id)
         return binding.root
     }
 

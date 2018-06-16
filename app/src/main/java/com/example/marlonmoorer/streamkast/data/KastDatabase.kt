@@ -9,10 +9,10 @@ import android.support.annotation.NonNull
 
 
 
-@Database(entities = arrayOf(Subscription::class), version = 2)
+@Database(entities = arrayOf(Subscription::class,Featured::class), version = 3)
 abstract class KastDatabase:RoomDatabase() {
     abstract fun SubscriptionDao(): SubscriptionDao
-
+    abstract fun FeaturedDao():FeaturedDao
     companion object {
         private var instance: KastDatabase? = null
         @Synchronized
@@ -22,7 +22,6 @@ abstract class KastDatabase:RoomDatabase() {
                         KastDatabase::class.java, "podcast.db")
                         .fallbackToDestructiveMigration()
                         .build()
-                instance?.getInvalidationTracker()?.addObserver(DataSourceTableObserver("subscription"))
 
             }
             return instance!!
@@ -31,17 +30,5 @@ abstract class KastDatabase:RoomDatabase() {
 
     }
 
-   class DataSourceTableObserver(tableName: String) : InvalidationTracker.Observer(tableName) {
 
-        //private var dataSource: DataSource? = null
-
-        override fun onInvalidated(tables: Set<String>) {
-           var f=4
-        }
-
-//        fun setCurrentDataSource(source: DataSource) {
-//            dataSource = source
-//        }
-
-    }
 }
