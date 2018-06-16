@@ -9,52 +9,40 @@
     </data>
 
     <android.support.v7.widget.CardView
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:layout_marginBottom="16dp"
         app:cardCornerRadius="3dp"
         app:cardElevation="2dp"
-        >
+        app:cardUseCompatPadding="true">
 
 
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
 
             <ImageView
                 android:id="@+id/poster"
 
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minHeight="80dp"
-                android:minWidth="80dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/title"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 app:src="@{subscription.thumbnail}" />
 
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="16dp"
+                android:layout_height="48dp"
 
                 android:gravity="center_vertical"
                 android:paddingBottom="8dp"
-
                 android:text="@{subscription.title}"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                android:textSize="12sp" />
 
-        </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 

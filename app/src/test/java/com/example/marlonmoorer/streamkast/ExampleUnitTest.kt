@@ -13,16 +13,7 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        val i= Repository()
-        var cast=i.topPodCast()
-        cast?.forEach {
-            var feed=i.getPodcastById(it.Id!!)!!.feedUrl!!
-            val t=i.rssParseService.parseFeed(feed).execute().body()
-            print("hi")
-        }
 
-
-       // Repository().parseFeed("https://www.npr.org/rss/podcast.php?id=510298")
         assertEquals(4, 2 + 2)
     }
 }

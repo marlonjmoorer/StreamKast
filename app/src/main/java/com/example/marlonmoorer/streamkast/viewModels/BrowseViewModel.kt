@@ -57,15 +57,7 @@ class  BrowseViewModel:BaseViewModel(),OnSubscribeListener {
         return  repository.getFeaturedPostcasts(genre.id)
     }
 
-    private fun loadFeaturedPodcasts(key: String, limit:Int=DEFAULT_COUNT):List<PodcastEntry>{
-        val genre=MediaGenre.parse(key)
-        return genre?.let {
-            return  repository.topPodCast(limit,it)!!
-        }?:when(key){
-            FEATURED -> repository.topPodCast(limit)!!
-            else-> emptyList()
-        }
-    }
+
 
 
     fun getPodcastByGenre(genre: MediaGenre):LiveData<List<MediaItem>>{

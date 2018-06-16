@@ -9,7 +9,6 @@ import java.util.*
 
 @Entity(primaryKeys = arrayOf("podcastId","genreId"))
 class Featured {
-    @PrimaryKey()
     var podcastId=""
     var name=""
     var imageUrl=""

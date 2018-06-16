@@ -8,14 +8,14 @@ import com.example.marlonmoorer.streamkast.di.DaggerAppComponent
 class App : Application(){
 
     companion object {
-        private var _component: AppComponent?=null
+        private var appComponent: AppComponent?=null
         val component
-            get() = _component
+            get() = appComponent
     }
 
     override fun onCreate() {
         super.onCreate()
-        _component= DaggerAppComponent.builder()
+        appComponent= DaggerAppComponent.builder()
                 .appModule(AppModule(this.applicationContext))
                 .build()
     }

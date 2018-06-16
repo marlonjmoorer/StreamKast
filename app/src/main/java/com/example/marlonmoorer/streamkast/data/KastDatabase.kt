@@ -9,7 +9,7 @@ import android.support.annotation.NonNull
 
 
 
-@Database(entities = arrayOf(Subscription::class,Featured::class), version = 3)
+@Database(entities = arrayOf(Subscription::class,Featured::class), version = 4)
 abstract class KastDatabase:RoomDatabase() {
     abstract fun SubscriptionDao(): SubscriptionDao
     abstract fun FeaturedDao():FeaturedDao

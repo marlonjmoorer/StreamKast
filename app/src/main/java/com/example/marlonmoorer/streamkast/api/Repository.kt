@@ -35,7 +35,7 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
     fun search(query:Map<String, String>): SearchResults? {
       return this.itunesService.search(query).execute().body()
     }
-    fun lookup(query:Map<String, String>): List<MediaItem>? {
+    private fun lookup(query:Map<String, String>): List<MediaItem>? {
         val response=this.itunesService.lookup(query).execute().body()
         response?.let {
             return  it.results
@@ -48,10 +48,6 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
 
     fun parseFeed(feedUrl:String,page:String="1"): RssResult?{
         try {
-             val url = Uri.parse(feedUrl)
-                    .buildUpon()
-                    .appendQueryParameter("page",page)
-                    .build().toString()
             val result=rssParseService.parseFeed(feedUrl).execute().body()
             return result
         }
@@ -62,7 +58,7 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
         return null
     }
 
-    fun syncFeatured(id:String="0") = async{
+    fun syncFeatured(id:String) = async{
 
        if (!featuredItems.hasRows(id)){
             val data=when(id){
@@ -83,16 +79,8 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
             entries?.let { featuredItems.insertAll(it) }
        }
     }
-    fun getFeaturedPostcasts(id:String="0") = featuredItems.getByGenreId(id)
+    fun getFeaturedPostcasts(id:String) = featuredItems.getByGenreId(id)
 
-
-    fun topPodCast(limit:Int=10,genre: MediaGenre?=null): List<PodcastEntry>?{
-
-        genre?.let {
-            return itunesService.topPodcastByGenre(it.id,limit).execute().body()?.rss?.entries
-        }
-        return itunesService.topPodcast(limit).execute().body()?.rss?.entries
-    }
 
     fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<MediaItem>? {
         val query=mapOf(
