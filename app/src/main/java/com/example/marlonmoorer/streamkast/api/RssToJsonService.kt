@@ -13,9 +13,13 @@ interface RssToJsonService{
 
     companion object {
         val baseUrl: String = "https://api.rss2json.com/v1/"
-        val apiKey= "75opuj4mx65ut7atsdzibwvtutkawgqljfxglfqv"//Resources.getSystem().getString(R.string.rss2jsonApKey)
+        private var rssApiKey= ""
+        fun setApiKey(key: String)
+        {
+            rssApiKey=key
+        }
     }
 
     @GET("api.json")
-    fun parseFeed(@Query("rss_url")rssUrl:String,@Query("api_key")key:String= apiKey,@Query("count")count:Int=50): Call<RssResult>
+    fun parseFeed(@Query("rss_url")rssUrl:String,@Query("api_key")key:String= rssApiKey,@Query("count")count:Int=50): Call<RssResult>
 }

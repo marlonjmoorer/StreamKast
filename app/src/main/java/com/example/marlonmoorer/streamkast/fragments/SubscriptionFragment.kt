@@ -31,7 +31,7 @@ class SubscriptionFragment:Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         adapter= SubscriptionAdapater()
         return inflater.inflate(R.layout.fragment_subscription,container,false).apply {
-            subs.layoutManager=GridLayoutManager(activity,3)
+            subs.layoutManager=GridLayoutManager(activity,2)
             subs.adapter=adapter
             val observer=Observer<List<Subscription>>{subscriptions->
                 subscriptions?.let {

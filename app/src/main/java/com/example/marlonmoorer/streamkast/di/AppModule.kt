@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.di
 
 import android.content.Context
+import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.ItunesService
 import com.example.marlonmoorer.streamkast.api.Repository
 import com.example.marlonmoorer.streamkast.api.RssToJsonService
@@ -50,7 +51,8 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideRssParseService(factory: GsonConverterFactory):RssToJsonService{
+    fun provideRssParseService(context: Context,factory: GsonConverterFactory):RssToJsonService{
+        RssToJsonService.setApiKey(context.getString(R.string.rss2jsonApKey))
         return Retrofit.Builder()
                 .baseUrl(RssToJsonService.baseUrl)
                 .addConverterFactory(factory)
@@ -61,5 +63,6 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun provideGsonFactory()= GsonConverterFactory.create()
+
 
 }
