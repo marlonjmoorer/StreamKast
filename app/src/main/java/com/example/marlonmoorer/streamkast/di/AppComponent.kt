@@ -12,5 +12,4 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun inject(view: BaseViewModel)
-    fun inject(view: SubscriptionFragment)
 }
