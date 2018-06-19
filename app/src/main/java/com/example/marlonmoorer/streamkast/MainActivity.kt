@@ -28,10 +28,8 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         browseViewModel = createViewModel()
         detailViewModel = createViewModel()
-
         navigation.setOnNavigationItemSelectedListener(this)
 
         browseViewModel?.getSelectedPodCastId()?.observe(this, Observer { id->
@@ -41,7 +39,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         })
         browseViewModel?.getCurrentGenre()?.observe(this, Observer {genre->
            genre?.let {
-               val sectionFragment  =SectionFragment.newInstance(genre.id)
+               val sectionFragment = SectionFragment.newInstance(genre.id)
                this.addFragment(targetId,sectionFragment)
            }
         })

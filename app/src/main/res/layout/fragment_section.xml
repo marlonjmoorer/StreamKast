@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
             name="genre"
@@ -12,6 +13,26 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/black">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBarLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:theme="@style/AppBarOverlay"
+            app:layout_constraintBottom_toTopOf="@+id/thumbnail_large"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorPrimary"
+                app:popupTheme="@style/PopupOverlay"
+                app:title="LOL"/>
+
+        </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -29,7 +50,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:textColor="@color/white"
-                    android:textSize="19sp"
+                    android:textSize="24sp"
                     android:text="Featured" />
 
                 <android.support.v7.widget.RecyclerView

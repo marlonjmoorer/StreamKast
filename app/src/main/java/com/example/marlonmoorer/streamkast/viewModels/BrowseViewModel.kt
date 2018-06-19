@@ -3,6 +3,7 @@ package com.example.marlonmoorer.streamkast.viewModels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
+import android.widget.Toast
 import com.example.marlonmoorer.streamkast.BR
 
 import com.example.marlonmoorer.streamkast.api.Repository
