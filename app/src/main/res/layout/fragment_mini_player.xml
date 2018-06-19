@@ -5,49 +5,61 @@
     <data>
         <variable
             name="model"
-            type="com.example.marlonmoorer.streamkast.MediaService.EpisodeModel"/>
+            type="com.example.marlonmoorer.streamkast.EpisodeModel"/>
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark">
+        android:background="@color/colorPrimary"
+        android:elevation="3dp">
 
         <Button
             android:id="@+id/play_pause"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
             android:background="@{model.isPlaying? @drawable/icons8_pause : @drawable/icons8_play}"
             app:layout_constraintBottom_toBottomOf="@+id/mini_image"
+            app:layout_constraintDimensionRatio=""
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/mini_title"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/mini_image"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/mini_title"
+            app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:src="@{model.thumbnail}" />
 
         <TextView
             android:id="@+id/mini_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
             android:text="@{model.title}"
-            android:textSize="24sp"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/play_pause"
             app:layout_constraintHorizontal_bias="0.052"
             app:layout_constraintStart_toEndOf="@+id/mini_image"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.51" />
     </android.support.constraint.ConstraintLayout>
 
 

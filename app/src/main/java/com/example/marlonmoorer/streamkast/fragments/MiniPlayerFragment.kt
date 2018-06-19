@@ -11,29 +11,34 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.marlonmoorer.streamkast.MediaService
-import com.example.marlonmoorer.streamkast.createViewModel
-import com.example.marlonmoorer.streamkast.databinding.MiniPlayerBinding
+import com.example.marlonmoorer.streamkast.*
+import com.example.marlonmoorer.streamkast.databinding.FragmentMiniPlayerBinding
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.startService
 
 
 class MiniPlayerFragment:Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding=MiniPlayerBinding.inflate(inflater)
+        binding=FragmentMiniPlayerBinding.inflate(inflater)
         val intent= Intent(activity,MediaService::class.java)
-       // activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
+        activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
         return  binding?.root
     }
     private var detailViewModel: DetailViewModel?=null
-    private var episodeModel:MediaService.EpisodeModel?=null
-    private var binding:MiniPlayerBinding?=null
+    private var episodeModel: EpisodeModel?=null
+    private var binding:FragmentMiniPlayerBinding?=null
     private val serviceConnection= object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             if (binder is MediaService.MediaBinder){
                 episodeModel=binder.getModel()
                 binding?.model=episodeModel
                 binding?.executePendingBindings()
+                binding?.miniTitle?.isSelected=true
+                binding?.root?.setOnClickListener {
+                    startActivity<MediaPlayerActivity>()
+                }
             }
         }
         override fun onServiceDisconnected(className: ComponentName?) {
@@ -49,6 +54,7 @@ class MiniPlayerFragment:Fragment() {
             episode?.let {
                 this.show()
                 episodeModel?.setEpisode(episode)
+               // startService<MediaService>()
                 episodeModel?.prepare()
             }
             binding?.playPause?.setOnClickListener {
@@ -61,5 +67,10 @@ class MiniPlayerFragment:Fragment() {
     }
     fun show(){
         fragmentManager?.beginTransaction()?.show(this)?.commit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.unbindService(serviceConnection)
     }
 }

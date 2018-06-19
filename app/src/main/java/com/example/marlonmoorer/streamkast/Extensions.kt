@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast
 
 import android.app.Activity
+import android.app.Notification
 import android.app.Service
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
@@ -14,6 +15,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import org.jetbrains.anko.image
 import android.arch.persistence.room.Room
+import android.widget.RemoteViews
+import com.bumptech.glide.request.target.NotificationTarget
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
 
@@ -25,10 +28,15 @@ fun ImageView.load(url:String){
     Glide.with(context)
             .load(url)
             //.apply(RequestOptions().fitCenter())
-            .into(this);
+            .into(this)
+
 }
 fun ImageView.load(id:Int) {
     this.image = ResourcesCompat.getDrawable(context.resources, id, null)
+}
+
+fun RemoteViews.loadImage(context: Context,target: NotificationTarget,url: String){
+   Glide.with(context).asBitmap().load(url).into(target)
 }
 
 inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): T {
@@ -51,6 +59,16 @@ fun AppCompatActivity.replaceFragment(id:Int,fragment: Fragment){
     .replace(id,fragment)
     .commit()
 }
+fun Int.toTime():String{
 
+    val millis=this.toLong()
+    return StringBuffer()
+            .append(String.format("%02d", millis / (1000 * 60 * 60)))
+            .append(":")
+            .append(String.format("%02d", millis % (1000 * 60 * 60) / (1000 * 60)))
+            .append(":")
+            .append(String.format("%02d", millis % (1000 * 60 * 60) % (1000 * 60) / 1000))
+            .toString()
+}
 
 

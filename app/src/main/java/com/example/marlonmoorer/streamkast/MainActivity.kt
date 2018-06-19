@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             EpisodeFragment().show(supportFragmentManager,"")
         })
         navigation.selectedItemId=R.id.menu_browse
-        //this.loadFragment(SearchFragment())
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -60,9 +59,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             R.id.menu_library->SubscriptionFragment()
             else-> Fragment()
         }
-        fragment.let {
-            replaceFragment(targetId,fragment)
-        }
+        replaceFragment(targetId,fragment)
         return true
     }
 

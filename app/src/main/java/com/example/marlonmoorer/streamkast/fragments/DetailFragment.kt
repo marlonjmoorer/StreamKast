@@ -30,10 +30,12 @@ class DetailFragment: Fragment(),OnEpisodeClickListener {
     private  var Id:String=""
 
     override fun onClick(episode: Episode) {
-        if(episode.thumbnail.isNullOrEmpty()){
-            episode.thumbnail= binding.channel?.image
-        }
+
         detailModel.setEpisode(episode)
+    }
+
+    override fun onPlay(episode: Episode) {
+        detailModel.queuedEpisode.postValue(episode)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +55,14 @@ class DetailFragment: Fragment(),OnEpisodeClickListener {
             setNestedScrollingEnabled(false);
         }
         detailModel.getEpisodes().observe(this, Observer { episodes->
-            episodes?.let { episodeListAdapter.setEpisodes(it) }
+            episodes?.let {
+                it.forEach {
+                    if(it.thumbnail.isNullOrEmpty()){
+                        it.thumbnail= binding.channel?.image
+                    }
+                }
+                episodeListAdapter.setEpisodes(it)
+            }
         })
         detailModel.loadPodcast(Id).observe(this, Observer { channel->
             binding.channel=channel
