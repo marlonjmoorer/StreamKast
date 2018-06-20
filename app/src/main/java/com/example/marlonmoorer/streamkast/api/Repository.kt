@@ -2,27 +2,16 @@ package com.example.marlonmoorer.streamkast.api
 
 
 
-import android.arch.lifecycle.LiveData
-import android.net.Uri
 import android.util.Log
 
 
 import com.example.marlonmoorer.streamkast.api.models.*
 
-import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
 import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.data.*
 import javax.inject.Inject
 
 
-//import org.simpleframework.xml.core.Persister
-
-
-
-
-/**
- * Created by marlonmoorer on 3/21/18.
- */
 class Repository @Inject constructor(database: KastDatabase,val itunesService: ItunesService, val rssParseService: RssToJsonService) {
 
     val subscriptions:SubscriptionDao
@@ -35,14 +24,14 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
     fun search(query:Map<String, String>): SearchResults? {
       return this.itunesService.search(query).execute().body()
     }
-    private fun lookup(query:Map<String, String>): List<MediaItem>? {
+    private fun lookup(query:Map<String, String>): List<Podcast>? {
         val response=this.itunesService.lookup(query).execute().body()
         response?.let {
             return  it.results
         }
         return emptyList()
     }
-    fun getPodcastById(id:String):MediaItem?{
+    fun getPodcastById(id:String):Podcast?{
         return lookup(mapOf("id" to id))?.firstOrNull()
     }
 
@@ -82,7 +71,7 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
     fun getFeaturedPostcasts(id:String) = featuredItems.getByGenreId(id)
 
 
-    fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<MediaItem>? {
+    fun getShowsByGenre(genre: MediaGenre,limit: Int=10): List<Podcast>? {
         val query=mapOf(
                 "term" to "podcast",
                 "genreId" to genre.id,

@@ -2,7 +2,6 @@ package com.example.marlonmoorer.streamkast.api.models
 
 import android.databinding.BaseObservable
 import android.databinding.Bindable
-import com.example.marlonmoorer.streamkast.listeners.OnSubscribeListener
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -12,14 +11,14 @@ class SearchResults{
     @SerializedName("resultCount")
     @Expose
     var resultCount: Long? = null
-    @SerializedName("results")
 
+    @SerializedName("results")
     @Expose
-    var results: List<MediaItem>? = null
+    var results: List<Podcast>? = null
 
 }
 
-class MediaItem:BaseObservable(){
+class Podcast:BaseObservable(){
 
 
 
@@ -72,15 +71,9 @@ class MediaItem:BaseObservable(){
     @Expose
     var artworkUrl600: String? = null
 
-
     @Bindable
     var subscribed= false
 
-    var listener: OnSubscribeListener?=null
-
-    fun subscribe(){
-        listener?.toggleSubscription(this)
-    }
 
 
 

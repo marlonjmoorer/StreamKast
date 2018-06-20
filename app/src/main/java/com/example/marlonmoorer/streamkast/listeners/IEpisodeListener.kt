@@ -2,10 +2,10 @@ package com.example.marlonmoorer.streamkast.listeners
 
 import com.example.marlonmoorer.streamkast.api.models.Episode
 
-interface OnEpisodeClickListener {
-    fun onClick(episode: Episode)
+interface IEpisodeListener {
+    fun open(episode: Episode)
 
-    fun onPlay(episode: Episode){
+    fun play(episode: Episode){
 
     }
 }

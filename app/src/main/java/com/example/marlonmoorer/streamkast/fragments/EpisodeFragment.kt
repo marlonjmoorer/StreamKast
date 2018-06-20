@@ -11,11 +11,11 @@ import com.example.marlonmoorer.streamkast.api.models.Episode
 
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentEpisodeBinding
-import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener
+import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 
-class EpisodeFragment: BottomSheetDialogFragment(),OnEpisodeClickListener {
+class EpisodeFragment: BottomSheetDialogFragment(),IEpisodeListener {
 
 
     lateinit var detailModel: DetailViewModel
@@ -24,7 +24,7 @@ class EpisodeFragment: BottomSheetDialogFragment(),OnEpisodeClickListener {
         detailModel = createViewModel()
     }
 
-    override fun onClick(episode: Episode) {
+    override fun open(episode: Episode) {
         this.dismiss()
         detailModel.queuedEpisode.postValue(episode)
     }

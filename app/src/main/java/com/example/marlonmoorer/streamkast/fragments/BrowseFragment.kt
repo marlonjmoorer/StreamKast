@@ -16,8 +16,6 @@ import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
 
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.createViewModel
-import com.example.marlonmoorer.streamkast.listeners.OnGenreClickListener
-import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import kotlinx.android.synthetic.main.fragment_browse.view.*
 
@@ -25,20 +23,17 @@ import kotlinx.android.synthetic.main.fragment_browse.view.*
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class BrowseFragment : Fragment(),OnGenreClickListener,OnPodcastClickListener {
-    override fun onClick(genre: MediaGenre) =browseViewModel.setGenre(genre)
-
-    override fun onClick(podcastId: String) =browseViewModel.setPodcast(podcastId)
+class BrowseFragment : Fragment(){
 
     lateinit var browseViewModel: BrowseViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_browse, container, false)
-        val featuredPodcastAdapter=FeaturedPodcastAdapter(this)
+        val featuredPodcastAdapter=FeaturedPodcastAdapter(browseViewModel)
         view?.apply {
             featured.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             categories.layoutManager = GridLayoutManager(activity, 2)
-            categories.adapter = CategoryAdapter(this@BrowseFragment)
+            categories.adapter = CategoryAdapter(browseViewModel)
             categories.setNestedScrollingEnabled(false)
             featured.adapter = featuredPodcastAdapter
         }

@@ -2,9 +2,7 @@ package com.example.marlonmoorer.streamkast.api.models.chart
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import android.databinding.BindingAdapter
-import android.widget.ImageView
-import com.example.marlonmoorer.streamkast.load
+
 
 
 /**

@@ -2,7 +2,7 @@ package com.example.marlonmoorer.streamkast.listeners
 
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 
-interface OnGenreClickListener {
+interface IGenreListener {
 
-    fun onClick(genre: MediaGenre)
+    fun open(genre: MediaGenre)
 }

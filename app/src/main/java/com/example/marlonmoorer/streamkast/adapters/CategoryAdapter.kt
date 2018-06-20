@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.databinding.ItemCategoryBinding
-import com.example.marlonmoorer.streamkast.listeners.OnGenreClickListener
+import com.example.marlonmoorer.streamkast.listeners.IGenreListener
 
 /**
  * Created by marlonmoorer on 4/2/18.
  */
-class CategoryAdapter(val listener: OnGenreClickListener?=null):DataBoundAdapter<ItemCategoryBinding>() {
+class CategoryAdapter(val listener: IGenreListener?=null):DataBoundAdapter<ItemCategoryBinding>() {
 
     var categories=MediaGenre.categories
     override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>?, position: Int) {

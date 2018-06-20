@@ -9,7 +9,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener"/>
+            type="com.example.marlonmoorer.streamkast.listeners.IEpisodeListener"/>
     </data>
 
         <android.support.design.widget.CoordinatorLayout
@@ -73,7 +73,7 @@
                 app:backgroundTint="@color/colorAccent"
                 app:layout_anchor="@id/main"
                 app:layout_anchorGravity="bottom|right|end"
-                android:onClick="@{e->handler.onClick(episode)}"/>
+                android:onClick="@{e->handler.open(episode)}"/>
 
         </android.support.design.widget.CoordinatorLayout>
 </layout>

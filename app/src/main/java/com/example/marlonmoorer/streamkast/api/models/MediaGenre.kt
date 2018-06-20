@@ -8,9 +8,7 @@ import com.example.marlonmoorer.streamkast.R
  */
 enum class MediaGenre(private val value:String){
 
-    Featured("0"){
-
-    },
+    Featured("0"),
 
     Arts("1301"){
         override var displayname="Art"

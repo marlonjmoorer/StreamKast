@@ -11,13 +11,12 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
 
-import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 
-class SearchFragment:Fragment(),OnPodcastClickListener{
+class SearchFragment:Fragment(){
 
     var searchViewModel:SearchViewModel?=null
     var browseViewModel:BrowseViewModel?=null
@@ -27,9 +26,14 @@ class SearchFragment:Fragment(),OnPodcastClickListener{
         super.onCreate(savedInstanceState)
         searchViewModel=createViewModel()
         browseViewModel=createViewModel()
-        adapter=PodcastListAdapter(this)
+        adapter=PodcastListAdapter(browseViewModel)
         searchViewModel?.searchResults?.observe(this@SearchFragment, Observer {results->
-            results?.results?.let { adapter?.setPostcasts(it) }
+            results?.results?.let {
+                adapter?.setPostcasts(it)
+            }
+        })
+        browseViewModel?.getSelectedPodCastId()?.observe(this, Observer {
+            view?.search_view?.clearSearchFocus()
         })
     }
 
@@ -45,10 +49,5 @@ class SearchFragment:Fragment(),OnPodcastClickListener{
         return view
     }
 
-    override fun onClick(podcastId: String) {
-        this.browseViewModel?.setPodcast(podcastId)
-        view?.search_view?.clearSearchFocus()
 
-
-    }
 }

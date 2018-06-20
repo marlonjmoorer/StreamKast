@@ -1,8 +1,6 @@
 package com.example.marlonmoorer.streamkast.api.models
 
-import android.databinding.BaseObservable
-import android.databinding.Bindable
-import com.example.marlonmoorer.streamkast.listeners.OnSubscribeListener
+
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -48,7 +46,6 @@ class Channel {
     @Expose
     var url: String? = null
 
-
     @SerializedName("title")
     @Expose
     var title: String? = null
@@ -56,11 +53,9 @@ class Channel {
     @Expose
     var link: String? = null
 
-
     @SerializedName("author")
     @Expose
     var author: String? = null
-
 
     @SerializedName("description")
     @Expose
@@ -68,7 +63,6 @@ class Channel {
     @SerializedName("image")
     @Expose
     var image: String? = null
-
 
 }
 

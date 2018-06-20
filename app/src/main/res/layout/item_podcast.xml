@@ -4,10 +4,10 @@
     <data>
         <variable
             name="show"
-            type="com.example.marlonmoorer.streamkast.api.models.MediaItem"/>
+            type="com.example.marlonmoorer.streamkast.api.models.Podcast"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener"/>
+            type="com.example.marlonmoorer.streamkast.listeners.IPodcastListener"/>
     </data>
     <android.support.constraint.ConstraintLayout
 
@@ -17,7 +17,7 @@
         android:clickable="true"
         android:background="@drawable/outlined_tile"
         android:layout_marginBottom="4dp"
-        android:onClick="@{e -> handler.onClick(show.collectionId)}"
+        android:onClick="@{e -> handler.open(show.collectionId)}"
         >
 
 
@@ -48,7 +48,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:onClick="@{v->show.subscribe()}"
+            android:onClick="@{v->handler.toggleSubscription(show)}"
             android:background="@{show.subscribed?@drawable/icons8_art:@drawable/icons8_add}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

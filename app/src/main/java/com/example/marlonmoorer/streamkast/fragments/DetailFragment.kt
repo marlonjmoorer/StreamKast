@@ -15,26 +15,26 @@ import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
-import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener
+import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 /**
  * Created by marlonmoorer on 3/24/18.
  */
-class DetailFragment: Fragment(),OnEpisodeClickListener {
+class DetailFragment: Fragment(),IEpisodeListener {
 
 
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
     private  var Id:String=""
 
-    override fun onClick(episode: Episode) {
+    override fun open(episode: Episode) {
 
         detailModel.setEpisode(episode)
     }
 
-    override fun onPlay(episode: Episode) {
+    override fun play(episode: Episode) {
         detailModel.queuedEpisode.postValue(episode)
     }
     override fun onCreate(savedInstanceState: Bundle?) {

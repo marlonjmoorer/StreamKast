@@ -9,7 +9,7 @@
                 type="com.example.marlonmoorer.streamkast.data.Featured"/>
             <variable
                 name="handler"
-                type="com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener"/>
+                type="com.example.marlonmoorer.streamkast.listeners.IPodcastListener"/>
         </data>
 
 
@@ -19,7 +19,7 @@
       android:background="@color/grey_400"
       android:layout_margin="8dp"
       android:orientation="vertical"
-      android:onClick="@{e->handler.onClick(featured.podcastId)}">
+      android:onClick="@{e->handler.open(featured.podcastId)}">
 
       <ImageView
           android:id="@+id/podcast_image"

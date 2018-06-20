@@ -8,7 +8,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener"/>
+            type="com.example.marlonmoorer.streamkast.listeners.IEpisodeListener"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/outlined_tile"
         android:clickable="true"
-        android:onClick="@{e->handler.onClick(episode)}">
+        android:onClick="@{e->handler.open(episode)}">
 
         <TextView
             android:id="@+id/textView12"
@@ -47,7 +47,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:background="@color/blue_400"
-            android:onClick="@{e->handler.onPlay(episode)}"
+            android:onClick="@{e->handler.play(episode)}"
             android:padding="4dp"
             android:src="@drawable/icons8_play"
             app:layout_constraintBottom_toBottomOf="parent"

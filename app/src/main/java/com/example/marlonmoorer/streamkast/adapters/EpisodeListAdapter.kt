@@ -7,13 +7,13 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
-import com.example.marlonmoorer.streamkast.listeners.OnEpisodeClickListener
+import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 
 
 /**
  * Created by marlonmoorer on 3/29/18.
  */
-class EpisodeListAdapter(val listener:OnEpisodeClickListener):DataBoundAdapter<ItemEpisodeBinding> (){
+class EpisodeListAdapter(val listener:IEpisodeListener):DataBoundAdapter<ItemEpisodeBinding> (){
     private var episodes:List<Episode>? = null
     override fun getItemCount()=  episodes?.size?:0
 

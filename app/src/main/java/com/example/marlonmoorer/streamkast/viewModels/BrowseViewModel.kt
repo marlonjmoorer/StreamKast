@@ -2,32 +2,35 @@ package com.example.marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import android.widget.Toast
 import com.example.marlonmoorer.streamkast.BR
 
-import com.example.marlonmoorer.streamkast.api.Repository
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
-import com.example.marlonmoorer.streamkast.api.models.MediaItem
-import com.example.marlonmoorer.streamkast.api.models.chart.PodcastEntry
+import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.data.Featured
 import com.example.marlonmoorer.streamkast.data.Subscription
-import com.example.marlonmoorer.streamkast.listeners.OnSubscribeListener
+import com.example.marlonmoorer.streamkast.listeners.IGenreListener
+import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
 
 
-class  BrowseViewModel:BaseViewModel(),OnSubscribeListener {
 
-    private var podcastList = MutableLiveData<List<MediaItem>>()
+class  BrowseViewModel:BaseViewModel(),IGenreListener,IPodcastListener {
+
+    private var podcastList = MutableLiveData<List<Podcast>>()
     private var DEFAULT_COUNT=10;
     private var selectedPodcastId= MutableLiveData<String>()
     private var selectedGenre= MutableLiveData<MediaGenre>()
 
-    companion object {
-        var FEATURED="Featured"
+
+    override fun open(podcastId: String) {
+        setPodcast(podcastId)
     }
 
-    override fun toggleSubscription(podcast: MediaItem) = async {
+    override fun open(genre: MediaGenre) {
+        setGenre(genre)
+    }
+
+    override fun toggleSubscription(podcast: Podcast) = async {
         if(repository.isSubscribed(podcast.collectionId)){
             repository.unsubscribe(podcast.collectionId)
         }else{
@@ -61,11 +64,11 @@ class  BrowseViewModel:BaseViewModel(),OnSubscribeListener {
 
 
 
-    fun getPodcastByGenre(genre: MediaGenre):LiveData<List<MediaItem>>{
+    fun getPodcastByGenre(genre: MediaGenre):LiveData<List<Podcast>>{
         async {
             val results=repository.getShowsByGenre(genre)
             results?.forEach {
-                it.listener=this
+
                it.subscribed= repository.isSubscribed(it.collectionId)
             }
             this.podcastList.postValue(results)

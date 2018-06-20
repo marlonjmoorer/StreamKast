@@ -11,6 +11,7 @@ import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.fragments.*
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
 
     private var browseViewModel: BrowseViewModel?=null
     private var detailViewModel: DetailViewModel?=null
+    private var subscriptionViewModel:SubscriptionViewModel?=null
     private val targetId:Int=R.id.main
 
 
@@ -30,13 +32,12 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         setContentView(R.layout.activity_main)
         browseViewModel = createViewModel()
         detailViewModel = createViewModel()
+        subscriptionViewModel= createViewModel()
         navigation.setOnNavigationItemSelectedListener(this)
 
-        browseViewModel?.getSelectedPodCastId()?.observe(this, Observer { id->
-           id?.let { val fragment = DetailFragment.newInstance(id)
-            this.addFragment(targetId,fragment)
-           }
-        })
+        browseViewModel?.getSelectedPodCastId()?.observe(this, podcastObserver)
+        subscriptionViewModel?.selectedPodcastId?.observe(this,podcastObserver)
+
         browseViewModel?.getCurrentGenre()?.observe(this, Observer {genre->
            genre?.let {
                val sectionFragment = SectionFragment.newInstance(genre.id)
@@ -47,6 +48,11 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             EpisodeFragment().show(supportFragmentManager,"")
         })
         navigation.selectedItemId=R.id.menu_browse
+    }
+    val podcastObserver = Observer<String> { id->
+        id?.let { val fragment = DetailFragment.newInstance(id)
+            this.addFragment(targetId,fragment)
+        }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

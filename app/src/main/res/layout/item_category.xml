@@ -9,7 +9,7 @@
             type="com.example.marlonmoorer.streamkast.api.models.MediaGenre"/>
         <variable
             name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.OnGenreClickListener"/>
+            type="com.example.marlonmoorer.streamkast.listeners.IGenreListener"/>
     </data>
 
     <FrameLayout
@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:background="@drawable/outlined_tile"
-        android:onClick="@{e->handler.onClick(genre)}"
+        android:onClick="@{e->handler.open(genre)}"
         android:clickable="true"
         android:padding="10dp">
 

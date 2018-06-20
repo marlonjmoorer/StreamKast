@@ -11,10 +11,9 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
-import com.example.marlonmoorer.streamkast.api.models.MediaItem
+import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.data.Featured
-import com.example.marlonmoorer.streamkast.listeners.OnPodcastClickListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 
 import kotlinx.android.synthetic.main.fragment_section.view.*
@@ -23,21 +22,20 @@ import kotlinx.android.synthetic.main.fragment_section.view.*
 private const val KEY = "SECTION_NAME"
 
 
-class SectionFragment : Fragment(),OnPodcastClickListener {
+class SectionFragment : Fragment() {
 
     private var title:String?=null
     lateinit var viewModel: BrowseViewModel
     private var podcastAdapter:PodcastListAdapter?=null
     private var featuredPodcastAdapter:FeaturedPodcastAdapter?=null
 
-    override fun onClick(podcastId: String) {
-        viewModel.setPodcast(podcastId)
-    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        podcastAdapter= PodcastListAdapter(this)
-        featuredPodcastAdapter= FeaturedPodcastAdapter(this)
+        podcastAdapter= PodcastListAdapter(viewModel)
+        featuredPodcastAdapter= FeaturedPodcastAdapter(viewModel)
         arguments?.let {
             MediaGenre.parse(it.getString(KEY))?.let { genre->
                 viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
@@ -52,7 +50,7 @@ class SectionFragment : Fragment(),OnPodcastClickListener {
           featuredPodcastAdapter?.setPodcasts(podcasts)
         }
     }
-    val podcastObserver= Observer<List<MediaItem>> { podcasts->
+    val podcastObserver= Observer<List<Podcast>> { podcasts->
        podcasts?.let {
            podcastAdapter?.setPostcasts(podcasts)
        }
