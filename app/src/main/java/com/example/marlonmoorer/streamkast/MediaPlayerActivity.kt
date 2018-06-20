@@ -27,7 +27,7 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
     private var episodeModel: EpisodeModel?=null
 
     private lateinit var binding: ActivityMediaPlayerBinding
-    var timer = Timer()
+    val timer = Timer()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_media_player)
@@ -42,6 +42,7 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
     override fun onDestroy() {
         super.onDestroy()
         unbindService(serviceConnection)
+        timer.cancel()
     }
     private val serviceConnection= object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
@@ -58,7 +59,6 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
                     setDisplayHomeAsUpEnabled(true)
                     setHomeButtonEnabled(true)
                     title=episodeModel?.title
-
                 }
                 startSeekBarTracking()
             }
@@ -70,7 +70,9 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
     fun startSeekBarTracking(){
       timer.scheduleAtFixedRate(object :TimerTask(){
           override fun run() {
-              updateUi()
+              if(episodeModel!!.isPlaying){
+                  updateUi()
+              }
           }
       },0,1000)
     }
@@ -95,4 +97,5 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
     override fun onStopTrackingTouch(bar: SeekBar?) {
         episodeModel?.play()
     }
+
 }

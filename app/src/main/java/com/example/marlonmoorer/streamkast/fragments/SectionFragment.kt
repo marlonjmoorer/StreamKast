@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 
@@ -68,12 +69,18 @@ class SectionFragment : Fragment() {
                 layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
                 adapter=featuredPodcastAdapter
             }
-        }
 
-        activity?.actionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setHomeButtonEnabled(true)
-            title=this@SectionFragment.title
+        }
+        (activity as AppCompatActivity).apply {
+            setSupportActionBar(view.toolbar)
+            supportActionBar?.apply {
+                setDisplayHomeAsUpEnabled(true)
+                setHomeButtonEnabled(true)
+                title=this@SectionFragment.title
+            }
+            view.toolbar.setNavigationOnClickListener {
+                this.onBackPressed()
+            }
         }
         setHasOptionsMenu(true)
         return view
@@ -90,6 +97,7 @@ class SectionFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.menu_main, menu);
     }
+
 
     companion object {
         @JvmStatic

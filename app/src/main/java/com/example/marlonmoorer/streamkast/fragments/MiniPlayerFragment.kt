@@ -15,7 +15,7 @@ import com.example.marlonmoorer.streamkast.*
 import com.example.marlonmoorer.streamkast.databinding.FragmentMiniPlayerBinding
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.support.v4.startService
+
 
 
 class MiniPlayerFragment:Fragment() {
@@ -54,7 +54,6 @@ class MiniPlayerFragment:Fragment() {
             episode?.let {
                 this.show()
                 episodeModel?.setEpisode(episode)
-               // startService<MediaService>()
                 episodeModel?.prepare()
             }
             binding?.playPause?.setOnClickListener {
@@ -73,4 +72,5 @@ class MiniPlayerFragment:Fragment() {
         super.onDestroy()
         activity?.unbindService(serviceConnection)
     }
+
 }

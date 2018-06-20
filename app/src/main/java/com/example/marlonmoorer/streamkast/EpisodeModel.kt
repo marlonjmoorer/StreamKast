@@ -15,6 +15,10 @@ class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener {
     init {
         mediaPlayer = MediaPlayer()
         mediaPlayer.setOnPreparedListener(this)
+        mediaPlayer.setOnBufferingUpdateListener{p,i->
+
+        }
+
 
     }
     val author
@@ -57,6 +61,7 @@ class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener {
     }
     override fun onPrepared(player: MediaPlayer) {
         player.start()
+        val info= player.trackInfo
         notifyChange()
     }
 
@@ -72,9 +77,10 @@ class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener {
 
     fun stop(){
         with(mediaPlayer){
+            pause()
             stop()
             reset()
-            notifyChange()
+            release()
         }
     }
 

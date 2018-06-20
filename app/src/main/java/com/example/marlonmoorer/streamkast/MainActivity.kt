@@ -7,12 +7,15 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.fragments.*
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.startService
 import javax.inject.Inject
 
 
@@ -79,4 +82,14 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val i=intentFor<MediaService>().apply {
+            action= MediaService.STOP
+        }
+        startService(i)
+    }
+
+
 }

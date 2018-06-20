@@ -30,7 +30,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
                 app:popupTheme="@style/PopupOverlay"
-                app:title="LOL"/>
+                />
 
         </android.support.design.widget.AppBarLayout>
 
