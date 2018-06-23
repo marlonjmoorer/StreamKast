@@ -9,11 +9,12 @@
 
     </data>
 
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="40dp"
-        android:background="@color/grey_800"
+        android:background="@color/black"
         >
 
         <ImageView

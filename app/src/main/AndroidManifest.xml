@@ -3,7 +3,9 @@
     package="com.example.marlonmoorer.streamkast">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -23,13 +25,31 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".MediaService" />
+        <service android:name=".MediaService">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
+        </service>
+
+        <receiver android:name=".MediaService$YourBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <!--<receiver android:name=".RemoteControlReciever">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MEDIA_BUTTON" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <activity
             android:name=".MediaPlayerActivity"
             android:label="@string/title_activity_media_player"
             android:launchMode="singleTask"
-            android:theme="@style/NoActionBar"></activity>
+            android:theme="@style/NoActionBar"/>
     </application>
 
 </manifest>

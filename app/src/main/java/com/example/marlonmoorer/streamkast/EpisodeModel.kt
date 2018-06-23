@@ -2,11 +2,12 @@ package com.example.marlonmoorer.streamkast
 
 import android.databinding.BaseObservable
 import android.databinding.Bindable
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.widget.SeekBar
 import com.example.marlonmoorer.streamkast.api.models.Episode
 
-class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener {
+class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener, AudioManager.OnAudioFocusChangeListener {
 
     private  var _episode: Episode? = null
     private var mediaPlayer: MediaPlayer
@@ -18,8 +19,8 @@ class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener {
         mediaPlayer.setOnBufferingUpdateListener{p,i->
 
         }
-
-
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC)
+        mediaPlayer.setVolume(1.0f, 1.0f)
     }
     val author
          @Bindable get() =  _episode?.author
@@ -61,7 +62,6 @@ class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener {
     }
     override fun onPrepared(player: MediaPlayer) {
         player.start()
-        val info= player.trackInfo
         notifyChange()
     }
 
@@ -87,6 +87,29 @@ class EpisodeModel : BaseObservable(), MediaPlayer.OnPreparedListener {
     fun seekTo(position: Int)=mediaPlayer.seekTo(position)
 
     var listener:SeekBar.OnSeekBarChangeListener?=null
+
+    override fun onAudioFocusChange(id: Int) {
+        when (id) {
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop()
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                mediaPlayer.pause()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                mediaPlayer.setVolume(0.3f, 0.3f)
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                    if (!mediaPlayer.isPlaying()&&_episode!==null) {
+                        mediaPlayer.start()
+                    }
+                    mediaPlayer.setVolume(1.0f, 1.0f)
+                }
+            }
+        }
+
 
 
 }

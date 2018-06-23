@@ -1,6 +1,10 @@
 package com.example.marlonmoorer.streamkast
 
 import android.arch.lifecycle.Observer
+import android.bluetooth.BluetoothAdapter
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -17,6 +21,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.startService
 import javax.inject.Inject
+import android.content.IntentFilter
+import android.media.session.MediaSession
 
 
 class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
@@ -51,6 +57,8 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             EpisodeFragment().show(supportFragmentManager,"")
         })
         navigation.selectedItemId=R.id.menu_browse
+
+
     }
     val podcastObserver = Observer<String> { id->
         id?.let { val fragment = DetailFragment.newInstance(id)
@@ -90,6 +98,8 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         }
         startService(i)
     }
+
+
 
 
 }

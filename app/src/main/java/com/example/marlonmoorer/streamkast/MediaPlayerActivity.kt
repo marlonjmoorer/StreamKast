@@ -12,6 +12,8 @@ import kotlinx.android.synthetic.main.activity_media_player.*
 import org.jetbrains.anko.support.v4.startActivity
 import android.databinding.DataBindingUtil
 import android.os.Handler
+import android.support.v4.media.session.MediaControllerCompat
+import android.view.KeyEvent
 import android.widget.SeekBar
 import com.example.marlonmoorer.streamkast.databinding.ActivityMediaPlayerBinding
 import org.jetbrains.anko.appcompat.v7.contentFrameLayout
@@ -60,6 +62,7 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
                     setHomeButtonEnabled(true)
                     title=episodeModel?.title
                 }
+                MediaControllerCompat.setMediaController(this@MediaPlayerActivity,binder.controller)
                 startSeekBarTracking()
             }
         }
@@ -96,6 +99,10 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
 
     override fun onStopTrackingTouch(bar: SeekBar?) {
         episodeModel?.play()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return super.onKeyDown(keyCode, event)
     }
 
 }
