@@ -3,9 +3,7 @@ package com.example.marlonmoorer.streamkast.api.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-
-
-
+import java.io.Serializable
 
 
 class Enclosure {
@@ -66,7 +64,7 @@ class Channel {
 
 }
 
-class Episode {
+class Episode{
 
     @SerializedName("title")
     @Expose

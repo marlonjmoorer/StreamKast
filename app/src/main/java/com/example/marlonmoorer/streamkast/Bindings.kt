@@ -1,10 +1,12 @@
 package com.example.marlonmoorer.streamkast
 
 import android.databinding.BindingAdapter
+import android.graphics.Bitmap
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import com.example.marlonmoorer.streamkast.api.models.Episode
 
@@ -29,6 +31,27 @@ object BindingAdapters{
             view.load(it)
         }
     }
+
+    @JvmStatic
+    @BindingAdapter("src")
+    fun loadImage(view: ImageView, image:Bitmap?){
+        view.setImageBitmap(image)
+    }
+
+
+
+    @JvmStatic
+    @BindingAdapter("progress")
+    fun setProgress(view: SeekBar, progress:Int?){
+       progress?.let { view.progress=progress }
+    }
+    @JvmStatic
+    @BindingAdapter("max")
+    fun setMax(view: SeekBar,max:Int?){
+       max?.let {  view.max=max}
+    }
+
+
     @JvmStatic
     @BindingAdapter("href")
     fun setLink(view: TextView, url: String?){

@@ -93,10 +93,10 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
 
     override fun onDestroy() {
         super.onDestroy()
-        val i=intentFor<MediaService>().apply {
-            action= MediaService.STOP
-        }
-        startService(i)
+//        val i=intentFor<MediaService>().apply {
+//            action= MediaService.STOP
+//        }
+//        startService(i)
     }
 
 

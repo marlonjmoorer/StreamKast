@@ -71,4 +71,6 @@ fun Int.toTime():String{
             .toString()
 }
 
+fun Long.toTime():String= this.toInt().toTime()
+
 

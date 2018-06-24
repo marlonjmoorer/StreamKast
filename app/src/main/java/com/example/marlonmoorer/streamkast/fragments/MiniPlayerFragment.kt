@@ -14,58 +14,78 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.*
 import com.example.marlonmoorer.streamkast.databinding.FragmentMiniPlayerBinding
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.support.v4.startService
 
 
 class MiniPlayerFragment:Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding=FragmentMiniPlayerBinding.inflate(inflater)
-        val intent= Intent(activity,MediaService::class.java)
-        activity?.bindService(intent,serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
-        return  binding?.root
-    }
+
     private var detailViewModel: DetailViewModel?=null
-    private var episodeModel: EpisodeModel?=null
+    private var mediaModel: MediaModel?=null
     private var binding:FragmentMiniPlayerBinding?=null
+    private  var serviceBound:Boolean=false
+
     private val serviceConnection= object: ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             if (binder is MediaService.MediaBinder){
-                episodeModel=binder.getModel()
-                binding?.model=episodeModel
-                binding?.executePendingBindings()
+                mediaModel=binder.getMediaModel()
+                binding?.model=mediaModel
                 binding?.miniTitle?.isSelected=true
                 binding?.root?.setOnClickListener {
                     startActivity<MediaPlayerActivity>()
                 }
+                binding?.executePendingBindings()
+                serviceBound=true
             }
         }
         override fun onServiceDisconnected(className: ComponentName?) {
-            episodeModel=null
+            mediaModel=null
+            serviceBound=false
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding=FragmentMiniPlayerBinding.inflate(inflater)
+        return  binding?.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.hide()
+        this.hideFragment()
         detailViewModel=createViewModel()
         detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
             episode?.let {
-                this.show()
-                episodeModel?.setEpisode(episode)
-                episodeModel?.prepare()
-                startService<MediaService>()
+                this.showFragment()
+
+                val media=MediaService.MediaItem(
+                    title=episode.title,
+                    author=episode.author,
+                    thumbnail=episode.thumbnail,
+                    url=episode.enclosure?.link,
+                    description=episode.description
+                )
+
+                if(!serviceBound) {
+                    val intent = intentFor<MediaService>()
+                    intent.putExtra(MediaService.MEDIA,media)
+                    activity?.startService(intent)
+                    activity?.bindService(intent, serviceConnection, AppCompatActivity.BIND_AUTO_CREATE)
+                }else{
+                    val broadcastIntent = Intent(MediaService.PLAY_AUDIO)
+                    broadcastIntent.putExtra(MediaService.MEDIA,media)
+                    activity?.sendBroadcast(broadcastIntent)
+                }
             }
             binding?.playPause?.setOnClickListener {
-               episodeModel?.play_pause()
+               mediaModel?.togglePlayback()
             }
         })
     }
-    fun hide(){
+    fun hideFragment(){
         fragmentManager?.beginTransaction()?.hide(this)?.commit()
     }
-    fun show(){
+    fun showFragment(){
         fragmentManager?.beginTransaction()?.show(this)?.commit()
     }
 

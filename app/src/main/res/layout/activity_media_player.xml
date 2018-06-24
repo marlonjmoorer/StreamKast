@@ -6,7 +6,7 @@
     <data>
         <variable
             name="model"
-            type="com.example.marlonmoorer.streamkast.EpisodeModel"/>
+            type="com.example.marlonmoorer.streamkast.MediaModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -56,9 +56,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:onProgressChanged="@{model.listener.onProgressChanged}"
-            android:onStartTrackingTouch="@{model.listener.onStartTrackingTouch}"
-            android:onStopTrackingTouch="@{model.listener.onStopTrackingTouch}"
+            app:max="@{model.length}"
             app:layout_constraintBottom_toTopOf="@+id/play"
             app:layout_constraintEnd_toStartOf="@+id/duration"
             app:layout_constraintHorizontal_bias="0.52"
