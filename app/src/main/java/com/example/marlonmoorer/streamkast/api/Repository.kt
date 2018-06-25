@@ -49,11 +49,13 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
 
     fun syncFeatured(id:String) = async{
 
-       if (!featuredItems.hasRows(id)){
+      // if (!featuredItems.hasRows(id)){
+            featuredItems.clearGenreItems(id)
             val data=when(id){
-                "0"->itunesService.topPodcast().execute().body()?.rss?.entries
-                else->itunesService.topPodcastByGenre(id).execute().body()?.rss?.entries
-            }
+                MediaGenre.Featured.id->itunesService.topPodcast()
+                else->itunesService.topPodcastByGenre(id)
+            }.execute().body()?.rss?.entries
+
             val entries= data?.map {
                 Featured().apply {
                     name=it.Name!!
@@ -66,7 +68,7 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
                 }
             }
             entries?.let { featuredItems.insertAll(it) }
-       }
+       //}
     }
     fun getFeaturedPostcasts(id:String) = featuredItems.getByGenreId(id)
 

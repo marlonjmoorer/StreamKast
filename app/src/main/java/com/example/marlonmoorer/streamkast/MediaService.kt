@@ -70,8 +70,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             val play_pauseAction= if(mediaPlayer.isPlaying) playbackAction(PlaybackStateCompat.ACTION_PAUSE)
             else playbackAction(PlaybackStateCompat.ACTION_PLAY)
 
-            val largeIcon =
-                    BitmapFactory.decodeStream(URL(mediaItem?.thumbnail).openStream())
+           // val largeIcon = BitmapFactory.decodeResource(resources,R.drawable.icons8_technology)
+                    //BitmapFactory.decodeStream(URL(mediaItem?.thumbnail).openStream())
 
             val mediaStyle=MediaStyle()
                     .setMediaSession(mediaSession!!.sessionToken)
@@ -82,7 +82,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             val notif = NotificationCompat.Builder(this, CHANNEL_ID)
                     .setShowWhen(false)
                     .setStyle(mediaStyle)
-                    .setLargeIcon(largeIcon)
+                  //  .setLargeIcon(largeIcon)
                     .setSmallIcon(android.R.drawable.stat_sys_headset)
                     .addAction(android.R.drawable.ic_media_previous, "previous",playbackAction(PlaybackStateCompat.ACTION_REWIND) )
                     .addAction(play_pause_icon, "play",play_pauseAction)
@@ -132,7 +132,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     }
 
     private fun updateMetaData()= async {
-        val albumArt = BitmapFactory.decodeStream(URL(mediaItem?.thumbnail).openStream())
+        val albumArt = BitmapFactory.decodeResource(resources,R.drawable.icons8_technology) //BitmapFactory.decodeStream(URL(mediaItem?.thumbnail).openStream())
         mediaSession!!.setMetadata(MediaMetadataCompat.Builder()
             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mediaItem?.author)
@@ -182,7 +182,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (mediaModel?.isPlaying==true) {
+            if (mediaModel?.playing==true) {
                 mediaModel?.pause()
             }
         }

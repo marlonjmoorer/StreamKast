@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_media_player.*
 import android.databinding.DataBindingUtil
 import android.databinding.Observable
+import android.support.v4.media.session.MediaControllerCompat
 import android.util.Log
 import android.widget.SeekBar
 import com.example.marlonmoorer.streamkast.databinding.ActivityMediaPlayerBinding
@@ -18,7 +19,7 @@ import com.example.marlonmoorer.streamkast.databinding.ActivityMediaPlayerBindin
 class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener {
 
     private var mediaModel: MediaModel?=null
-
+    //private  var binder:MediaService.MediaBinder
     private lateinit var binding: ActivityMediaPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,13 +42,16 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
         override fun onServiceConnected(className: ComponentName?, binder: IBinder?) {
             if (binder is MediaService.MediaBinder){
                 mediaModel=binder.getMediaModel()
-                binding.model=mediaModel
-                binding.seekBar.apply {
-                    max=mediaModel?.length?:0
-                    setOnSeekBarChangeListener(this@MediaPlayerActivity)
-                }
-                binding.play.setOnClickListener {
-                    mediaModel?.togglePlayback()
+                with(binding){
+                    model=mediaModel
+                    seekBar.apply {
+                        max=mediaModel?.length?:0
+                        progress=mediaModel?.position?:0
+                        setOnSeekBarChangeListener(this@MediaPlayerActivity)
+                    }
+                    play.setOnClickListener {
+                        mediaModel?.togglePlayback()
+                    }
                 }
                 supportActionBar?.apply {
                     setDisplayHomeAsUpEnabled(true)
@@ -67,7 +71,6 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
 
     override fun onProgressChanged(bar: SeekBar?, position:  Int, fromUser: Boolean) {
         if (fromUser){
-            mediaModel?.seekTo(position)
             binding.elapsed.text= position.toTime()
         }
     }
@@ -76,8 +79,9 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
         mediaModel?.pause()
     }
 
-    override fun onStopTrackingTouch(bar: SeekBar?) {
+    override fun onStopTrackingTouch(bar: SeekBar) {
         mediaModel?.play()
+        mediaModel?.seekTo(bar.progress)
     }
 
     private val propertyChangedCallback=object :Observable.OnPropertyChangedCallback(){

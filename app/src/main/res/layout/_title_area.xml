@@ -39,6 +39,7 @@
             android:layout_marginTop="8dp"
             android:text="@{channel.title}"
             android:textSize="22sp"
+            android:maxLines="2"
             app:layout_constraintBottom_toTopOf="@+id/textView3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"

@@ -36,7 +36,7 @@ class  BrowseViewModel:BaseViewModel(),IGenreListener,IPodcastListener {
         }else{
             repository.subscribe(Subscription().apply {
                 title=podcast.collectionName
-                thumbnail=podcast.artworkUrl100
+                thumbnail=podcast.artworkUrl600
                 podcastId=podcast.collectionId.toInt()
             })
         }

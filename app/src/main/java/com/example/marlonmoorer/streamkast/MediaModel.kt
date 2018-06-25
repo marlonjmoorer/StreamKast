@@ -16,7 +16,7 @@ class MediaModel(val controller:MediaControllerCompat): BaseObservable() {
         }
 
         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-            isPlaying=state?.state==PlaybackStateCompat.STATE_PLAYING
+            playing=state?.state==PlaybackStateCompat.STATE_PLAYING
             position= state?.position?.toInt()
             notifyPropertyChanged(BR.playing)
             notifyPropertyChanged(BR.elapsed)
@@ -35,7 +35,7 @@ class MediaModel(val controller:MediaControllerCompat): BaseObservable() {
     val author
         @Bindable get() = metaData?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
     @Bindable
-    var isPlaying = false
+    var playing = false
 
     val title
         @Bindable get() = metaData?.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
@@ -57,15 +57,16 @@ class MediaModel(val controller:MediaControllerCompat): BaseObservable() {
 
     fun play(){
         transportControls.play()
-        notifyPropertyChanged(BR.playing)
+       // notifyPropertyChanged(BR.playing)
     }
     fun pause(){
         transportControls.pause()
-        notifyPropertyChanged(BR.playing)
+        //notifyPropertyChanged(BR.playing)
     }
 
     fun togglePlayback(){
-        if (isPlaying) pause() else play()
+        if (playing) pause() else play()
+        //notifyPropertyChanged(BR.playing)
     }
 
     fun seekTo(position: Int) =transportControls.seekTo(position.toLong())

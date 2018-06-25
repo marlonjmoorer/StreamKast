@@ -100,7 +100,7 @@
             android:layout_marginBottom="16dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:background="@{model.isPlaying? @drawable/icons8_pause : @drawable/icons8_play}"
+            android:background="@{model.playing? @drawable/icons8_pause : @drawable/icons8_play}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button6"
             app:layout_constraintStart_toEndOf="@+id/button3" />

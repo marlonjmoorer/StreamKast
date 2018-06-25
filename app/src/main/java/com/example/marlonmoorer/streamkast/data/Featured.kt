@@ -32,6 +32,9 @@ interface FeaturedDao {
     @Query("SELECT EXISTS(SELECT * FROM featured  WHERE  genreId = :id)")
     fun hasRows(id:String):Boolean
 
+    @Query("DELETE from featured   WHERE  genreId = :genreId")
+    fun clearGenreItems(genreId:String)
+
     @Insert
     fun insert(featured: Featured)
 
