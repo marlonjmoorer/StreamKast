@@ -8,23 +8,25 @@ import android.support.v4.media.session.PlaybackStateCompat
 
 class MediaModel(val controller:MediaControllerCompat): BaseObservable() {
 
-    private var metaData:MediaMetadataCompat?=null
-    private val callback=object :MediaControllerCompat.Callback(){
-        override fun onMetadataChanged(metadata: MediaMetadataCompat) {
-            metaData= metadata
-            notifyChange()
-        }
+    private var metadata:MediaMetadataCompat?=null
+    private var state:PlaybackStateCompat?=null
 
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-            playing=state?.state==PlaybackStateCompat.STATE_PLAYING
-            position= state?.position?.toInt()
-            notifyPropertyChanged(BR.playing)
-            notifyPropertyChanged(BR.elapsed)
-        }
-
-    }
+//    private val callback=object :MediaControllerCompat.Callback(){
+//        override fun onMetadataChanged(metadata: MediaMetadataCompat) {
+//            this@MediaModel.metadata= metadata
+//            notifyChange()
+//        }
+//
+//        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+//            this@MediaModel.state=state
+//            notifyPropertyChanged(BR.playing)
+//            notifyPropertyChanged(BR.elapsed)
+//            notifyPropertyChanged(BR.position)
+//        }
+//
+//    }
     init {
-        controller.registerCallback(callback)
+       // controller.registerCallback(callback)
     }
 
     val transportControls
@@ -33,43 +35,45 @@ class MediaModel(val controller:MediaControllerCompat): BaseObservable() {
 
 
     val author
-        @Bindable get() = metaData?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
-    @Bindable
-    var playing = false
+        @Bindable get() = this.metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
+
+    val playing
+        @Bindable get() = this.state?.state==PlaybackStateCompat.STATE_PLAYING
 
     val title
-        @Bindable get() = metaData?.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
+        @Bindable get() = this.metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
     val thumbnail
-        @Bindable get() = metaData?.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
+        @Bindable get() = this.metadata?.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
 
     val elapsed
-        @Bindable get() = position?.toTime()
+        @Bindable get() = this.position?.toTime()
 
     val duration
-        @Bindable get() = length?.toTime()
+        @Bindable get() = this.length?.toTime()
 
 
     val length
-        @Bindable get() = metaData?.getLong(MediaMetadataCompat.METADATA_KEY_DURATION)?.toInt()
+        @Bindable get() = this.metadata?.getLong(MediaMetadataCompat.METADATA_KEY_DURATION)?.toInt()
 
-    @Bindable
-    var position:Int?=0
+
+    val position
+     @Bindable get() = this.state?.position?.toInt()
 
     fun play(){
-        transportControls.play()
+        this.transportControls.play()
        // notifyPropertyChanged(BR.playing)
     }
     fun pause(){
-        transportControls.pause()
+        this.transportControls.pause()
         //notifyPropertyChanged(BR.playing)
     }
 
     fun togglePlayback(){
-        if (playing) pause() else play()
+        if (this.playing) pause() else play()
         //notifyPropertyChanged(BR.playing)
     }
 
-    fun seekTo(position: Int) =transportControls.seekTo(position.toLong())
+    fun seekTo(position: Int) = this.transportControls.seekTo(position.toLong())
 
 
 }

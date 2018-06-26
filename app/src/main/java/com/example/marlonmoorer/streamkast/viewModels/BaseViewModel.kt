@@ -19,11 +19,12 @@ abstract class BaseViewModel:ViewModel() {
 
     class ViewModelFactory: ViewModelProvider.Factory{
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            val vm=modelClass.getConstructor().newInstance()
-            if(vm is BaseViewModel){
+            if(modelClass== BaseViewModel::class.java){
+                val vm=modelClass.getConstructor().newInstance()
                 App.component?.inject(vm)
+                return vm as T
             }
-            return vm
+            return modelClass.getConstructor().newInstance()
         }
     }
 

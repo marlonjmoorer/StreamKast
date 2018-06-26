@@ -32,7 +32,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     private var mediaItem:MediaItem?=null
     private var mediaPlayer:MediaPlayer
     private var mediaModel:MediaModel?=null
-    private  val timer:Timer
+
 
     companion object {
         const val NOTIFICATION_ID=8888
@@ -44,7 +44,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     init {
         mediaPlayer= MediaPlayer()
-        timer= Timer()
     }
 
     override fun onCreate() {
@@ -59,7 +58,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             initMediaPlayer()
             initMediaSession()
             updateMetaData()
-            sessionToken=mediaSession?.sessionToken
+            if(sessionToken==null)
+                sessionToken=mediaSession?.sessionToken
         }
         MediaButtonReceiver.handleIntent(mediaSession, intent)
         return START_STICKY
@@ -152,13 +152,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         mediaSession?.controller?.transportControls?.play()
         updateMetaData()
         startForeground()
-        timer.scheduleAtFixedRate(object :TimerTask(){
-            override fun run() {
-                if(mediaPlayer.isPlaying){
-                    setPlaybackState(PlaybackStateCompat.STATE_PLAYING)
-                }
-            }
-        },0,1000)
+
     }
 
     private fun setPlaybackState(state: Int) {
@@ -166,12 +160,15 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         else PlaybackStateCompat.ACTION_PLAY
         val playbackstateBuilder = PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or action)
-                .setState(state, mediaPlayer.currentPosition.toLong(), 0f)
+                .setState(state, mediaPlayer.currentPosition.toLong(),1.0f, SystemClock.elapsedRealtime())
         mediaSession?.setPlaybackState(playbackstateBuilder.build())
     }
 
     inner class MediaBinder: Binder() {
         fun getMediaModel()=mediaModel
+        val controller
+            get() = mediaSession?.controller
+
     }
     data class MediaItem(
             var url:String?=null,
@@ -226,7 +223,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         }
 
         override fun onStop() {
-            timer.cancel()
+
             mediaPlayer.reset()
             mediaPlayer.release()
             stopForeground(true)
