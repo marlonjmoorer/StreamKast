@@ -25,6 +25,7 @@ import android.text.TextUtils
 import org.jetbrains.anko.intentFor
 import java.io.Serializable
 import java.util.*
+import android.graphics.Bitmap
 
 class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener  {
 
@@ -70,7 +71,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             val play_pauseAction= if(mediaPlayer.isPlaying) playbackAction(PlaybackStateCompat.ACTION_PAUSE)
             else playbackAction(PlaybackStateCompat.ACTION_PLAY)
 
-           // val largeIcon = BitmapFactory.decodeResource(resources,R.drawable.icons8_technology)
+           val largeIcon =mediaItem?.bitmapImage
                     //BitmapFactory.decodeStream(URL(mediaItem?.thumbnail).openStream())
 
             val mediaStyle=MediaStyle()
@@ -82,7 +83,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             val notif = NotificationCompat.Builder(this, CHANNEL_ID)
                     .setShowWhen(false)
                     .setStyle(mediaStyle)
-                  //  .setLargeIcon(largeIcon)
+                    .setLargeIcon(largeIcon)
                     .setSmallIcon(android.R.drawable.stat_sys_headset)
                     .addAction(android.R.drawable.ic_media_previous, "previous",playbackAction(PlaybackStateCompat.ACTION_REWIND) )
                     .addAction(play_pause_icon, "play",play_pauseAction)
@@ -117,6 +118,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         }
     }
     private fun initMediaSession() {
+        with(mediaItem){
+            async { this?.bitmapImage =URL(this?.thumbnail).toBitmap() }
+        }
         val mediaButtonReciever=  ComponentName(applicationContext,MediaButtonReceiver::class.java)
         val intent= Intent(Intent.ACTION_MEDIA_BUTTON).apply {
             setClass(this@MediaService,MediaButtonReceiver::class.java)
@@ -131,16 +135,15 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         }
     }
 
-    private fun updateMetaData()= async {
-        val albumArt = BitmapFactory.decodeResource(resources,R.drawable.icons8_technology) //BitmapFactory.decodeStream(URL(mediaItem?.thumbnail).openStream())
+    private fun updateMetaData(){
         mediaSession!!.setMetadata(MediaMetadataCompat.Builder()
-            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, albumArt)
+            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,mediaItem?.bitmapImage)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mediaItem?.author)
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mediaItem?.title)
             .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,mediaPlayer.duration.toLong())
             .build())
     }
-    fun updateNotification()= async{
+    fun updateNotification(){
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID,notification)
     }
@@ -175,7 +178,13 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             var title:String?=null,
             var author:String?=null,
             var thumbnail:String?=null,
-            var description: String?=null):Serializable
+            var description: String?=null):Serializable{
+
+        var bitmapImage:Bitmap?=null
+        init {
+
+        }
+    }
 
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -273,7 +282,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     }
 
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
-        result.sendResult(null);
+        result.sendResult(null)
     }
 
 

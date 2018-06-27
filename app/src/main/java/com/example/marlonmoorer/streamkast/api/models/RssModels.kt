@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.api.models
 
 
+import android.graphics.Bitmap
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -66,6 +67,9 @@ class Channel {
 
 class Episode{
 
+    init {
+        var d=0
+    }
     @SerializedName("title")
     @Expose
     var title: String? = null
@@ -96,6 +100,8 @@ class Episode{
     @SerializedName("categories")
     @Expose
     var categories: List<Any>? = null
+
+    var imageBitmap:Bitmap?=null
 
 }
 

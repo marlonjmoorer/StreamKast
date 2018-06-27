@@ -17,14 +17,11 @@ abstract class BaseViewModel:ViewModel() {
     @Inject
     lateinit var context:Context
 
-    class ViewModelFactory: ViewModelProvider.Factory{
+    class ViewModelFactory: ViewModelProvider.NewInstanceFactory() {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if(modelClass== BaseViewModel::class.java){
-                val vm=modelClass.getConstructor().newInstance()
-                App.component?.inject(vm)
-                return vm as T
-            }
-            return modelClass.getConstructor().newInstance()
+            val vm=modelClass.getConstructor().newInstance()
+            App.component?.inject(vm as BaseViewModel)
+            return vm
         }
     }
 

@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.os.SystemClock
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -24,10 +25,10 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
 
 
     private var previousState:PlaybackStateCompat?=null
-    private val playState:MutableLiveData<Int>
+    val playState:MutableLiveData<Int>
     private var timer:Timer?=null
-    private  var controller: MutableLiveData<MediaControllerCompat>
-    private  val position:MutableLiveData<Int>
+    var controller: MutableLiveData<MediaControllerCompat>
+    val position:MutableLiveData<Int>
     val metadata:MutableLiveData<MediaMetadataCompat>
 
     val application
@@ -44,12 +45,20 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
         application.bindService(intent,this, AppCompatActivity.BIND_AUTO_CREATE)
     }
     fun disconnect() {
-        getApplication<Application>().unbindService(this)
+        application.unbindService(this)
     }
 
     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
         if (binder is MediaService.MediaBinder){
-            binder.controller?.registerCallback(callback)
+            with(binder.controller!!){
+                registerCallback(callback)
+                val state=playbackState
+                updatePlaybackState(state)
+                updateMetadata(metadata)
+                when(state?.state){
+                    PlaybackStateCompat.STATE_PLAYING,PlaybackStateCompat.STATE_BUFFERING -> scheduleSeekbarUpdate()
+                }
+            }
             controller.postValue(binder.controller)
         }
     }
@@ -71,7 +80,6 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
     private fun updatePlaybackState(state: PlaybackStateCompat?) {
         state?.let {
             previousState=state
-
             when (state.state) {
                 PlaybackStateCompat.STATE_PLAYING -> {
                     scheduleSeekbarUpdate()
@@ -91,10 +99,7 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
     }
     private  fun updateMetadata(metadata:MediaMetadataCompat?){
         metadata?.let {
-            //            toolbar.title=it.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
-//            thumbnail_large.setImageBitmap(it.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART))
-//            duration.text=it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt().toTime()
-//            seekBar.max=it.getLong(MediaMetadataCompat.METADATA_KEY_DURATION).toInt()
+            this.metadata.postValue(it)
         }
     }
 
@@ -104,14 +109,28 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
         timer= Timer()
         timer?.scheduleAtFixedRate(object : TimerTask(){
             override fun run() {
-
+                updateProgress()
             }
         },0,1000)
     }
     private fun stopSeekbarUpdate() {
         timer?.cancel()
     }
+    private fun updateProgress() {
+        previousState?.let {
+            var currentPosition = it.getPosition()
+            if (it.getState() == PlaybackStateCompat.STATE_PLAYING) {
+                val timeDelta = SystemClock.elapsedRealtime() - it.lastPositionUpdateTime
+                currentPosition += timeDelta.toInt() * it.playbackSpeed.toLong()
+            }
+            position.postValue(currentPosition.toInt())
+        }
+    }
 
+    override fun onCleared() {
+        super.onCleared()
+        application.unbindService(this)
+    }
 
 
 

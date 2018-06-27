@@ -13,11 +13,14 @@ import android.view.ViewGroup
 
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.api.models.Episode
+import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
+import com.example.marlonmoorer.streamkast.toBitmap
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import java.net.URL
 
 /**
  * Created by marlonmoorer on 3/24/18.

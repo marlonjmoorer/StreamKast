@@ -15,10 +15,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import org.jetbrains.anko.image
 import android.arch.persistence.room.Room
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.widget.RemoteViews
 import com.bumptech.glide.request.target.NotificationTarget
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
+import java.net.URL
 
 
 /**
@@ -40,9 +43,16 @@ fun RemoteViews.loadImage(context: Context,target: NotificationTarget,url: Strin
 }
 
 inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): T {
- return ViewModelProviders.of(this, BaseViewModel.ViewModelFactory()).get(T::class.java)
+
+    if(!BaseViewModel::class.java.isAssignableFrom(T::class.java)){
+        ViewModelProviders.of(this).get(T::class.java)
+    }
+    return ViewModelProviders.of(this, BaseViewModel.ViewModelFactory()).get(T::class.java)
 }
 inline fun <reified T : ViewModel> Fragment.createViewModel(): T {
+    if(!BaseViewModel::class.java.isAssignableFrom(T::class.java)){
+        ViewModelProviders.of(this).get(T::class.java)
+    }
     return ViewModelProviders.of(this.activity!!, BaseViewModel.ViewModelFactory()).get(T::class.java)
 }
 
@@ -73,4 +83,7 @@ fun Int.toTime():String{
 
 fun Long.toTime():String= this.toInt().toTime()
 
+fun URL.toBitmap():Bitmap{
+    return BitmapFactory.decodeStream(this.openStream())
+}
 

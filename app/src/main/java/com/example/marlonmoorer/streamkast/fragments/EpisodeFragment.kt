@@ -31,7 +31,7 @@ class EpisodeFragment: BottomSheetDialogFragment(),IEpisodeListener {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentEpisodeBinding.inflate(inflater)
-        detailModel.getCurrentEpisode().observe(this, Observer { episode->
+        detailModel.getCurrentEpisode().observe(this, Observer { episode ->
             binding.episode=episode
         })
         binding.handler=this
