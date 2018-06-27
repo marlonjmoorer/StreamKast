@@ -51,7 +51,7 @@ inline fun <reified T : ViewModel> AppCompatActivity.createViewModel(): T {
 }
 inline fun <reified T : ViewModel> Fragment.createViewModel(): T {
     if(!BaseViewModel::class.java.isAssignableFrom(T::class.java)){
-        ViewModelProviders.of(this).get(T::class.java)
+        ViewModelProviders.of(this.activity!!).get(T::class.java)
     }
     return ViewModelProviders.of(this.activity!!, BaseViewModel.ViewModelFactory()).get(T::class.java)
 }

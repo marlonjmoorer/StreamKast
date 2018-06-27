@@ -5,7 +5,7 @@
     <data>
         <variable
             name="model"
-            type="com.example.marlonmoorer.streamkast.MediaModel"/>
+            type="com.example.marlonmoorer.streamkast.MediaPlayerModel"/>
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:layout_height="60dp"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
-            android:background="@{model.playing? @drawable/icons8_pause : @drawable/icons8_play}"
+            android:background="@drawable/icons8_play"
             app:layout_constraintBottom_toBottomOf="@+id/mini_image"
             app:layout_constraintDimensionRatio=""
             app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
             app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:src="@{model.thumbnail}" />
+            />
 
         <TextView
             android:id="@+id/mini_title"
@@ -52,7 +52,7 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="@{model.title}"
+            android:text="@{model.Title}"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/play_pause"
