@@ -1,48 +1,38 @@
 package com.example.marlonmoorer.streamkast.fragments
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.support.v4.app.Fragment
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.*
-import com.example.marlonmoorer.streamkast.databinding.FragmentMiniPlayerBinding
+import com.example.marlonmoorer.streamkast.databinding.FragmentMediaplayerBinding
+
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.MediaViewModel
-import kotlinx.android.synthetic.main.fragment_mini_player.*
-
-import org.jetbrains.anko.support.v4.intentFor
-import org.jetbrains.anko.support.v4.startActivity
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import kotlinx.android.synthetic.main.fragment_mediaplayer.*
 
 
-class MiniPlayerFragment:Fragment() {
+class MediaPlayerFragment:Fragment(), SlidingUpPanelLayout.PanelSlideListener{
 
 
     private var detailViewModel: DetailViewModel?=null
     var mediaViewModel:MediaViewModel?=null
     var mediaPlayerModel=MediaPlayerModel()
     private  var controller: MediaControllerCompat?=null
-    private var binding:FragmentMiniPlayerBinding?=null
+    private var binding:FragmentMediaplayerBinding?=null
 
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding=FragmentMiniPlayerBinding.inflate(inflater)
+        binding=FragmentMediaplayerBinding.inflate(inflater)
         binding?.model=mediaPlayerModel
-        binding?.root?.setOnClickListener {
-            startActivity<MediaPlayerActivity>()
-        }
-        binding?.miniTitle?.isSelected=true
+        binding?.nowPlaying?.miniTitle?.isSelected=true
         binding?.playPause?.setOnClickListener {
             controller?.playbackState?.let {
                 val controls = controller?.transportControls
@@ -92,13 +82,13 @@ class MiniPlayerFragment:Fragment() {
 
         })
         with(mediaViewModel!!){
-            metadata.observe(this@MiniPlayerFragment, Observer {data->
+            metadata.observe(this@MediaPlayerFragment, Observer { data->
                 data?.let {
                     mediaPlayerModel.Image=data.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
                     mediaPlayerModel.Title=data.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
                 }
             })
-            playState.observe(this@MiniPlayerFragment, Observer { state->
+            playState.observe(this@MediaPlayerFragment, Observer { state->
                 when(state) {
                     PlaybackStateCompat.STATE_PLAYING -> {
                        play_pause.setBackgroundResource(R.drawable.icons8_pause)
@@ -111,11 +101,12 @@ class MiniPlayerFragment:Fragment() {
                     }
                 }
             })
-            controller.observe(this@MiniPlayerFragment, Observer {
-                this@MiniPlayerFragment.controller=it
+            controller.observe(this@MediaPlayerFragment, Observer {
+                this@MediaPlayerFragment.controller=it
             })
         }
     }
+
     fun hideFragment(){
         fragmentManager?.beginTransaction()?.hide(this)?.commit()
     }
@@ -126,6 +117,17 @@ class MiniPlayerFragment:Fragment() {
     override fun onDestroy() {
         super.onDestroy()
        // activity?.unbindService(serviceConnection)
+    }
+
+    override fun onPanelSlide(panel: View?, slideOffset: Float) {
+        now_playing?.fade(1 - (slideOffset))
+        thumbnail?.fade(slideOffset )
+    }
+
+    override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
+       when(newState){
+
+       }
     }
 
 }

@@ -1,5 +1,7 @@
 package com.example.marlonmoorer.streamkast
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.arch.lifecycle.Observer
 import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
@@ -12,20 +14,18 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 
-import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.fragments.*
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.startService
-import javax.inject.Inject
-import android.content.IntentFilter
-import android.media.session.MediaSession
+import android.view.View
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
+import org.jetbrains.anko.find
+import org.jetbrains.anko.toast
 
 
-class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSelectedListener, SlidingUpPanelLayout.PanelSlideListener {
 
 
     private var browseViewModel: BrowseViewModel?=null
@@ -42,7 +42,15 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         browseViewModel = createViewModel()
         detailViewModel = createViewModel()
         subscriptionViewModel= createViewModel()
-        navigation.setOnNavigationItemSelectedListener(this)
+        nav.setOnNavigationItemSelectedListener(this)
+        supportFragmentManager.findFragmentById(R.id.mini_player)?.run {
+            if(this is SlidingUpPanelLayout.PanelSlideListener){
+                val slidePanel = find<SlidingUpPanelLayout>(R.id.sliding_panel)
+                slidePanel.addPanelSlideListener(this)
+                slidePanel.addPanelSlideListener(this@MainActivity)
+            }
+        }
+
 
         browseViewModel?.getSelectedPodCastId()?.observe(this, podcastObserver)
         subscriptionViewModel?.selectedPodcastId?.observe(this,podcastObserver)
@@ -56,7 +64,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         detailViewModel?.getCurrentEpisode()?.observe(this, Observer {episode->
             EpisodeFragment().show(supportFragmentManager,"")
         })
-        navigation.selectedItemId=R.id.menu_browse
+        nav.selectedItemId=R.id.menu_browse
 
 
     }
@@ -76,6 +84,19 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         }
         replaceFragment(targetId,fragment)
         return true
+    }
+    override fun onPanelSlide(panel: View?, slideOffset: Float) {
+        nav.animate()
+        .translationY(slideOffset*nav.height)
+        .setDuration(0)
+
+    }
+
+    override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
+//        when(newState){
+//           SlidingUpPanelLayout.PanelState.COLLAPSED-> nav.visibility=View.VISIBLE
+//            SlidingUpPanelLayout.PanelState.EXPANDED->nav.visibility=View.GONE
+//        }
     }
 
 

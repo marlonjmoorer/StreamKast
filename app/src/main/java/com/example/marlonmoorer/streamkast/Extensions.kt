@@ -1,5 +1,7 @@
 package com.example.marlonmoorer.streamkast
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.Notification
 import android.app.Service
@@ -17,6 +19,7 @@ import org.jetbrains.anko.image
 import android.arch.persistence.room.Room
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.view.View
 import android.widget.RemoteViews
 import com.bumptech.glide.request.target.NotificationTarget
 import com.example.marlonmoorer.streamkast.data.KastDatabase
@@ -86,4 +89,18 @@ fun Long.toTime():String= this.toInt().toTime()
 fun URL.toBitmap():Bitmap{
     return BitmapFactory.decodeStream(this.openStream())
 }
+fun View.fade(alpha:Float){
+    this.animate()
+            .alpha(alpha)
+            .setDuration(0)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    when(this@fade.alpha){
+                        in 0f..(.50f) ->this@fade.visibility=View.GONE
+                        in (.50f)..1f->this@fade.visibility=View.VISIBLE
+                    }
+                }
+            });
 
+}
