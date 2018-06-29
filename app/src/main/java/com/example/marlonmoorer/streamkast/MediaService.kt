@@ -26,13 +26,16 @@ import org.jetbrains.anko.intentFor
 import java.io.Serializable
 import java.util.*
 import android.graphics.Bitmap
+import android.graphics.drawable.Icon
+import org.jetbrains.anko.doAsync
 
 class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener  {
 
-    private var mediaSession: MediaSessionCompat? = null
+    private var mediaSession: MediaSessionCompat?=null
     private var mediaItem:MediaItem?=null
     private var mediaPlayer:MediaPlayer
-    private var mediaModel:MediaModel?=null
+
+
 
 
     companion object {
@@ -41,65 +44,117 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         const val MEDIAPLAYER="MEDIAPLAYER"
         const val MEDIA="MEDIA"
         const val PLAY_AUDIO="PLAY_AUDIO"
+        val ACTION_PLAY = "ACTION_PLAY"
+        val ACTION_PAUSE = "ACTION_PAUSE"
+        val ACTION_PREVIOUS = "ACTION_PREVIOUS"
+        val ACTION_NEXT = "ACTION_NEXT"
+        val ACTION_STOP = "ACTION_STOP"
+
     }
 
     init {
         mediaPlayer= MediaPlayer()
     }
 
+    val transportControls
+        get() = mediaSession?.controller?.transportControls
+
     override fun onCreate() {
         super.onCreate()
+        val mediaButtonReciever=  ComponentName(applicationContext,MediaButtonReceiver::class.java)
+        val intent= Intent(Intent.ACTION_MEDIA_BUTTON).apply {
+            setClass(this@MediaService,MediaButtonReceiver::class.java)
+        }
+        val pendingIntent= PendingIntent.getBroadcast(this,0,intent,0)
+        mediaSession = MediaSessionCompat(applicationContext, "Tag",mediaButtonReciever,null).apply {
+            setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+            setCallback(mediaSessionCallback)
+            isActive=true
+            setMediaButtonReceiver(pendingIntent)
+        }
+
         registerReceiver(noisyReceiver,IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
         registerReceiver(playAudioReceiver, IntentFilter(PLAY_AUDIO))
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    fun handleIntent(intent: Intent){
         if(intent.hasExtra(MEDIA)){
-            mediaItem= intent.getSerializableExtra(MEDIA) as MediaItem
+            mediaItem = (intent.getSerializableExtra(MEDIA) as MediaItem).apply{
+                this@MediaService.load(this.thumbnail,{bitmap-> this.bitmapImage = bitmap})
+            }
             initMediaPlayer()
-            initMediaSession()
             updateMetaData()
             if(sessionToken==null)
                 sessionToken=mediaSession?.sessionToken
         }
+    }
+    fun handleMediaButtonAction(intent: Intent){
+        mediaSession?.controller?.transportControls?.run{
+            when(intent.action){
+                ACTION_PLAY-> play()
+                ACTION_NEXT->skipToNext()
+                ACTION_PREVIOUS->skipToPrevious()
+                ACTION_PAUSE->pause()
+                ACTION_STOP->stop()
+            }
+        }
+    }
+
+    private fun createAction(actionNumber: Int): PendingIntent {
+        val playbackAction = Intent(this, MediaService::class.java)
+         playbackAction.action =  when (actionNumber) {
+            0 -> ACTION_PLAY
+            1 -> ACTION_PAUSE
+            2 -> ACTION_NEXT
+            3 -> ACTION_PREVIOUS
+            4-> ACTION_STOP
+            else -> null
+        }
+        return PendingIntent.getService(this, actionNumber, playbackAction, 0)
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        handleIntent(intent)
+        handleMediaButtonAction(intent)
         MediaButtonReceiver.handleIntent(mediaSession, intent)
         return START_STICKY
     }
 
     val notification:Notification
         get(){
-            val play_pauseAction= if(mediaPlayer.isPlaying) playbackAction(PlaybackStateCompat.ACTION_PAUSE)
-            else playbackAction(PlaybackStateCompat.ACTION_PLAY)
-
-           val largeIcon =mediaItem?.bitmapImage
-                    //BitmapFactory.decodeStream(URL(mediaItem?.thumbnail).openStream())
+            val play_pauseAction:PendingIntent
+            val play_pause_icon:Int
+            if(mediaPlayer.isPlaying) {
+                play_pauseAction=createAction(1)
+                play_pause_icon= R.drawable.icons8_pause
+            }
+            else {
+                play_pauseAction=createAction(0)
+                play_pause_icon= R.drawable.icons8_play
+            }
 
             val mediaStyle=MediaStyle()
-                    .setMediaSession(mediaSession!!.sessionToken)
+                    .setMediaSession(mediaSession?.sessionToken)
                     .setShowActionsInCompactView(0,1,2)
 
-            val play_pause_icon= if(mediaPlayer.isPlaying) R.drawable.icons8_pause else R.drawable.icons8_play
-
+            val activityIntent=intentFor<MainActivity>().apply {
+                action= MEDIAPLAYER
+            }
             val notif = NotificationCompat.Builder(this, CHANNEL_ID)
                     .setShowWhen(false)
                     .setStyle(mediaStyle)
-                    .setLargeIcon(largeIcon)
+                    .setLargeIcon(mediaItem?.bitmapImage)
                     .setSmallIcon(android.R.drawable.stat_sys_headset)
-                    .addAction(android.R.drawable.ic_media_previous, "previous",playbackAction(PlaybackStateCompat.ACTION_REWIND) )
+                    .addAction(android.R.drawable.ic_media_previous, "previous",createAction(3) )
                     .addAction(play_pause_icon, "play",play_pauseAction)
-                    .addAction(android.R.drawable.ic_media_next, "next",playbackAction(PlaybackStateCompat.ACTION_FAST_FORWARD))
+                    .addAction(android.R.drawable.ic_media_next, "next",createAction(2))
                     .setContentText(mediaItem?.author)
                     .setContentTitle(mediaItem?.title)
-                    .setDeleteIntent(playbackAction(PlaybackStateCompat.ACTION_STOP))
-                    .setContentIntent(PendingIntent.getActivity(this,0,intentFor<MediaPlayerActivity>(),0))
+                    .setDeleteIntent(createAction(4))
+                    .setContentIntent(PendingIntent.getActivity(this,0,activityIntent,0))
                     .build()
             return notif
         }
-
-    private fun playbackAction(action:Long): PendingIntent? {
-       return MediaButtonReceiver.buildMediaButtonPendingIntent(this,action)
-    }
-
 
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -117,26 +172,10 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             prepareAsync()
         }
     }
-    private fun initMediaSession() {
-        with(mediaItem){
-            async { this?.bitmapImage =URL(this?.thumbnail).toBitmap() }
-        }
-        val mediaButtonReciever=  ComponentName(applicationContext,MediaButtonReceiver::class.java)
-        val intent= Intent(Intent.ACTION_MEDIA_BUTTON).apply {
-            setClass(this@MediaService,MediaButtonReceiver::class.java)
-        }
-        val pendingIntent= PendingIntent.getBroadcast(this,0,intent,0)
-        mediaSession = MediaSessionCompat(applicationContext, "Tag",mediaButtonReciever,null).apply {
-            setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-            setCallback(mediaSessionCallback)
-            isActive=true
-            mediaModel= MediaModel(controller)
-            setMediaButtonReceiver(pendingIntent)
-        }
-    }
+
 
     private fun updateMetaData(){
-        mediaSession!!.setMetadata(MediaMetadataCompat.Builder()
+        mediaSession?.setMetadata(MediaMetadataCompat.Builder()
             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,mediaItem?.bitmapImage)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mediaItem?.author)
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mediaItem?.title)
@@ -147,28 +186,26 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID,notification)
     }
-    fun startForeground()= async {
+    fun startForeground(){
         startForeground(NOTIFICATION_ID,notification)
     }
 
     override fun onPrepared(player: MediaPlayer) {
-        mediaSession?.controller?.transportControls?.play()
+        transportControls?.play()
         updateMetaData()
-        startForeground()
-
+        //startForeground()
     }
 
     private fun setPlaybackState(state: Int) {
         val action=if (state == PlaybackStateCompat.STATE_PLAYING)PlaybackStateCompat.ACTION_PAUSE
         else PlaybackStateCompat.ACTION_PLAY
         val playbackstateBuilder = PlaybackStateCompat.Builder()
-                .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or action)
+                .setActions(action)
                 .setState(state, mediaPlayer.currentPosition.toLong(),1.0f, SystemClock.elapsedRealtime())
         mediaSession?.setPlaybackState(playbackstateBuilder.build())
     }
 
     inner class MediaBinder: Binder() {
-        fun getMediaModel()=mediaModel
         val controller
             get() = mediaSession?.controller
 
@@ -179,31 +216,20 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             var author:String?=null,
             var thumbnail:String?=null,
             var description: String?=null):Serializable{
-
         var bitmapImage:Bitmap?=null
-        init {
-
-        }
     }
 
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (mediaModel?.playing==true) {
-                mediaModel?.pause()
+            if (mediaPlayer.isPlaying==true) {
+                transportControls?.pause()
             }
         }
     }
     private val playAudioReceiver = object :BroadcastReceiver() {
 
         override fun onReceive(context: Context?, intent: Intent) {
-
-            if(intent.hasExtra(MEDIA)){
-                mediaItem= intent.getSerializableExtra(MEDIA) as MediaItem
-                initMediaPlayer()
-                initMediaSession()
-                updateMetaData()
-            }
-
+            handleIntent(intent)
         }
 
     }
@@ -212,22 +238,19 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         override fun onPlay() {
             super.onPlay()
             if(successfullyRetrievedAudioFocus()){
+                mediaPlayer.start()
                 mediaSession?.setActive(true)
                 setPlaybackState(PlaybackStateCompat.STATE_PLAYING)
                 startForeground()
-                mediaPlayer.start()
-                mediaModel?.notifyChange()
-
             }
         }
 
         override fun onPause() {
             super.onPause()
+            mediaPlayer.pause()
             setPlaybackState(PlaybackStateCompat.STATE_PAUSED)
             stopForeground(false)
-            mediaPlayer.pause()
             updateNotification()
-            mediaModel?.notifyChange()
 
         }
 
@@ -249,18 +272,18 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         when (action) {
             AudioManager.AUDIOFOCUS_LOSS -> {
                 if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.stop()
+                    transportControls?.stop()
                 }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                mediaPlayer.pause()
+                transportControls?.pause()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 mediaPlayer.setVolume(0.3f, 0.3f)
             }
             AudioManager.AUDIOFOCUS_GAIN -> {
                 if (!mediaPlayer.isPlaying()) {
-                    mediaPlayer.start()
+                    transportControls?.play()
                 }
                 mediaPlayer.setVolume(1.0f, 1.0f)
             }

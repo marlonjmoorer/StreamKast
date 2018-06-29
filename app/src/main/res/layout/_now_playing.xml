@@ -9,39 +9,42 @@
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/slide_panel_height"
         android:background="@color/colorPrimary"
         android:elevation="3dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/play_pause"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginEnd="8dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/icons8_play"
-            app:layout_constraintBottom_toBottomOf="@+id/mini_image"
+            android:src="@drawable/icons8_play"
+            android:background="@color/transparent"
+            android:padding="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/thumbnail"
             app:layout_constraintDimensionRatio=""
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/mini_title"
+            app:layout_constraintStart_toEndOf="@+id/title"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/mini_image"
+            android:id="@+id/thumbnail"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/mini_title"
+            app:layout_constraintEnd_toStartOf="@+id/title"
             app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:src="@{model.Image}"
             />
 
         <TextView
-            android:id="@+id/mini_title"
+            android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -57,7 +60,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/play_pause"
             app:layout_constraintHorizontal_bias="0.052"
-            app:layout_constraintStart_toEndOf="@+id/mini_image"
+            app:layout_constraintStart_toEndOf="@+id/thumbnail"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.51" />
     </android.support.constraint.ConstraintLayout>

@@ -22,9 +22,12 @@ import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.RemoteViews
 import com.bumptech.glide.request.target.NotificationTarget
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
 import java.net.URL
+import java.util.concurrent.Executors
 
 
 /**
@@ -104,3 +107,12 @@ fun View.fade(alpha:Float){
             });
 
 }
+fun Context.load(url:String?,fn:(bitmap:Bitmap)->Unit){
+     Glide.with(this).asBitmap().load(url).into(object :SimpleTarget<Bitmap>(){
+         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+           fn(resource)
+         }
+     })
+}
+
+

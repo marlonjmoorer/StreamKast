@@ -32,9 +32,13 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
     val position:MutableLiveData<Int>
     val metadata:MutableLiveData<MediaMetadataCompat>
     var bound:MutableLiveData<Boolean>
+    private var binder:MediaService.MediaBinder?=null
 
     val application
             get()=getApplication<App>()
+
+    val localController
+            get() = binder?.controller
     init {
         playState= MutableLiveData()
         position=MutableLiveData()
@@ -49,13 +53,15 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
         application.bindService(intent,this, AppCompatActivity.BIND_AUTO_CREATE)
     }
     fun disconnect() {
-        application.unbindService(this)
+        if(bound.value==true)
+            application.unbindService(this)
     }
 
     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
         if (binder is MediaService.MediaBinder){
             bound.postValue(true)
-            with(binder.controller!!){
+            this.binder=binder
+            localController?.run {
                 registerCallback(callback)
                 val state=playbackState
                 updatePlaybackState(state)
@@ -64,7 +70,7 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
                     PlaybackStateCompat.STATE_PLAYING,PlaybackStateCompat.STATE_BUFFERING -> scheduleSeekbarUpdate()
                 }
             }
-            controller.postValue(binder.controller)
+            controller.postValue(localController)
         }
     }
 
@@ -146,7 +152,6 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
             val intent =Intent(application,MediaService::class.java)
             intent.putExtra(MediaService.MEDIA,media)
             application.startService(intent)
-
         }else{
             val broadcastIntent = Intent(MediaService.PLAY_AUDIO)
             broadcastIntent.putExtra(MediaService.MEDIA,media)
