@@ -52,7 +52,6 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
             playState.observe(this@MediaPlayerActivity, Observer { state->
                 when(state) {
                     PlaybackStateCompat.STATE_PLAYING -> {
-
                         play.setBackgroundResource(R.drawable.icons8_pause)
                     }
                     PlaybackStateCompat.STATE_PAUSED,
@@ -63,9 +62,7 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
                     }
                 }
             })
-            controller.observe(this@MediaPlayerActivity, Observer {
-                this@MediaPlayerActivity.controller=it
-            })
+
         }
         play.setOnClickListener {
             controller?.playbackState?.let {

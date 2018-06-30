@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.fragments
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.media.MediaMetadataCompat
@@ -21,50 +22,38 @@ import kotlinx.android.synthetic.main.fragment_mediaplayer.*
 import org.jetbrains.anko.support.v4.startService
 
 
-class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener, View.OnClickListener,SlidingUpPanelLayout.PanelSlideListener{
+class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener,SlidingUpPanelLayout.PanelSlideListener{
 
 
     private var detailViewModel: DetailViewModel?=null
     var mediaViewModel:MediaViewModel?=null
     var mediaPlayerModel=MediaPlayerModel()
-    private  var controller: MediaControllerCompat?=null
     private var binding:FragmentMediaplayerBinding?=null
 
 
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding=FragmentMediaplayerBinding.inflate(inflater)
-        binding?.run {
+        binding=FragmentMediaplayerBinding.inflate(inflater).apply{
             model=mediaPlayerModel
             nowPlaying?.run {
                 title.isSelected=true
-                playPause.setOnClickListener(this@MediaPlayerFragment)
+                playPause.setOnClickListener(mediaViewModel)
             }
-            playPause.setOnClickListener(this@MediaPlayerFragment)
+            playPause.setOnClickListener(mediaViewModel)
             seekbar.setOnSeekBarChangeListener(this@MediaPlayerFragment)
         }
-        return  binding?.root
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        detailViewModel=createViewModel()
-        mediaViewModel=createViewModel()
         detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
             episode?.let {
                 val media=MediaService.MediaItem(
-                    title=episode.title,
-                    author=episode.author,
-                    thumbnail=episode.thumbnail,
-                    url=episode.enclosure?.link,
-                    description=episode.description
+                        title=episode.title,
+                        author=episode.author,
+                        thumbnail=episode.thumbnail,
+                        url=episode.enclosure?.link,
+                        description=episode.description
                 )
                 mediaViewModel?.setMedia(media)
             }
-
         })
         mediaViewModel?.run{
             metadata.observe(this@MediaPlayerFragment, Observer { data->
@@ -88,14 +77,19 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener, View.OnCli
                         play_pause.setImageResource(R.drawable.icons8_play)
                     }
                 }
-                position.observe(this@MediaPlayerFragment, Observer{ pos->
-                    pos?.let { mediaPlayerModel.Elapsed=pos}
-                })
             })
-            controller.observe(this@MediaPlayerFragment, Observer {
-                this@MediaPlayerFragment.controller=it
+            position.observe(this@MediaPlayerFragment, Observer{ pos->
+                pos?.let { mediaPlayerModel.Elapsed=pos}
             })
         }
+        return  binding?.root
+    }
+
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        detailViewModel=createViewModel()
+        mediaViewModel=createViewModel()
     }
 
     override fun onResume() {
@@ -114,41 +108,22 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener, View.OnCli
     }
 
     override fun onStartTrackingTouch(bar: SeekBar) {
-        controller?.transportControls?.pause()
+        mediaViewModel?.pause()
     }
 
     override fun onStopTrackingTouch(bar: SeekBar) {
-        controller?.transportControls?.seekTo(bar.progress.toLong())
-        controller?.transportControls?.play()
+        mediaViewModel?.seekTo(bar.progress.toLong())
+        mediaViewModel?.play()
     }
 
     override fun onPanelSlide(panel: View?, slideOffset: Float) {
         now_playing?.fade(1 - (slideOffset))
-        //thumbnail?.fade(slideOffset )
     }
 
     override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
 
     }
 
-    override fun onClick(view: View) {
-      when(view.id){
-            R.id.play_pause->{
-                controller?.playbackState?.let {
-                      val controls = controller?.transportControls
-                      when (it.state) {
-                          PlaybackStateCompat.STATE_PLAYING
-                              , PlaybackStateCompat.STATE_BUFFERING -> {
-                              controls?.pause()
-                          }
-                          PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.STATE_STOPPED -> {
-                              controls?.play()
-                          }
-                          else->{}
-                      }
-                }
-            }
-      }
-    }
+
 
 }

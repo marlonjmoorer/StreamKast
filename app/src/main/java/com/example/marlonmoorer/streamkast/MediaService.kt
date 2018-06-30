@@ -27,6 +27,7 @@ import java.io.Serializable
 import java.util.*
 import android.graphics.Bitmap
 import android.graphics.drawable.Icon
+import android.support.v4.media.MediaDescriptionCompat
 import org.jetbrains.anko.doAsync
 
 class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener  {
@@ -34,10 +35,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     private var mediaSession: MediaSessionCompat?=null
     private var mediaItem:MediaItem?=null
     private var mediaPlayer:MediaPlayer
-
-
-
-
+    private val playbackState
+            get() = mediaSession?.controller?.playbackState?.state
     companion object {
         const val NOTIFICATION_ID=8888
         const val CHANNEL_ID="9999"
@@ -49,6 +48,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         val ACTION_PREVIOUS = "ACTION_PREVIOUS"
         val ACTION_NEXT = "ACTION_NEXT"
         val ACTION_STOP = "ACTION_STOP"
+        val ACTION_FF = "ACTION_FF"
+        val ACTION_RR = "ACTION_RR"
+
 
     }
 
@@ -96,7 +98,10 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                 ACTION_PREVIOUS->skipToPrevious()
                 ACTION_PAUSE->pause()
                 ACTION_STOP->stop()
+                ACTION_RR-> rewind()
+                ACTION_FF->fastForward()
             }
+
         }
     }
 
@@ -105,8 +110,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
          playbackAction.action =  when (actionNumber) {
             0 -> ACTION_PLAY
             1 -> ACTION_PAUSE
-            2 -> ACTION_NEXT
-            3 -> ACTION_PREVIOUS
+            2 -> ACTION_FF
+            3 -> ACTION_RR
             4-> ACTION_STOP
             else -> null
         }
@@ -265,6 +270,17 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
         override fun onSeekTo(pos: Long) {
             mediaPlayer.seekTo(pos.toInt())
+        }
+
+        override fun onRewind() {
+            mediaPlayer.seekTo(mediaPlayer.currentPosition-3000)
+            setPlaybackState(playbackState!!)
+
+        }
+
+        override fun onFastForward() {
+            mediaPlayer.seekTo(mediaPlayer.currentPosition+3000)
+            setPlaybackState(playbackState!!)
         }
 
     }

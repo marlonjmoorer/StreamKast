@@ -14,35 +14,35 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.MediaService
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.toTime
 import kotlinx.android.synthetic.main.activity_media_player.*
 import org.jetbrains.anko.support.v4.intentFor
+import java.text.ParsePosition
 import java.util.*
 
-class MediaViewModel(application: Application):AndroidViewModel(application),ServiceConnection {
+class MediaViewModel(application: Application):AndroidViewModel(application),ServiceConnection, View.OnClickListener {
 
 
     private var previousState:PlaybackStateCompat?=null
     val playState:MutableLiveData<Int>
     private var timer:Timer?=null
-    var controller: MutableLiveData<MediaControllerCompat>
+
     val position:MutableLiveData<Int>
     val metadata:MutableLiveData<MediaMetadataCompat>
     var bound:MutableLiveData<Boolean>
-    private var binder:MediaService.MediaBinder?=null
+    var controls:MediaControllerCompat.TransportControls?=null
 
     val application
             get()=getApplication<App>()
 
-    val localController
-            get() = binder?.controller
+
     init {
         playState= MutableLiveData()
         position=MutableLiveData()
-        controller= MutableLiveData()
         metadata= MutableLiveData()
         bound=MutableLiveData()
         bound.value=false
@@ -60,8 +60,7 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
         if (binder is MediaService.MediaBinder){
             bound.postValue(true)
-            this.binder=binder
-            localController?.run {
+            binder.controller?.run {
                 registerCallback(callback)
                 val state=playbackState
                 updatePlaybackState(state)
@@ -69,14 +68,12 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
                 when(state?.state){
                     PlaybackStateCompat.STATE_PLAYING,PlaybackStateCompat.STATE_BUFFERING -> scheduleSeekbarUpdate()
                 }
+                controls=transportControls
             }
-            controller.postValue(localController)
         }
     }
 
     override fun onServiceDisconnected(name: ComponentName?) {
-        controller.value?.unregisterCallback(callback)
-        controller.postValue(null)
         bound.postValue(false)
     }
 
@@ -138,14 +135,7 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
             position.postValue(currentPosition.toInt())
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        if (bound.value==true)
-        {
-            application.unbindService(this)
-        }
-    }
+    
 
     fun setMedia(media: MediaService.MediaItem){
         if(!bound.value!!) {
@@ -158,6 +148,27 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
             application.sendBroadcast(broadcastIntent)
         }
     }
+
+    override fun onClick(view :View?) {
+        playbackState?.let {
+            when (it) {
+                PlaybackStateCompat.STATE_PLAYING
+                    , PlaybackStateCompat.STATE_BUFFERING -> {
+                    pause()
+                }
+                PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.STATE_STOPPED -> {
+                    play()
+                }
+                else->{}
+            }
+        }
+    }
+
+    fun play()=controls?.play()
+    fun pause()=controls?.pause()
+    fun seekTo(position: Long)=controls?.seekTo(position)
+    val playbackState
+        get() = playState.value
 
 
 
