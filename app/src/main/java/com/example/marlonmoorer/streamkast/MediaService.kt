@@ -28,9 +28,10 @@ import java.util.*
 import android.graphics.Bitmap
 import android.graphics.drawable.Icon
 import android.support.v4.media.MediaDescriptionCompat
+import android.util.Log
 import org.jetbrains.anko.doAsync
 
-class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener  {
+class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener,MediaPlayer.OnBufferingUpdateListener  {
 
     private var mediaSession: MediaSessionCompat?=null
     private var mediaItem:MediaItem?=null
@@ -77,6 +78,11 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
         registerReceiver(noisyReceiver,IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
         registerReceiver(playAudioReceiver, IntentFilter(PLAY_AUDIO))
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(noisyReceiver)
+        unregisterReceiver(playAudioReceiver)
     }
 
     fun handleIntent(intent: Intent){
@@ -157,6 +163,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                     .setContentTitle(mediaItem?.title)
                     .setDeleteIntent(createAction(4))
                     .setContentIntent(PendingIntent.getActivity(this,0,activityIntent,0))
+                    .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .build()
             return notif
         }
@@ -174,6 +181,32 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             setVolume(1.0f, 1.0f)
             setDataSource(mediaItem?.url)
             setOnPreparedListener(this@MediaService)
+            setOnBufferingUpdateListener(this@MediaService)
+            setOnErrorListener{mp,what, extra->
+                when(what){
+                    MediaPlayer.MEDIA_ERROR_TIMED_OUT->
+                            transportControls?.stop()
+                    MediaPlayer.MEDIA_ERROR_IO ->
+                            transportControls?.pause()
+                }
+                return@setOnErrorListener true
+            }
+            setOnInfoListener{mp,what, extra->
+//                when(what){
+//                    MediaPlayer.MEDIA_INFO_BUFFERING_START-> transportControls?.pause()
+//                      //  transportControls?.stop()
+//                    MediaPlayer.MEDIA_INFO_BUFFERING_END -> transportControls?.play()
+//                       // transportControls?.pause()
+//
+//                }
+                Log.w("info","code: $what")
+                return@setOnInfoListener true
+            }
+            setOnSeekCompleteListener {mp->
+                val state= mediaSession?.controller?.playbackState?.state
+                Log.w("info","state: $state")
+                transportControls?.play()
+            }
             prepareAsync()
         }
     }
@@ -199,6 +232,10 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         transportControls?.play()
         updateMetaData()
         //startForeground()
+    }
+
+    override fun onBufferingUpdate(plater: MediaPlayer?, percent: Int) {
+        Log.w("Buffer","$percent %")
     }
 
     private fun setPlaybackState(state: Int) {
@@ -269,19 +306,21 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         }
 
         override fun onSeekTo(pos: Long) {
+           // mediaPlayer.pause()
             mediaPlayer.seekTo(pos.toInt())
         }
 
         override fun onRewind() {
-            mediaPlayer.seekTo(mediaPlayer.currentPosition-3000)
+            mediaPlayer.seekTo(mediaPlayer.currentPosition-30000)
             setPlaybackState(playbackState!!)
 
         }
 
         override fun onFastForward() {
-            mediaPlayer.seekTo(mediaPlayer.currentPosition+3000)
+            mediaPlayer.seekTo(mediaPlayer.currentPosition+30000)
             setPlaybackState(playbackState!!)
         }
+
 
     }
     override fun onAudioFocusChange(action: Int) {

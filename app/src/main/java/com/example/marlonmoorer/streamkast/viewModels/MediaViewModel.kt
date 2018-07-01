@@ -135,7 +135,7 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
             position.postValue(currentPosition.toInt())
         }
     }
-    
+
 
     fun setMedia(media: MediaService.MediaItem){
         if(!bound.value!!) {

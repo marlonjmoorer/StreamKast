@@ -108,12 +108,12 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener,SlidingUpPa
     }
 
     override fun onStartTrackingTouch(bar: SeekBar) {
-        mediaViewModel?.pause()
+       // mediaViewModel?.pause()
     }
 
     override fun onStopTrackingTouch(bar: SeekBar) {
         mediaViewModel?.seekTo(bar.progress.toLong())
-        mediaViewModel?.play()
+        //mediaViewModel?.play()
     }
 
     override fun onPanelSlide(panel: View?, slideOffset: Float) {
