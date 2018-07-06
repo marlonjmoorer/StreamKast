@@ -12,68 +12,190 @@
             type="com.example.marlonmoorer.streamkast.listeners.IEpisodeListener"/>
     </data>
 
-        <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            style="@style/CardView.Light"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/black"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp">
 
-            <android.support.constraint.ConstraintLayout
+            <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark">
 
-                <LinearLayout
-                    android:id="@+id/main"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:orientation="vertical"
-                    android:padding="16dp"
-                    android:background="@color/colorPrimaryDark"
-                    android:gravity="center"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
+            <TextView
+                android:id="@+id/primary_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:maxLines="2"
+                android:text="@{episode.title}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toStartOf="@+id/media_image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:textColor="@color/white"
-                        android:textSize="22sp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@{episode.title}" />
-                </LinearLayout>
+            <TextView
+                android:id="@+id/sub_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@{episode.author}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toStartOf="@+id/media_image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/primary_text" />
 
-                <ScrollView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:minHeight="200dp"
-                    android:layout_marginBottom="8dp"
-                    android:padding="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/main">
+            <ImageView
+                android:id="@+id/media_image"
+                src="@{episode.thumbnail}"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:layout_marginTop="16dp"
-                        android:id="@+id/textView10"
-                        android:textColor="@color/white"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:html="@{episode.description}" />
-                </ScrollView>
+            <Button
+                android:id="@+id/action_button_1"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:drawableEnd="@drawable/ic_play_arrow"
+                android:minWidth="0dp"
+                android:onClick="@{e->handler.open(episode)}"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:text="@string/action_play"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/media_image">
 
-            </android.support.constraint.ConstraintLayout>
+            </Button>
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/detail_play"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_margin="16dp"
-                android:src="@drawable/icons8_play"
-                app:backgroundTint="@color/colorAccent"
-                app:layout_anchor="@id/main"
-                app:layout_anchorGravity="bottom|right|end"
-                android:onClick="@{e->handler.open(episode)}"/>
+            <Button
+                android:id="@+id/action_button_2"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:drawableEnd="@drawable/ic_file_download"
+                android:minWidth="0dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:text="@string/action_download"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toEndOf="@+id/action_button_1"
+                app:layout_constraintTop_toTopOf="@+id/action_button_1" />
 
-        </android.support.design.widget.CoordinatorLayout>
+        </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+
+            <TextView
+                android:id="@+id/textView10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="16dp"
+                android:textColor="@color/white"
+                app:html="@{episode.description}" />
+        </ScrollView>
+    </LinearLayout>
+        <!--<android.support.design.widget.CoordinatorLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@color/black"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<android.support.constraint.ConstraintLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent">-->
+
+                <!--<LinearLayout-->
+                    <!--android:id="@+id/main"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:background="@color/colorPrimaryDark"-->
+                    <!--android:gravity="center"-->
+                    <!--android:orientation="vertical"-->
+                    <!--android:padding="16dp"-->
+                    <!--app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--app:layout_constraintStart_toStartOf="parent"-->
+                    <!--app:layout_constraintTop_toTopOf="parent">-->
+
+                    <!--<TextView-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="@{episode.title}"-->
+                        <!--android:textColor="@color/white"-->
+                        <!--android:textSize="22sp" />-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/textView6"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_marginTop="4dp"-->
+                        <!--android:text="@{episode.size}"-->
+                        <!--android:textColor="@color/white" />-->
+                <!--</LinearLayout>-->
+
+                <!--<ScrollView-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:minHeight="200dp"-->
+                    <!--android:layout_marginBottom="8dp"-->
+                    <!--android:padding="16dp"-->
+                    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+                    <!--app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--app:layout_constraintStart_toStartOf="parent"-->
+                    <!--app:layout_constraintTop_toBottomOf="@+id/main">-->
+
+                    <!--<TextView-->
+                        <!--android:layout_marginTop="16dp"-->
+                        <!--android:id="@+id/textView10"-->
+                        <!--android:textColor="@color/white"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--app:html="@{episode.description}" />-->
+                <!--</ScrollView>-->
+
+            <!--</android.support.constraint.ConstraintLayout>-->
+
+            <!--<android.support.design.widget.FloatingActionButton-->
+                <!--android:id="@+id/detail_play"-->
+                <!--android:layout_width="56dp"-->
+                <!--android:layout_height="56dp"-->
+                <!--android:layout_marginEnd="16dp"-->
+                <!--android:layout_marginTop="4dp"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:onClick="@{e->handler.open(episode)}"-->
+                <!--android:src="@drawable/icons8_play"-->
+                <!--app:backgroundTint="@color/colorAccent"-->
+                <!--app:layout_anchor="@id/main"-->
+                <!--app:layout_anchorGravity="bottom|right|end" />-->
+
+        <!--</android.support.design.widget.CoordinatorLayout>-->
 </layout>

@@ -2,20 +2,26 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/menu_browse"
-        android:title="Browse"
+        android:title="@string/nav_browse"
         android:icon="@drawable/icons8_browse_page"
 
         />
     <item
         android:id="@+id/menu_search"
-        android:title="Search"
-android:icon="@drawable/icons8_search"
+        android:title="@string/nav_search"
+        android:icon="@drawable/icons8_search"
         />
 
     <item
         android:id="@+id/menu_library"
-        android:title="Subscriptions"
+        android:title="@string/nav_library"
         android:icon="@drawable/icons8_library"
+        />
+
+    <item
+        android:id="@+id/menu_subs"
+        android:title="@string/nav_subs"
+        android:icon="@drawable/ic_subscriptions"
         />
 
 </menu>

@@ -17,7 +17,7 @@ import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
-import com.example.marlonmoorer.streamkast.toBitmap
+
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import java.net.URL

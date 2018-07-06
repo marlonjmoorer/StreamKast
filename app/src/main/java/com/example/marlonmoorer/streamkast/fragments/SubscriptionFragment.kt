@@ -25,7 +25,9 @@ class SubscriptionFragment:Fragment() {
         viewModel=createViewModel()
         adapter= SubscriptionAdapater(viewModel)
         viewModel.subscriptions.observe(this, Observer {subs->
-            subs?.let { adapter.setSubList(it) }
+            subs?.let {
+                adapter.setSubList(it)
+            }
         })
     }
 

@@ -16,9 +16,12 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
 
     val subscriptions:SubscriptionDao
     val featuredItems:FeaturedDao
+    val savedEpisodes:EpisodeDao
+
     init {
         subscriptions=database.SubscriptionDao()
         featuredItems= database.FeaturedDao()
+        savedEpisodes=database.EpisodeDao()
     }
 
     fun search(query:Map<String, String>): SearchResults? {

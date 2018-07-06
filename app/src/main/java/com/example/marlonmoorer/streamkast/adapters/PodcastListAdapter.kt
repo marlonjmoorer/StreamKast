@@ -19,20 +19,18 @@ class PodcastListAdapter(private val listener:IPodcastListener?=null):DataBoundA
 
     private var podcastList: List<Podcast>?=null
     override fun getItemCount()= podcastList?.size?:0
-
-
     override fun onBindViewHolder(holder: DataViewHolder<ItemPodcastBinding>, position: Int) {
         val podcast= podcastList?.get(position)
-        val view= holder.itemView
-        holder.binding.apply {
+        holder.binding.run{
             show=podcast
             handler=listener
         }
         podcast?.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
             override fun onPropertyChanged(observable: Observable, id: Int) {
                 if(id== BR.subscribed){
-                    view?.let {
-                        val message= if(podcast.subscribed) "Subscribed" else "Unsubscribed"
+                    holder.itemView?.let{
+                        val messageId=if(podcast.subscribed) R.string.message_subscribe else R.string.message_unsubscribe
+                        val message=it.resources.getString(messageId)
                         Snackbar.make(it,message, Snackbar.LENGTH_SHORT).show()
                     }
                 }

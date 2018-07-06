@@ -12,6 +12,7 @@ import android.view.ViewGroup
 abstract class DataBoundAdapter<T>():RecyclerView.Adapter<DataBoundAdapter.DataViewHolder<T>>() where T:ViewDataBinding {
 
 
+
     class DataViewHolder<T> (val binding:T):RecyclerView.ViewHolder(binding.root) where T:ViewDataBinding{
 
     }

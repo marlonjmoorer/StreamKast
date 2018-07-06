@@ -77,21 +77,16 @@ fun AppCompatActivity.replaceFragment(id:Int,fragment: Fragment){
 }
 fun Int.toTime():String{
 
-    val millis=this.toLong()
+    //val millis=this//.toLong()
     return StringBuffer()
-            .append(String.format("%02d", millis / (1000 * 60 * 60)))
+            .append(String.format("%02d", this / (1000 * 60 * 60)))
             .append(":")
-            .append(String.format("%02d", millis % (1000 * 60 * 60) / (1000 * 60)))
+            .append(String.format("%02d", this % (1000 * 60 * 60) / (1000 * 60)))
             .append(":")
-            .append(String.format("%02d", millis % (1000 * 60 * 60) % (1000 * 60) / 1000))
+            .append(String.format("%02d", this % (1000 * 60 * 60) % (1000 * 60) / 1000))
             .toString()
 }
 
-fun Long.toTime():String= this.toInt().toTime()
-
-fun URL.toBitmap():Bitmap{
-    return BitmapFactory.decodeStream(this.openStream())
-}
 fun View.fade(alpha:Float){
     this.animate()
             .alpha(alpha)
@@ -107,12 +102,21 @@ fun View.fade(alpha:Float){
             });
 
 }
-fun Context.load(url:String?,fn:(bitmap:Bitmap)->Unit){
+fun Context.load(url:String?,callback:(bitmap:Bitmap)->Unit){
      Glide.with(this).asBitmap().load(url).into(object :SimpleTarget<Bitmap>(){
          override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-           fn(resource)
+           callback(resource)
          }
      })
 }
+
+fun Int.toByteSize():String{
+    val unit = 1000
+    if (this < unit) return "$this B"
+    val exp = (Math.log(this.toDouble()) / Math.log(unit.toDouble())).toInt()
+    val pre = ("kMGTPE")[exp - 1]
+    return String.format("%.1f %sB", this / Math.pow(unit.toDouble(), exp.toDouble()), pre)
+}
+
 
 

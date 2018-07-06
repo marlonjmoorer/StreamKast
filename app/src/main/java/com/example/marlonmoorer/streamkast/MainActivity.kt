@@ -18,6 +18,7 @@ import android.view.View
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.find
+import org.jetbrains.anko.intentFor
 
 
 class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSelectedListener, SlidingUpPanelLayout.PanelSlideListener {
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
     private var subscriptionViewModel:SubscriptionViewModel?=null
     private val targetId:Int=R.id.main
     private var PANEL_HEIGHT:Float?=null
+    private var searchFragment:SearchFragment?=null
     companion object {
         val PLAY_MEDIA="PLAY_MEDIA"
     }
@@ -44,11 +46,10 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         subscriptionViewModel= createViewModel()
         nav.setOnNavigationItemSelectedListener(this)
         slidePanel = find(R.id.sliding_panel)
-        supportFragmentManager.findFragmentById(R.id.mini_player)?.run {
-            if(this is SlidingUpPanelLayout.PanelSlideListener){
-
+        supportFragmentManager.findFragmentById(R.id.mini_player)?.let {
+            if(it is SlidingUpPanelLayout.PanelSlideListener){
+                slidePanel?.addPanelSlideListener(it)
                 slidePanel?.addPanelSlideListener(this)
-                slidePanel?.addPanelSlideListener(this@MainActivity)
             }
             slidePanel?.panelHeight=0
         }
@@ -70,10 +71,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             slidePanel?.panelHeight=PANEL_HEIGHT?.toInt()!!
         })
         nav.selectedItemId=R.id.menu_browse
-
-
-
-
+        searchFragment=SearchFragment()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -92,8 +90,9 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
 
         val fragment = when(item.itemId){
             R.id.menu_browse-> BrowseFragment()
-            R.id.menu_search->SearchFragment()
+            R.id.menu_search->searchFragment!!
             R.id.menu_library->SubscriptionFragment()
+            R.id.menu_subs->SubscriptionFragment()
             else-> Fragment()
         }
         replaceFragment(targetId,fragment)
@@ -107,10 +106,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
     }
 
     override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
-//        when(newState){
-//           SlidingUpPanelLayout.PanelState.COLLAPSED-> nav.visibility=View.VISIBLE
-//            SlidingUpPanelLayout.PanelState.EXPANDED->nav.visibility=View.GONE
-//        }
+
     }
 
 
@@ -128,10 +124,10 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
 
     override fun onDestroy() {
         super.onDestroy()
-//        val i=intentFor<MediaService>().apply {
-//            action= MediaService.STOP
-//        }
-//        startService(i)
+        val i=intentFor<MediaService>().apply {
+            action= MediaService.ACTION_STOP
+        }
+        startService(i)
     }
 
 

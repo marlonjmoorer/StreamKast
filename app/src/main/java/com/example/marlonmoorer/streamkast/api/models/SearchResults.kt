@@ -42,8 +42,6 @@ class Podcast:BaseObservable(){
     @Expose
     var trackName: String? = null
 
-
-
     @SerializedName("feedUrl")
     @Expose
     var feedUrl: String? = null

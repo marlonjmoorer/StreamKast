@@ -2,6 +2,8 @@ package com.example.marlonmoorer.streamkast.api.models
 
 
 import android.graphics.Bitmap
+import com.example.marlonmoorer.streamkast.toByteSize
+import com.example.marlonmoorer.streamkast.toTime
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -67,9 +69,6 @@ class Channel {
 
 class Episode{
 
-    init {
-        var d=0
-    }
     @SerializedName("title")
     @Expose
     var title: String? = null
@@ -103,5 +102,10 @@ class Episode{
 
     var imageBitmap:Bitmap?=null
 
+    val time
+      get() = enclosure?.duration?.let{it*1000}?.toTime()
+
+    val size
+      get() = enclosure?.length?.toByteSize()
 }
 
