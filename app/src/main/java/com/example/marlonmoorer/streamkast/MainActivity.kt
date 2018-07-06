@@ -18,6 +18,7 @@ import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_podcast.*
 import org.jetbrains.anko.intentFor
 
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         behavior=BottomSheetBehavior.from(findViewById<View>(R.id.bottom_sheet))?.apply {
             isHideable=true
             state=BottomSheetBehavior.STATE_HIDDEN
+
             setBottomSheetCallback(object :BottomSheetBehavior.BottomSheetCallback(){
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     nav.animate()
@@ -60,7 +62,6 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
 
                 }
             })
-
         }
 
         browseViewModel?.getSelectedPodCastId()?.observe(this, podcastObserver)
@@ -80,6 +81,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
                 state=BottomSheetBehavior.STATE_COLLAPSED
                 isHideable=false
             }
+            updateMargin()
         })
         nav.selectedItemId=R.id.menu_browse
         searchFragment=SearchFragment()
@@ -134,8 +136,17 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         startService(i)
     }
 
-
-
-
-
+    fun updateMargin () {
+        val p=main.getLayoutParams()
+        if (p is ViewGroup.MarginLayoutParams) {
+            p.setMargins(p.leftMargin, p.topMargin, p.rightMargin, behavior!!.peekHeight)
+            main.requestLayout()
+        }
+    }
 }
+
+
+
+
+
+
