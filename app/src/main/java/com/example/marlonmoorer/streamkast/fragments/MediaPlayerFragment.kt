@@ -16,13 +16,13 @@ import com.example.marlonmoorer.streamkast.databinding.FragmentMediaplayerBindin
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.MediaViewModel
-import com.sothree.slidinguppanel.SlidingUpPanelLayout
+
 import kotlinx.android.synthetic.main._now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_mediaplayer.*
 import org.jetbrains.anko.support.v4.startService
 
 
-class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener,SlidingUpPanelLayout.PanelSlideListener{
+class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
 
 
     private var detailViewModel: DetailViewModel?=null
@@ -116,13 +116,7 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener,SlidingUpPa
         //mediaViewModel?.play()
     }
 
-    override fun onPanelSlide(panel: View?, slideOffset: Float) {
-        now_playing?.fade(1 - (slideOffset))
-    }
-
-    override fun onPanelStateChanged(panel: View?, previousState: SlidingUpPanelLayout.PanelState?, newState: SlidingUpPanelLayout.PanelState?) {
-
-    }
+    fun fadeMiniPlayer(offset:Float)=now_playing?.fade(1 - (offset))
 
 
 

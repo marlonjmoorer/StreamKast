@@ -11,8 +11,10 @@ import com.example.marlonmoorer.streamkast.api.models.Episode
 
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentEpisodeBinding
+import com.example.marlonmoorer.streamkast.fade
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import kotlinx.android.synthetic.main.fragment_mediaplayer.*
 
 
 class EpisodeFragment: BottomSheetDialogFragment(),IEpisodeListener {
@@ -37,5 +39,7 @@ class EpisodeFragment: BottomSheetDialogFragment(),IEpisodeListener {
         binding.handler=this
         return  binding.root
     }
+
+
 
 }

@@ -3,47 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.marlonmoorer.streamkast.MainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/black">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        android:id="@+id/sliding_panel"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="bottom"
-        sothree:umanoPanelHeight="@dimen/slide_panel_height"
-        sothree:umanoShadowHeight="4dp"
+        android:layout_weight="1">
 
+        <FrameLayout
+            android:id="@+id/main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toTopOf="@+id/mini_player"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        </FrameLayout>
 
-        tools:context="com.example.marlonmoorer.streamkast.MainActivity">
-
-
-            <FrameLayout
-                android:id="@+id/main"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toTopOf="@+id/mini_player"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-            </FrameLayout>
-
+        <LinearLayout
+            android:id="@+id/bottom_sheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:behavior_peekHeight="@dimen/slide_panel_height"
+            app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+            android:elevation="@dimen/design_appbar_elevation">
             <fragment
                 android:id="@+id/mini_player"
                 android:name="com.example.marlonmoorer.streamkast.fragments.MediaPlayerFragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
 
     <android.support.design.widget.BottomNavigationView
-
         android:id="@+id/nav"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="start"
         app:itemBackground="@color/colorPrimaryDark"
         app:itemIconTint="@drawable/nav_state"
@@ -51,8 +52,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_items"
-        >
-
+        app:menu="@menu/bottom_nav_items">
     </android.support.design.widget.BottomNavigationView>
 </LinearLayout>
