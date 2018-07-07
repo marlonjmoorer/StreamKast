@@ -21,6 +21,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.RemoteViews
+import com.airbnb.paris.Paris
 import com.bumptech.glide.request.target.NotificationTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
@@ -76,8 +77,6 @@ fun AppCompatActivity.replaceFragment(id:Int,fragment: Fragment){
     .commit()
 }
 fun Int.toTime():String{
-
-    //val millis=this//.toLong()
     return StringBuffer()
             .append(String.format("%02d", this / (1000 * 60 * 60)))
             .append(":")
@@ -102,6 +101,10 @@ fun View.fade(alpha:Float){
             });
 
 }
+ fun View.applyStyle(id: Int){
+     Paris.style(this).apply(id)
+ }
+
 fun Context.load(url:String?,callback:(bitmap:Bitmap)->Unit){
      Glide.with(this).asBitmap().load(url).into(object :SimpleTarget<Bitmap>(){
          override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -117,6 +120,8 @@ fun Int.toByteSize():String{
     val pre = ("kMGTPE")[exp - 1]
     return String.format("%.1f %sB", this / Math.pow(unit.toDouble(), exp.toDouble()), pre)
 }
+
+
 
 
 

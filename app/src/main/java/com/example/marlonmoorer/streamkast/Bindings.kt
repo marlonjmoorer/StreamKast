@@ -56,7 +56,7 @@ object BindingAdapters{
     @BindingAdapter("href")
     fun setLink(view: TextView, url: String?){
        url?.let {
-           view.text= Html.fromHtml("<a href='${url}'>view</a>")
+           view.text= Html.fromHtml("<a href='${url}'>View</a>")
            view.movementMethod= LinkMovementMethod.getInstance()
        }
     }

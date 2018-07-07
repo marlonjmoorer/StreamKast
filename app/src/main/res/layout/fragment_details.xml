@@ -29,16 +29,25 @@
                 app:expandedTitleMarginEnd="64dp"
                 app:expandedTitleTextAppearance="@style/ExpandedAppBar">
 
-                <include layout="@layout/_title_area"
+                <include layout="@layout/_detail_card"
+                    android:id="@+id/detail_card"
                     app:channel="@{channel}" />
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?android:attr/actionBarSize"
                     app:layout_collapseMode="pin">
-
                 </android.support.v7.widget.Toolbar>
+
             </android.support.design.widget.CollapsingToolbarLayout>
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                app:tabIndicatorColor="@color/colorPrimary"
+                app:layout_anchorGravity="bottom">
+            </android.support.design.widget.TabLayout>
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
@@ -48,26 +57,10 @@
             android:background="@color/black"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:scrollbars="vertical">
-            <LinearLayout
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    app:html="@{channel.description}" />
-                <android.support.v7.widget.RecyclerView
-
-                    android:divider="@color/white"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/episodes"
-                    android:scrollbars="none"/>
-
-            </LinearLayout>
-
+                android:layout_height="match_parent"/>
 
         </android.support.v4.widget.NestedScrollView>
 

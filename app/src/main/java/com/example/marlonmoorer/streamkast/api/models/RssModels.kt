@@ -65,6 +65,8 @@ class Channel {
     @Expose
     var image: String? = null
 
+    var count="0"
+
 }
 
 class Episode{
