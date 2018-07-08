@@ -72,5 +72,6 @@ dependencies {
     implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$anko_version"
     implementation "org.jetbrains.anko:anko-design:$anko_version"
 
+    compile 'com.rometools:rome:1.11.0'
 
 }

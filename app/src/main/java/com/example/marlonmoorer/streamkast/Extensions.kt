@@ -27,8 +27,15 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.NodeList
 import java.net.URL
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.Executors
+import javax.xml.parsers.DocumentBuilderFactory
 
 
 /**
@@ -120,8 +127,54 @@ fun Int.toByteSize():String{
     val pre = ("kMGTPE")[exp - 1]
     return String.format("%.1f %sB", this / Math.pow(unit.toDouble(), exp.toDouble()), pre)
 }
+fun String.toDate():Date?{
+    val df = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US)
+    val date: Date
+    try {
+        date = df.parse(this)
+        return date
+    }catch(ex: ParseException){
+        return null
+    }
+
+}
 
 
 
+fun URL.asXmlDoc(): Document {
+    return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this.openStream())
+}
+operator fun Element.get(key:String):Element{
+    return this.getElementsByTagName(key).item(0) as Element
+}
+operator fun Document.get(key:String):Element {
+    return this.getElementsByTagName(key).item(0) as Element
+}
 
+fun Element.text(key:String): String {
+    return this.getElementsByTagName(key).item(0).textContent
+}
 
+fun Element.getList(key:String): NodeList {
+    return this.getElementsByTagName(key)
+}
+fun Element.has(key: String):Boolean{
+    return this.getElementsByTagName(key).length>0
+}
+
+inline fun  NodeList.forEach(action: (Element) -> Unit){
+    for (i in 0..this.length) {
+        val element=  this.item(i)  as Element
+        element?.let(action)
+    }
+}
+inline fun < R> NodeList.map(transform: (Element) -> R): List<R> {
+    val list= mutableListOf<R>()
+    for (i in 0..this.length) {
+        val element=  this.item(i) as Element?
+        element?.let{
+            list.add(transform(element))
+        }
+    }
+    return list
+}
