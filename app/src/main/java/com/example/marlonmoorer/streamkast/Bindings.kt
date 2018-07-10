@@ -8,9 +8,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-import com.example.marlonmoorer.streamkast.api.models.Episode
 
-import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 
 
 object BindingAdapters{

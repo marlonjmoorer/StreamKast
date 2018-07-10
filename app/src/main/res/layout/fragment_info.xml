@@ -5,8 +5,7 @@
     <data>
         <variable
             name="channel"
-            type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
-
+            type="com.example.marlonmoorer.streamkast.api.models.rss.Channel"/>
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -53,6 +52,7 @@
             android:layout_marginTop="8dp"
             android:textColor="@color/white"
             app:html="@{channel.author}"
+            android:maxLines="3"
             android:gravity="end"
             app:layout_constraintBottom_toBottomOf="@+id/author_label"
             app:layout_constraintEnd_toEndOf="parent"
@@ -70,7 +70,7 @@
             android:text="Link"
             android:textColor="@color/white"
             android:textSize="24sp"
-            app:layout_constraintBottom_toTopOf="@+id/description_label"
+            app:layout_constraintBottom_toTopOf="@+id/episode_label"
             app:layout_constraintEnd_toStartOf="@+id/link_text"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,16 +79,16 @@
         <TextView
             android:id="@+id/description_label"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="33dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:text="Description"
             android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toTopOf="@+id/nestedScrollView2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/link_label" />
+            app:layout_constraintTop_toBottomOf="@+id/episode_label" />
 
         <android.support.v4.widget.NestedScrollView
             android:id="@+id/nestedScrollView2"
@@ -105,9 +105,40 @@
                 android:id="@+id/description_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
                 android:padding="16dp"
+                android:textColor="@color/white"
                 app:html="@{channel.description}" />
         </android.support.v4.widget.NestedScrollView>
+
+        <TextView
+            android:id="@+id/episode_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Episodes"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/description_label"
+            app:layout_constraintEnd_toStartOf="@+id/episode_text"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/link_label" />
+
+        <TextView
+            android:id="@+id/episode_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="16dp"
+            android:text="@{channel.count}"
+            android:textColor="@color/white"
+            android:gravity="end"
+            app:layout_constraintBottom_toBottomOf="@+id/episode_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.658"
+            app:layout_constraintStart_toEndOf="@+id/episode_label"
+            app:layout_constraintTop_toTopOf="@+id/episode_label" />
     </android.support.constraint.ConstraintLayout>
 </layout>

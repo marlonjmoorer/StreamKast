@@ -3,16 +3,18 @@ package com.example.marlonmoorer.streamkast.api
 
 
 import android.util.Log
+import com.example.marlonmoorer.streamkast.Utils
 
 
 import com.example.marlonmoorer.streamkast.api.models.*
+import com.example.marlonmoorer.streamkast.api.models.rss.Channel
 
 import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.data.*
 import javax.inject.Inject
 
 
-class Repository @Inject constructor(database: KastDatabase,val itunesService: ItunesService, val rssParseService: RssToJsonService) {
+class Repository @Inject constructor(database: KastDatabase,val itunesService: ItunesService) {
 
     val subscriptions:SubscriptionDao
     val featuredItems:FeaturedDao
@@ -38,9 +40,9 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
         return lookup(mapOf("id" to id))?.firstOrNull()
     }
 
-    fun parseFeed(feedUrl:String,page:String="1"): RssResult?{
+    fun parseFeed(feedUrl:String,page:String="1"):Channel?{
         try {
-            val result=rssParseService.parseFeed(feedUrl).execute().body()
+            val result=Utils.parseFeed(feedUrl)
             return result
         }
        catch (ex:Exception){

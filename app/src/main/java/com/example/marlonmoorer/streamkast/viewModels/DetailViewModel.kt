@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.marlonmoorer.streamkast.BR
 import com.example.marlonmoorer.streamkast.api.Repository
-import com.example.marlonmoorer.streamkast.api.models.*
+import com.example.marlonmoorer.streamkast.api.models.rss.*
 
 import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.data.Subscription
@@ -40,14 +40,8 @@ class DetailViewModel :BaseViewModel() {
             podcastId=id
             val result= repository.getPodcastById(id)
             subscribed.postValue(isSubscribed())
-            repository.parseFeed(result?.feedUrl!!)?.run {
-                podcast.postValue(channel)
-                channel?.count=episodes!!.size.toString()
-                episodes?.forEach {
-                    if(it.thumbnail.isNullOrEmpty()){
-                        it.thumbnail=channel?.image
-                    }
-                }
+            repository.parseFeed(result?.feedUrl!!)?.run{
+                podcast.postValue(this)
                 this@DetailViewModel.episodes.postValue(episodes)
             }
         }
@@ -66,7 +60,7 @@ class DetailViewModel :BaseViewModel() {
             podcast.value?.let{
                 repository.subscribe(Subscription().apply {
                     title=it.title
-                    thumbnail=it.image
+                    thumbnail=it.thumbnail
                     podcastId=this@DetailViewModel.podcastId.toInt()
                 })
             }

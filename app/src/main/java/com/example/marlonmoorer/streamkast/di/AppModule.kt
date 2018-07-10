@@ -29,8 +29,8 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideRepository(database: KastDatabase,itunesService: ItunesService,rssToJsonService: RssToJsonService):Repository{
-        return Repository(database,itunesService,rssToJsonService)
+    fun provideRepository(database: KastDatabase,itunesService: ItunesService):Repository{
+        return Repository(database,itunesService)
     }
 
     @Provides

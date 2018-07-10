@@ -6,7 +6,7 @@
     <data>
         <variable
             name="episode"
-            type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
+            type="com.example.marlonmoorer.streamkast.api.models.rss.Episode"/>
         <variable
             name="handler"
             type="com.example.marlonmoorer.streamkast.listeners.IEpisodeListener"/>
@@ -53,6 +53,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@{episode.author}"
+                android:maxLines="3"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@color/white"
                 app:layout_constraintEnd_toStartOf="@+id/media_image"

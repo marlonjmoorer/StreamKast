@@ -11,7 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
-import com.example.marlonmoorer.streamkast.api.models.Episode
+import com.example.marlonmoorer.streamkast.api.models.rss.Episode
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel

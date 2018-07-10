@@ -5,7 +5,7 @@
     <data>
         <variable
             name="channel"
-            type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
+            type="com.example.marlonmoorer.streamkast.api.models.rss.Channel"/>
 
     </data>
 
@@ -27,7 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:src="@{channel.image}" />
+            app:src="@{channel.thumbnail}" />
 
         <TextView
             android:id="@+id/textView2"

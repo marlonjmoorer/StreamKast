@@ -4,15 +4,16 @@ import android.graphics.Bitmap
 import java.util.*
 
 class Channel{
-
     var title=""
     var link=""
     var lastUpdateDate:Date?=null
     var description=""
     var author=""
     var thumbnail=""
-    var category:List<String> = emptyList()
-    var episodes:List<Episode> = emptyList()
+    var categories:MutableList<String> = mutableListOf()
+    var episodes:MutableList<Episode> = mutableListOf()
+    val count
+        get() = episodes.size.toString()
 
 }
 
@@ -26,7 +27,6 @@ class  Episode{
     var mediaUrl=""
     var length=""
     var imageBitmap: Bitmap?=null
-
-
+    var author=""
 }
 

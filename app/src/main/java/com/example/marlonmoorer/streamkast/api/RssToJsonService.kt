@@ -2,7 +2,6 @@ package com.example.marlonmoorer.streamkast.api
 
 import android.content.res.Resources
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.RssResult
 import com.example.marlonmoorer.streamkast.api.models.chart.ChartResult
 import retrofit2.Call
 import retrofit2.http.GET
@@ -20,6 +19,6 @@ interface RssToJsonService{
         }
     }
 
-    @GET("api.json")
-    fun parseFeed(@Query("rss_url")rssUrl:String,@Query("api_key")key:String= rssApiKey,@Query("count")count:Int=50): Call<RssResult>
+//    @GET("api.json")
+//    fun parseFeed(@Query("rss_url")rssUrl:String,@Query("api_key")key:String= rssApiKey,@Query("count")count:Int=50): Call<RssResult>
 }

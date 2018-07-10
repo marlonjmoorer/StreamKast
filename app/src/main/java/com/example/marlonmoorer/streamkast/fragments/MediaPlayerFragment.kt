@@ -49,7 +49,7 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
                         title=episode.title,
                         author=episode.author,
                         thumbnail=episode.thumbnail,
-                        url=episode.enclosure?.link,
+                        url=episode.mediaUrl,
                         description=episode.description
                 )
                 mediaViewModel?.setMedia(media)

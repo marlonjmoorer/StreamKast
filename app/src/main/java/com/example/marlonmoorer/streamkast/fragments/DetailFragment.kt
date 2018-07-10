@@ -14,7 +14,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.example.marlonmoorer.streamkast.R
 
-import com.example.marlonmoorer.streamkast.api.models.Episode
+import com.example.marlonmoorer.streamkast.api.models.rss.Episode
 import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding

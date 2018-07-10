@@ -29,6 +29,7 @@ import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
 import org.w3c.dom.Document
 import org.w3c.dom.Element
+import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.net.URL
 import java.text.ParseException
@@ -151,7 +152,11 @@ operator fun Document.get(key:String):Element {
     return this.getElementsByTagName(key).item(0) as Element
 }
 
-fun Element.text(key:String): String {
+
+fun Element.text(key:String): String? {
+    if(!this.has(key)){
+        return  null
+    }
     return this.getElementsByTagName(key).item(0).textContent
 }
 
@@ -162,16 +167,24 @@ fun Element.has(key: String):Boolean{
     return this.getElementsByTagName(key).length>0
 }
 
-inline fun  NodeList.forEach(action: (Element) -> Unit){
+val NodeList.Nodes:List<Node>
+    get(){
+       return mutableListOf<Node>().also{list->
+           for (i in 0..length-1) {
+               list.add(item(i))
+           }
+       }
+    }
+inline fun  NodeList.forEach(action: (Node) -> Unit){
     for (i in 0..this.length) {
-        val element=  this.item(i)  as Element
+        val element=  this.item(i)
         element?.let(action)
     }
 }
-inline fun < R> NodeList.map(transform: (Element) -> R): List<R> {
+inline fun < R> NodeList.map(transform: (Node) -> R): List<R> {
     val list= mutableListOf<R>()
     for (i in 0..this.length) {
-        val element=  this.item(i) as Element?
+        val element=this.item(i)
         element?.let{
             list.add(transform(element))
         }
