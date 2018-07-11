@@ -1,31 +1,52 @@
 package com.example.marlonmoorer.streamkast.viewModels
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import com.example.marlonmoorer.streamkast.async
+
 import com.example.marlonmoorer.streamkast.data.Subscription
 import com.example.marlonmoorer.streamkast.listeners.ISubscriptionListener
+import org.jetbrains.anko.doAsync
 
-class  SubscriptionViewModel:BaseViewModel(),ISubscriptionListener{
+class  SubscriptionViewModel:BaseViewModel(){
 
 
     val subscriptions
            get() = repository.subscriptions.all
 
-    val selectedPodcastId= MutableLiveData<String>()
 
+    fun toggleSubscription(id:String):LiveData<Boolean>{
+        val subscribed=MutableLiveData<Boolean>()
+        doAsync {
+            if(repository.isSubscribed(id)){
+                repository.unsubscribe(id)
+                subscribed.postValue(false)
+            }else{
+                repository.getPodcastById(id)?.let{podcast->
+                    repository.subscribe(Subscription().apply {
+                        title=podcast.collectionName
+                        thumbnail=podcast.artworkUrl600
+                        podcastId=podcast.collectionId.toInt()
+                    })
+                    subscribed.postValue(true)
+                }
 
-
-    override fun subscribe(subscription: Subscription)= async {
-        repository.subscribe(subscription)
+            }
+        }
+        return subscribed
     }
 
-    override fun unsubscribe(sub:Subscription) =async {
-        repository.unsubscribe("${sub.podcastId}")
+    fun subscribe(sub:Subscription){
+        doAsync {
+            repository.subscribe(sub)
+        }
+
     }
 
-
-    override fun openPodcast(id: String) {
-        selectedPodcastId.postValue(id)
+    fun unsubscribe(sub:Subscription) {
+        doAsync {
+            repository.unsubscribe("${sub.podcastId}")
+        }
     }
+    
 
 }

@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/outlined_tile"
         android:clickable="true"
-        android:onClick="@{e->handler.open(episode)}">
+        android:onClick="@{e->handler.viewEpisode(episode)}">
 
         <TextView
             android:id="@+id/textView12"
@@ -47,7 +47,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/circle"
-            android:onClick="@{e->handler.play(episode)}"
+            android:onClick="@{e->handler.playEpisode(episode)}"
             android:padding="4dp"
             android:src="@drawable/icons8_play"
             app:layout_constraintBottom_toBottomOf="parent"

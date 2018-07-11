@@ -19,11 +19,20 @@ import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import android.view.View
 import android.view.ViewGroup
+import com.example.marlonmoorer.streamkast.api.models.MediaGenre
+import com.example.marlonmoorer.streamkast.api.models.Podcast
+import com.example.marlonmoorer.streamkast.api.models.rss.Episode
+import com.example.marlonmoorer.streamkast.data.Subscription
+import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
+import com.example.marlonmoorer.streamkast.listeners.IGenreListener
+import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
+import com.example.marlonmoorer.streamkast.listeners.ISubscriptionListener
 import kotlinx.android.synthetic.main.item_podcast.*
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 
 
-class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSelectedListener{
+class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenreListener,BottomNavigationView.OnNavigationItemSelectedListener{
 
 
     private var browseViewModel: BrowseViewModel?=null
@@ -32,12 +41,16 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
     private val targetId:Int=R.id.main
     private var searchFragment:SearchFragment?=null
     private var mediaPlayerFragment:MediaPlayerFragment?=null
+    private var episodeFragment: EpisodeFragment?=null
+
     companion object {
         val PLAY_MEDIA="PLAY_MEDIA"
     }
 
 
     private var behavior: BottomSheetBehavior<View>?=null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,18 +77,6 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             })
         }
 
-        browseViewModel?.getSelectedPodCastId()?.observe(this, podcastObserver)
-        subscriptionViewModel?.selectedPodcastId?.observe(this,podcastObserver)
-
-        browseViewModel?.getCurrentGenre()?.observe(this, Observer {genre->
-           genre?.let {
-               val sectionFragment = SectionFragment.newInstance(genre.id)
-               this.addFragment(targetId,sectionFragment)
-           }
-        })
-        detailViewModel?.getCurrentEpisode()?.observe(this, Observer {episode->
-            EpisodeFragment().show(supportFragmentManager,"")
-        })
         detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
             behavior?.run{
                 state=BottomSheetBehavior.STATE_COLLAPSED
@@ -86,7 +87,10 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         nav.selectedItemId=R.id.menu_browse
         searchFragment=SearchFragment()
         mediaPlayerFragment=supportFragmentManager.findFragmentById(R.id.mini_player) as MediaPlayerFragment
+        episodeFragment= EpisodeFragment()
     }
+
+
 
     override fun onNewIntent(intent: Intent?) {
         if(intent?.action==MediaService.MEDIAPLAYER){
@@ -96,11 +100,7 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
             }
         }
     }
-    val podcastObserver = Observer<String> { id->
-        id?.let { val fragment = DetailFragment.newInstance(id)
-            this.addFragment(targetId,fragment)
-        }
-    }
+
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
 
@@ -136,15 +136,45 @@ class MainActivity : AppCompatActivity(),BottomNavigationView.OnNavigationItemSe
         startService(i)
     }
 
-    fun updateMargin () {
+    private fun updateMargin () {
         val p=main.getLayoutParams()
         if (p is ViewGroup.MarginLayoutParams) {
             p.setMargins(p.leftMargin, p.topMargin, p.rightMargin, behavior!!.peekHeight)
             main.requestLayout()
         }
     }
-}
 
+    override fun viewPodcast(podcastId: String) {
+        val fragment = DetailFragment.newInstance(podcastId)
+        this.addFragment(targetId,fragment)
+    }
+
+    override fun viewEpisode(episode: Episode) {
+        episodeFragment?.show(supportFragmentManager,"")
+        detailViewModel?.setEpisode(episode)
+    }
+
+    override fun selectGenre(genre: MediaGenre) {
+        val sectionFragment = SectionFragment.newInstance(genre.id)
+        this.addFragment(targetId,sectionFragment)
+    }
+
+    override fun toggleSubscription(podcast: Podcast) {
+        subscriptionViewModel?.toggleSubscription(podcast.collectionId)?.observe(this, Observer {subbed->
+              subbed?.let {
+                  podcast.subscribed=subbed
+                  podcast.notifyPropertyChanged(BR.subscribed)
+              }
+        })
+    }
+
+    override fun playEpisode(episode: Episode) {
+        episodeFragment?.dismiss()
+
+    }
+
+
+}
 
 
 

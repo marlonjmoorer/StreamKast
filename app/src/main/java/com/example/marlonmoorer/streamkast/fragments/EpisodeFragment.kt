@@ -17,7 +17,7 @@ import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import kotlinx.android.synthetic.main.fragment_mediaplayer.*
 
 
-class EpisodeFragment: BottomSheetDialogFragment(),IEpisodeListener {
+class EpisodeFragment: BottomSheetDialogFragment() {
 
 
     lateinit var detailModel: DetailViewModel
@@ -26,20 +26,13 @@ class EpisodeFragment: BottomSheetDialogFragment(),IEpisodeListener {
         detailModel = createViewModel()
     }
 
-    override fun open(episode: Episode) {
-        this.dismiss()
-        detailModel.queuedEpisode.postValue(episode)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val binding = FragmentEpisodeBinding.inflate(inflater)
         detailModel.getCurrentEpisode().observe(this, Observer { episode ->
             binding.episode=episode
         })
-        binding.handler=this
+        binding.handler=activity as IEpisodeListener
         return  binding.root
     }
-
-
 
 }

@@ -19,7 +19,7 @@
       android:background="@color/grey_400"
       android:layout_margin="8dp"
       android:orientation="vertical"
-      android:onClick="@{e->handler.open(featured.podcastId)}">
+      android:onClick="@{e->handler.viewPodcast(featured.podcastId)}">
 
       <ImageView
           android:id="@+id/podcast_image"

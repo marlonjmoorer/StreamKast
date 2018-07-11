@@ -28,7 +28,7 @@ class SubscriptionAdapater(private val listener:ISubscriptionListener?=null):Dat
            this?.subscription =subs?.get(position)
         }
         holder?.itemView?.setOnClickListener {
-            listener?.openPodcast(subs!!.get(position).podcastId.toString())
+            listener?.viewPodcast(subs!!.get(position).podcastId.toString())
         }
         holder?.itemView?.menu?.setOnClickListener { view->
             handleContextMenu(holder.itemView.context,view,subs!!.get(position))

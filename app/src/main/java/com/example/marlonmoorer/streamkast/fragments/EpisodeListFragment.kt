@@ -17,18 +17,11 @@ import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 
-class EpisodeListFragment: Fragment(), IEpisodeListener {
+class EpisodeListFragment: BaseFragment(){
 
 
     lateinit var detailModel: DetailViewModel
 
-    override fun open(episode: Episode) {
-        detailModel.setEpisode(episode)
-    }
-
-    override fun play(episode: Episode) {
-        detailModel.queuedEpisode.postValue(episode)
-    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -36,7 +29,7 @@ class EpisodeListFragment: Fragment(), IEpisodeListener {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val episodeListAdapter= EpisodeListAdapter(this)
+        val episodeListAdapter= EpisodeListAdapter(episodeListener)
         detailModel.getEpisodes().observe(this, Observer { episodes->
             episodes?.let {
                 episodeListAdapter.setEpisodes(it)

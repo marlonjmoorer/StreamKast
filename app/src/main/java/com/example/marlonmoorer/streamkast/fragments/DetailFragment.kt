@@ -15,7 +15,6 @@ import android.widget.Button
 import com.example.marlonmoorer.streamkast.R
 
 import com.example.marlonmoorer.streamkast.api.models.rss.Episode
-import com.example.marlonmoorer.streamkast.async
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
@@ -31,32 +30,20 @@ import org.jetbrains.anko.design.snackbar
 /**
  * Created by marlonmoorer on 3/24/18.
  */
-class DetailFragment: Fragment(),IEpisodeListener {
-
+class DetailFragment: BaseFragment(){
 
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
     private  var Id:String=""
 
-    override fun open(episode: Episode) {
-
-        detailModel.setEpisode(episode)
-    }
-
-    override fun play(episode: Episode) {
-        detailModel.queuedEpisode.postValue(episode)
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             Id=it.getString(KEY)
         }
-
-
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding =FragmentDetailsBinding.inflate(inflater,container,false)
-
 
         (activity as AppCompatActivity).apply {
             setSupportActionBar(binding.toolbar)
@@ -67,13 +54,18 @@ class DetailFragment: Fragment(),IEpisodeListener {
             binding.toolbar.setNavigationOnClickListener {
                 this.onBackPressed()
             }
-            binding.viewPager.adapter= ViewPagerAdapter(childFragmentManager)
         }
         detailModel.loadPodcast(Id).observe(this, Observer { channel->
-            binding.channel=channel
-
-            binding.executePendingBindings()
+            if(channel==null){
+                binding.loadingScreen?.visibility=View.VISIBLE
+            }else{
+                binding.channel=channel
+                binding.loadingScreen?.visibility=View.GONE
+                binding.executePendingBindings()
+            }
         })
+
+        binding.viewPager.adapter= ViewPagerAdapter(childFragmentManager)
         binding.tabs.run {
             setupWithViewPager(binding.viewPager)
             getTabAt(0)?.setIcon(R.drawable.icons8_bulleted_list_filled)
@@ -81,40 +73,45 @@ class DetailFragment: Fragment(),IEpisodeListener {
             return@run
         }
         detailModel.subscribed().observe(this, Observer {subscribed->
-            val button_text: String
-            val icon:Int
-            if(subscribed!!){
-                button_text=resources.getString(R.string.action_subbed)
-                icon=R.drawable.icons8_checked_user_male
-            }
-            else{
-                button_text=resources.getString(R.string.action_sub)
-                icon=R.drawable.icons8_add_user_male
-            }
-            binding.detailCard?.followBtn?.run {
-                    text=button_text
-                    setCompoundDrawablesWithIntrinsicBounds(0,0,icon,0)
-            }
+
+              subscribed?.let {
+                  val button_text: String
+                  val icon:Int
+                  if(subscribed){
+                      button_text=resources.getString(R.string.action_subbed)
+                      icon=R.drawable.icons8_checked_user_male
+                  }
+                  else{
+                      button_text=resources.getString(R.string.action_sub)
+                      icon=R.drawable.icons8_add_user_male
+                  }
+                  binding.detailCard?.followBtn?.run {
+                      text=button_text
+                      setCompoundDrawablesWithIntrinsicBounds(0,0,icon,0)
+                      setOnClickListener {
+                          detailModel.toggleSubscription()
+                      }
+                  }
+              }
+
         })
-        binding.detailCard?.followBtn?.setOnClickListener {
-
-            detailModel.run {
-                if(subbed==true){
-                    alert("Unsubcribe  from  $title ?") {
-                        yesButton {
-                            toggleSubscription()
-                            snackbar(binding.viewPager,"Unsubcribed from ${this@run.title} ","Undo") {
-                                toggleSubscription()
-                            }
-                        }
-                        noButton {}
-                    }.show()
-                }else{
-                    toggleSubscription()
-                }
-            }
-
-        }
+//        binding.detailCard?.followBtn?.setOnClickListener {
+//            detailModel.run {
+//                if(subbed==true){
+//                    alert("Unsubcribe  from  $title ?") {
+//                        yesButton {
+//                            toggleSubscription()
+//                            snackbar(binding.viewPager,"Unsubcribed from ${this@run.title} ","Undo") {
+//                                toggleSubscription()
+//                            }
+//                        }
+//                        noButton {}
+//                    }.show()
+//                }else{
+//                    toggleSubscription()
+//                }
+//            }
+//        }
 
 
         return binding.root

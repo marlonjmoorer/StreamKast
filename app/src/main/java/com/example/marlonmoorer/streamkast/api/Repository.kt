@@ -9,8 +9,9 @@ import com.example.marlonmoorer.streamkast.Utils
 import com.example.marlonmoorer.streamkast.api.models.*
 import com.example.marlonmoorer.streamkast.api.models.rss.Channel
 
-import com.example.marlonmoorer.streamkast.async
+
 import com.example.marlonmoorer.streamkast.data.*
+import org.jetbrains.anko.doAsync
 import javax.inject.Inject
 
 
@@ -52,9 +53,10 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
         return null
     }
 
-    fun syncFeatured(id:String) = async{
+    fun syncFeatured(id:String){
+        doAsync{
 
-      // if (!featuredItems.hasRows(id)){
+            // if (!featuredItems.hasRows(id)){
             featuredItems.clearGenreItems(id)
             val data=when(id){
                 MediaGenre.Featured.id->itunesService.topPodcast()
@@ -73,7 +75,8 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
                 }
             }
             entries?.let { featuredItems.insertAll(it) }
-       //}
+            //}
+        }
     }
     fun getFeaturedPostcasts(id:String) = featuredItems.getByGenreId(id)
 

@@ -4,5 +4,5 @@ import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 
 interface IGenreListener {
 
-    fun open(genre: MediaGenre)
+    fun selectGenre(genre: MediaGenre)
 }

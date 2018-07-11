@@ -14,19 +14,6 @@ import org.w3c.dom.Text
 import java.net.URL
 import java.util.concurrent.Executors
 
-
-private val BACKGROUND_THREAD= Executors.newSingleThreadExecutor()
-
-
-fun async(fn:()->Unit){
-    val future = BACKGROUND_THREAD.submit(fn)
-    try {
-        future.get()
-    }catch (ex:Exception){
-        Log.e("ERR",ex.message)
-    }
-}
-
 class Utils{
     companion object {
        fun parseFeed(url:String):Channel{

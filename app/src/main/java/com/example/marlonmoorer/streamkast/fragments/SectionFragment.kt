@@ -20,11 +20,10 @@ import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import kotlinx.android.synthetic.main.fragment_section.view.*
 
 
-private const val KEY = "SECTION_NAME"
 
 
-class SectionFragment : Fragment() {
-
+class SectionFragment : BaseFragment() {
+    private  val KEY = "SECTION_NAME"
     private var title:String?=null
     lateinit var viewModel: BrowseViewModel
     private var podcastAdapter:PodcastListAdapter?=null
@@ -35,8 +34,8 @@ class SectionFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        podcastAdapter= PodcastListAdapter(viewModel)
-        featuredPodcastAdapter= FeaturedPodcastAdapter(viewModel)
+        podcastAdapter= PodcastListAdapter(podcastListener)
+        featuredPodcastAdapter= FeaturedPodcastAdapter(podcastListener)
         arguments?.let {
             MediaGenre.parse(it.getString(KEY))?.let { genre->
                 viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
@@ -87,7 +86,8 @@ class SectionFragment : Fragment() {
     }
 
 
-    override fun onAttach(context: Context) {
+
+    override fun onAttach(context: Context?) {
         super.onAttach(context)
         viewModel = createViewModel()
     }

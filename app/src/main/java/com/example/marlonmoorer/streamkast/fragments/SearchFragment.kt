@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 
-class SearchFragment:Fragment(){
+class SearchFragment:BaseFragment(){
 
     var searchViewModel:SearchViewModel?=null
     var browseViewModel:BrowseViewModel?=null
@@ -31,7 +31,7 @@ class SearchFragment:Fragment(){
         super.onCreate(savedInstanceState)
         searchViewModel=createViewModel()
         browseViewModel=createViewModel()
-        adapter=PodcastListAdapter(browseViewModel)
+        adapter=PodcastListAdapter(podcastListener)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

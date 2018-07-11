@@ -79,7 +79,7 @@
                 android:layout_marginTop="16dp"
                 android:drawableEnd="@drawable/ic_play_arrow"
                 android:minWidth="0dp"
-                android:onClick="@{e->handler.open(episode)}"
+                android:onClick="@{e->handler.playEpisode(episode)}"
                 android:paddingEnd="8dp"
                 android:paddingStart="8dp"
                 android:text="@string/action_play"
@@ -192,7 +192,7 @@
                 <!--android:layout_marginEnd="16dp"-->
                 <!--android:layout_marginTop="4dp"-->
                 <!--android:layout_marginBottom="4dp"-->
-                <!--android:onClick="@{e->handler.open(episode)}"-->
+                <!--android:onClick="@{e->handler.viewPodcast(episode)}"-->
                 <!--android:src="@drawable/icons8_play"-->
                 <!--app:backgroundTint="@color/colorAccent"-->
                 <!--app:layout_anchor="@id/main"-->

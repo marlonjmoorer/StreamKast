@@ -11,11 +11,14 @@ import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+
 import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
 import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
 
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
+import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.createViewModel
+import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import kotlinx.android.synthetic.main.fragment_browse.view.*
 
@@ -23,17 +26,18 @@ import kotlinx.android.synthetic.main.fragment_browse.view.*
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class BrowseFragment : Fragment(){
+class BrowseFragment : BaseFragment() {
 
     lateinit var browseViewModel: BrowseViewModel
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_browse, container, false)
-        val featuredPodcastAdapter=FeaturedPodcastAdapter(browseViewModel)
+        val featuredPodcastAdapter=FeaturedPodcastAdapter(podcastListener)
         view?.apply {
             featured.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             categories.layoutManager = GridLayoutManager(activity, 2)
-            categories.adapter = CategoryAdapter(browseViewModel)
+            categories.adapter = CategoryAdapter(genreListener)
             categories.setNestedScrollingEnabled(false)
             featured.adapter = featuredPodcastAdapter
         }

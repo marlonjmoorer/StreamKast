@@ -7,7 +7,7 @@ import com.example.marlonmoorer.streamkast.data.Subscription
 interface  ISubscriptionListener{
     fun unsubscribe(sub:Subscription)
 
-    fun openPodcast(id:String)
+    fun viewPodcast(id:String)
 
     fun subscribe(sub: Subscription)
 }

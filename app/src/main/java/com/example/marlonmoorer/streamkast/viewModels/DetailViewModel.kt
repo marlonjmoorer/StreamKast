@@ -7,8 +7,9 @@ import com.example.marlonmoorer.streamkast.BR
 import com.example.marlonmoorer.streamkast.api.Repository
 import com.example.marlonmoorer.streamkast.api.models.rss.*
 
-import com.example.marlonmoorer.streamkast.async
+
 import com.example.marlonmoorer.streamkast.data.Subscription
+import org.jetbrains.anko.doAsync
 
 
 /**
@@ -23,11 +24,6 @@ class DetailViewModel :BaseViewModel() {
     private var podcastId=""
     val queuedEpisode=MutableLiveData<Episode>()
 
-    init {
-        async {
-            subscribed.value=isSubscribed()
-        }
-    }
 
     fun getPodcast():LiveData<Channel> = podcast
     fun getCurrentEpisode():LiveData<Episode> = selectedEpisode
@@ -36,13 +32,14 @@ class DetailViewModel :BaseViewModel() {
     fun setEpisode(episode: Episode)=selectedEpisode.postValue(episode)
 
     fun loadPodcast(id:String): LiveData<Channel> {
-        async {
+        podcast.value=null
+        doAsync {
             podcastId=id
             val result= repository.getPodcastById(id)
             subscribed.postValue(isSubscribed())
-            repository.parseFeed(result?.feedUrl!!)?.run{
-                podcast.postValue(this)
-                this@DetailViewModel.episodes.postValue(episodes)
+            repository.parseFeed(result?.feedUrl!!)?.let{feed->
+                podcast.postValue(feed)
+                episodes.postValue(feed.episodes)
             }
         }
         return  podcast
@@ -51,21 +48,30 @@ class DetailViewModel :BaseViewModel() {
         get() = subscribed.value
     val title
         get() = podcast.value?.title
+
     private fun isSubscribed()=repository.isSubscribed(podcastId)
 
-    fun toggleSubscription()=async{
-        if(repository.isSubscribed(podcastId)){
-            repository.unsubscribe(podcastId)
-        }else{
-            podcast.value?.let{
-                repository.subscribe(Subscription().apply {
-                    title=it.title
-                    thumbnail=it.thumbnail
-                    podcastId=this@DetailViewModel.podcastId.toInt()
-                })
+    fun toggleSubscription(){
+        doAsync {
+            if(repository.isSubscribed(podcastId)){
+                repository.unsubscribe(podcastId)
+            }else{
+                podcast.value?.let{
+                    repository.subscribe(Subscription().also{sub->
+                        sub.title=it.title
+                        sub.thumbnail=it.thumbnail
+                        sub.podcastId=podcastId.toInt()
+                    })
+                }
             }
+            subscribed.postValue(isSubscribed())
         }
-        subscribed.postValue(isSubscribed())
+    }
+
+    fun clear(){
+        podcast.postValue(null)
+        episodes.postValue(null)
+        subscribed.postValue(false)
     }
 
 
