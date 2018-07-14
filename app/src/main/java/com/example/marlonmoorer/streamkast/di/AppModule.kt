@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.ItunesService
 import com.example.marlonmoorer.streamkast.api.Repository
@@ -30,7 +31,7 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun provideRepository(database: KastDatabase,itunesService: ItunesService):Repository{
-        return Repository(database,itunesService)
+        return Repository(database,itunesService,context.getSharedPreferences(context.packageName,0))
     }
 
     @Provides

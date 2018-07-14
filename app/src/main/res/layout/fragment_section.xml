@@ -18,7 +18,6 @@
             android:id="@+id/appBarLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:theme="@style/AppBarOverlay"
             app:layout_constraintBottom_toTopOf="@+id/thumbnail_large"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,29 +28,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorPrimary"
-                app:popupTheme="@style/PopupOverlay"
+                app:popupTheme="@style/AppBarOverlay"
                 />
 
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/textView5"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:text="Featured"
                     android:textAlignment="center"
                     android:textColor="@color/white"
-                    android:textSize="24sp"
-                    android:text="Featured" />
+                    android:textSize="24sp" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/featured_items"
@@ -63,7 +63,6 @@
                     android:id="@+id/latest_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:background="@color/black"
 
                     android:paddingBottom="4dp"
@@ -77,9 +76,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/section_items"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    >
+                    android:layout_height="wrap_content">
 
                 </android.support.v7.widget.RecyclerView>
 

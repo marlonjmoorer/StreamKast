@@ -12,7 +12,7 @@ import com.example.marlonmoorer.streamkast.listeners.IGenreListener
 class CategoryAdapter(val listener: IGenreListener?=null):DataBoundAdapter<ItemCategoryBinding>() {
 
     var categories=MediaGenre.categories
-    override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>?, position: Int) {
+    override fun onBindViewHolder(holder: DataViewHolder<ItemCategoryBinding>, position: Int) {
         holder?.binding?.apply {
             genre=categories.get(position)
             handler=listener
@@ -21,10 +21,12 @@ class CategoryAdapter(val listener: IGenreListener?=null):DataBoundAdapter<ItemC
 
     override fun getItemCount()= categories.size
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DataViewHolder<ItemCategoryBinding> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder<ItemCategoryBinding> {
         val viewBinding = ItemCategoryBinding.inflate(LayoutInflater.from(parent?.context), parent, false)
 
         return DataViewHolder(viewBinding)
     }
+
+
 
 }

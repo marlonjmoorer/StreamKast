@@ -20,7 +20,7 @@ class InfoFragment: Fragment(){
     private lateinit var detailModel: DetailViewModel
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding=FragmentInfoBinding.inflate(inflater,container,false)
-        detailModel.getPodcast().observe(this, Observer { podcast->
+        detailModel.podcastDetails.observe(this, Observer { podcast->
             binding.channel=podcast
             binding.executePendingBindings()
         })

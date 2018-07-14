@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.fragments
 
 import android.arch.lifecycle.Observer
+import android.arch.paging.PagedList
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,6 +11,7 @@ import android.view.*
 
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
+import com.example.marlonmoorer.streamkast.adapters.PagedPodcastListAdapter
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.Podcast
@@ -28,7 +30,7 @@ class SectionFragment : BaseFragment() {
     lateinit var viewModel: BrowseViewModel
     private var podcastAdapter:PodcastListAdapter?=null
     private var featuredPodcastAdapter:FeaturedPodcastAdapter?=null
-
+    lateinit var  genre: MediaGenre
 
 
 
@@ -38,9 +40,7 @@ class SectionFragment : BaseFragment() {
         featuredPodcastAdapter= FeaturedPodcastAdapter(podcastListener)
         arguments?.let {
             MediaGenre.parse(it.getString(KEY))?.let { genre->
-                viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
-                viewModel.getPodcastByGenre(genre).observe(this,podcastObserver)
-                this.title=genre.displayname
+                this.genre=genre
             }
         }
     }
@@ -58,24 +58,25 @@ class SectionFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_section, container, false)
+        viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
+        viewModel.getPodcastByGenre(genre.id).observe(this,podcastObserver)
         view.apply {
             section_items.apply {
                 layoutManager= LinearLayoutManager(activity)
                 adapter=podcastAdapter
-                setNestedScrollingEnabled(false);
+                setNestedScrollingEnabled(false)
             }
             featured_items.apply {
                 layoutManager=LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL,false)
                 adapter=featuredPodcastAdapter
             }
-
         }
         (activity as AppCompatActivity).apply {
             setSupportActionBar(view.toolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeButtonEnabled(true)
-                title=this@SectionFragment.title
+                title=genre.displayname
             }
             view.toolbar.setNavigationOnClickListener {
                 this.onBackPressed()
@@ -93,10 +94,6 @@ class SectionFragment : BaseFragment() {
     }
 
 
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.menu_main, menu);
-    }
 
 
     companion object {

@@ -18,12 +18,12 @@ class SubscriptionAdapater(private val listener:ISubscriptionListener?=null):Dat
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): DataViewHolder<ItemSubTileBinding> {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder<ItemSubTileBinding> {
         val binding= ItemSubTileBinding.inflate(LayoutInflater.from(parent?.context))
         return DataViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: DataViewHolder<ItemSubTileBinding>?, position: Int) {
+    override fun onBindViewHolder(holder: DataViewHolder<ItemSubTileBinding>, position: Int) {
         holder?.binding.apply {
            this?.subscription =subs?.get(position)
         }

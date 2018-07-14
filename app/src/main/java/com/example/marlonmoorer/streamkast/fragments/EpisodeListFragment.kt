@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.ethanhua.skeleton.Skeleton
+import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.api.models.rss.Episode
 import com.example.marlonmoorer.streamkast.createViewModel
@@ -21,23 +23,21 @@ class EpisodeListFragment: BaseFragment(){
 
 
     lateinit var detailModel: DetailViewModel
-
+    lateinit var episodeList:RecyclerView
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         detailModel = createViewModel()
+        episodeList=RecyclerView(activity).apply{layoutManager= LinearLayoutManager(context)}
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val episodeListAdapter= EpisodeListAdapter(episodeListener)
-        detailModel.getEpisodes().observe(this, Observer { episodes->
-            episodes?.let {
-                episodeListAdapter.setEpisodes(it)
-            }
+        detailModel.episodes.observe(this, Observer { episodes->
+            episodeListAdapter.setEpisodes(episodes?: emptyList())
         })
-        return RecyclerView(activity).apply {
-            adapter=episodeListAdapter
-            layoutManager= LinearLayoutManager(context)
+        return episodeList.apply {
+           adapter= episodeListAdapter
         }
     }
 }

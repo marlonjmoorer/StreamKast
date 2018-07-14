@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import android.content.Context
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 
@@ -20,6 +21,7 @@ import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
+
 import kotlinx.android.synthetic.main.fragment_browse.view.*
 
 
@@ -36,23 +38,19 @@ class BrowseFragment : BaseFragment() {
         val featuredPodcastAdapter=FeaturedPodcastAdapter(podcastListener)
         view?.apply {
             featured.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            featured.adapter = featuredPodcastAdapter
             categories.layoutManager = GridLayoutManager(activity, 2)
             categories.adapter = CategoryAdapter(genreListener)
             categories.setNestedScrollingEnabled(false)
-            featured.adapter = featuredPodcastAdapter
+            (activity as AppCompatActivity).apply {
+                setSupportActionBar(toolbar)
+            }
         }
-
         browseViewModel.getFeaturedByGenre(MediaGenre.Featured.id).observe(this, Observer { podcast ->
             podcast?.let {
                featuredPodcastAdapter.setPodcasts(it)
             }
         })
-        activity?.actionBar?.apply {
-            setDisplayHomeAsUpEnabled(false)
-            setHomeButtonEnabled(false)
-            title = "Browse"
-        }
-
         return view
     }
 

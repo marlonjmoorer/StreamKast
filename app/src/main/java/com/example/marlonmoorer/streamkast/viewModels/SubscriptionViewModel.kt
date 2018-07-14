@@ -47,6 +47,6 @@ class  SubscriptionViewModel:BaseViewModel(){
             repository.unsubscribe("${sub.podcastId}")
         }
     }
-    
+
 
 }

@@ -28,7 +28,12 @@ class Utils{
                            "link"->link=node.textContent
                            "description"-> description=node.textContent
                            "itunes:author"->author=node.textContent
-                           "itunes:image"-> thumbnail=node.getAttribute("href")
+                           "image"-> node.childNodes.forEach {n->
+                               if(n.nodeName=="url"){
+                                   thumbnail=n.textContent
+                               }
+                           }
+                          // "itunes:image"-> thumbnail=node.getAttribute("href")
                            "itunes:category"-> categories.add(node.getAttribute("text"))
                            "item"-> {
                                val ep=parseEpisode(node)

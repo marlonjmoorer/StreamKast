@@ -3,6 +3,7 @@ package com.example.marlonmoorer.streamkast.fragments
 import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ class SubscriptionFragment:BaseFragment(),ISubscriptionListener {
                 adapter.setSubList(it)
             }
         })
+        setHasOptionsMenu(true)
     }
 
 
@@ -37,6 +39,9 @@ class SubscriptionFragment:BaseFragment(),ISubscriptionListener {
         return inflater.inflate(R.layout.fragment_subscription,container,false).apply {
             subs.layoutManager=GridLayoutManager(activity,2)
             subs.adapter=adapter
+            (activity as AppCompatActivity).apply {
+                setSupportActionBar(toolbar)
+            }
         }
     }
 

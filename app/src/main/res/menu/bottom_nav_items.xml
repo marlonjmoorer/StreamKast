@@ -6,11 +6,6 @@
         android:icon="@drawable/icons8_browse_page"
 
         />
-    <item
-        android:id="@+id/menu_search"
-        android:title="@string/nav_search"
-        android:icon="@drawable/icons8_search"
-        />
 
     <item
         android:id="@+id/menu_library"

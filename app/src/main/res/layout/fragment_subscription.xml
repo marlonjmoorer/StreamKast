@@ -8,15 +8,20 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppBarOverlay"
+        app:layout_constraintBottom_toTopOf="@+id/content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
         <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:popupTheme="@style/AppBarOverlay"
             app:title="Subscriptions"
-            app:titleTextColor="@color/white"></android.support.v7.widget.Toolbar>
+            app:titleTextColor="@color/white"/>
     </android.support.design.widget.AppBarLayout>
     <FrameLayout
         android:id="@+id/content"
@@ -29,8 +34,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/subs"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"/>
+            android:layout_height="match_parent"/>
         <ImageView
             android:id="@+id/no_results"
             android:layout_width="match_parent"

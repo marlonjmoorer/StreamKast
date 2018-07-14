@@ -6,13 +6,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.NotificationCompat
-import java.net.URL
 import android.support.v4.media.session.MediaSessionCompat
 import android.content.BroadcastReceiver
 import android.media.AudioManager
 import android.content.IntentFilter
 import android.content.ComponentName
-import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.*
 import android.support.v4.media.MediaBrowserCompat
@@ -24,12 +22,8 @@ import android.support.v4.media.session.MediaButtonReceiver
 import android.text.TextUtils
 import org.jetbrains.anko.intentFor
 import java.io.Serializable
-import java.util.*
 import android.graphics.Bitmap
-import android.graphics.drawable.Icon
-import android.support.v4.media.MediaDescriptionCompat
 import android.util.Log
-import org.jetbrains.anko.doAsync
 
 class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener,MediaPlayer.OnBufferingUpdateListener  {
 
@@ -88,7 +82,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     fun handleIntent(intent: Intent){
         if(intent.hasExtra(MEDIA)){
             mediaItem = (intent.getSerializableExtra(MEDIA) as MediaItem).apply{
-                this@MediaService.load(this.thumbnail,{bitmap-> this.bitmapImage = bitmap})
+                applicationContext.loadAsBitmap(this.thumbnail){bitmap->
+                     this.bitmapImage = bitmap
+                }
             }
             initMediaPlayer()
             updateMetaData()

@@ -18,7 +18,7 @@ object BindingAdapters{
     @BindingAdapter("android:src")
     fun loadImage(view: ImageView, resourceId:Int?){
         resourceId?.let {
-            view.load(it)
+            view.loadAsBitmap(it)
         }
     }
 
@@ -26,7 +26,7 @@ object BindingAdapters{
     @BindingAdapter("src")
     fun loadImageUrl(view: ImageView, imageUrl: String?){
         imageUrl?.let {
-            view.load(it)
+            view.loadAsBitmap(it)
         }
     }
 

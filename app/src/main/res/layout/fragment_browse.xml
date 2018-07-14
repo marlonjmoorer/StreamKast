@@ -5,8 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_800"
+    android:orientation="vertical"
     tools:layout_editor_absoluteY="81dp">
 
+   <android.support.design.widget.AppBarLayout
+       android:id="@+id/appBarLayout2"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:theme="@style/AppBarOverlay"
+       app:layout_constraintBottom_toTopOf="@+id/thumbnail_large"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent">
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="?attr/actionBarSize"
+          android:background="@color/colorPrimary"
+          app:popupTheme="@style/AppBarOverlay" />
+   </android.support.design.widget.AppBarLayout>
 
    <android.support.v4.widget.NestedScrollView
        android:id="@+id/nestedScrollView"
@@ -59,12 +76,12 @@
              android:id="@+id/textView"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:padding="8dp"
-             android:textSize="24sp"
-             android:textAlignment="center"
              android:background="@color/black"
+             android:padding="8dp"
+             android:text="@string/genre_label"
+             android:textAlignment="center"
              android:textColor="@color/white"
-             android:text="@string/genre_label" />
+             android:textSize="24sp" />
 
          <android.support.v7.widget.RecyclerView
              android:id="@+id/categories"
