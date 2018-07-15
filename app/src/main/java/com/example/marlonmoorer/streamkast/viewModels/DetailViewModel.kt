@@ -21,12 +21,13 @@ import org.jetbrains.anko.doAsync
 class DetailViewModel :BaseViewModel() {
 
     var podcastDetails:LiveData<Channel>
-    private val podcast:MutableLiveData<Podcast>
     val episodes:LiveData<List<Episode>>
-    private  val selectedEpisode=MutableLiveData<Episode>()
     val subscribed:LiveData<Boolean>
+
+    private val podcast:MutableLiveData<Podcast>
+    private  val selectedEpisode=MutableLiveData<Episode>()
     private var podcastId=""
-    val queuedEpisode=MutableLiveData<Episode>()
+
     init {
         podcast=MutableLiveData()
         podcastDetails=Transformations.switchMap(podcast,{p->
@@ -74,15 +75,4 @@ class DetailViewModel :BaseViewModel() {
             })
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

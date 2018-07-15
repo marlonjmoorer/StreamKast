@@ -4,8 +4,10 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.FragmentManager
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.Transformations
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
@@ -29,6 +31,8 @@ import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.listeners.IGenreListener
 import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
 import com.example.marlonmoorer.streamkast.listeners.ISubscriptionListener
+import com.example.marlonmoorer.streamkast.models.EpisodeModel
+import com.example.marlonmoorer.streamkast.viewModels.MediaViewModel
 import kotlinx.android.synthetic.main.item_podcast.*
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
@@ -38,13 +42,15 @@ import org.jetbrains.anko.intentFor
 class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenreListener,BottomNavigationView.OnNavigationItemSelectedListener{
 
 
-    private var browseViewModel: BrowseViewModel?=null
+
     private var detailViewModel: DetailViewModel?=null
     private var subscriptionViewModel:SubscriptionViewModel?=null
+    private var mediaViewModel:MediaViewModel?=null
     private val targetId:Int=R.id.main
     private lateinit var searchFragment:SearchFragment
     private lateinit var mediaPlayerFragment:MediaPlayerFragment
     private lateinit var episodeFragment: EpisodeFragment
+    private  var isBound=false
 
     companion object {
         val PLAY_MEDIA="PLAY_MEDIA"
@@ -59,10 +65,11 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        browseViewModel = createViewModel()
+
         detailViewModel = createViewModel()
         subscriptionViewModel= createViewModel()
-        nav.setOnNavigationItemSelectedListener(this)
+        mediaViewModel=createViewModel()
+
         behavior=BottomSheetBehavior.from(findViewById<View>(R.id.bottom_sheet))?.apply {
             isHideable=true
             state=BottomSheetBehavior.STATE_HIDDEN
@@ -80,19 +87,12 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
             })
         }
 
-        detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
-            behavior?.run{
-                state=BottomSheetBehavior.STATE_COLLAPSED
-                isHideable=false
-            }
-            updateMargin()
-        })
-
-
+        nav.setOnNavigationItemSelectedListener(this)
         nav.selectedItemId=R.id.menu_browse
         searchFragment=SearchFragment()
-        mediaPlayerFragment=supportFragmentManager.findFragmentById(R.id.mini_player) as MediaPlayerFragment
         episodeFragment= EpisodeFragment()
+        mediaPlayerFragment=supportFragmentManager.findFragmentById(R.id.mini_player) as MediaPlayerFragment
+
     }
 
 
@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
 
         val fragment = when(item.itemId){
             R.id.menu_browse-> BrowseFragment()
-            R.id.menu_library->SubscriptionFragment()
+            R.id.menu_library->LibraryFragment()
             R.id.menu_subs->SubscriptionFragment()
             else-> Fragment()
         }
@@ -159,8 +159,9 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
     }
 
     override fun viewEpisode(episode: Episode) {
-        episodeFragment.show(supportFragmentManager,"")
         detailViewModel?.setEpisode(episode)
+        this.addFragment(targetId,episodeFragment)
+        //episodeFragment.show(supportFragmentManager,"")
     }
 
     override fun selectGenre(genre: MediaGenre) {
@@ -181,8 +182,41 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
     }
 
     override fun playEpisode(episode: Episode) {
-        episodeFragment.dismiss()
 
+        episodeFragment.takeIf { it.isVisible }?.dismiss()
+
+        val media=EpisodeModel(
+                title=episode.title,
+                author=episode.author,
+                thumbnail=episode.thumbnail,
+                url=episode.mediaUrl,
+                description=episode.description)
+        if(!isBound) {
+            val intent =Intent(application,MediaService::class.java).apply {
+                putExtra(MediaService.MEDIA,media)
+            }
+            application.startService(intent)
+            bindService(intent,mediaViewModel,AppCompatActivity.BIND_AUTO_CREATE)
+        }else{
+            val broadcastIntent = Intent(MediaService.PLAY_AUDIO).apply{
+                putExtra(MediaService.MEDIA,media)
+            }
+            application.sendBroadcast(broadcastIntent)
+        }
+        behavior?.run{
+            state=BottomSheetBehavior.STATE_COLLAPSED
+            isHideable=false
+        }
+        updateMargin()
+
+    }
+
+    override fun onBackPressed() {
+        if(behavior!!.state==BottomSheetBehavior.STATE_EXPANDED){
+            behavior!!.state=BottomSheetBehavior.STATE_COLLAPSED
+        }else{
+            super.onBackPressed()
+        }
     }
 
 

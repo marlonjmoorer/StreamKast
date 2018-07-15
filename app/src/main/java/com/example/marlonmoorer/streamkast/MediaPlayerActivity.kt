@@ -1,9 +1,6 @@
 package com.example.marlonmoorer.streamkast
 
-import android.content.ComponentName
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
 import android.support.v7.app.AppCompatActivity
 
 import kotlinx.android.synthetic.main.activity_media_player.*
@@ -15,8 +12,8 @@ import android.arch.lifecycle.Observer
 import android.support.v4.media.session.PlaybackStateCompat
 
 import android.support.v4.media.MediaMetadataCompat
-import android.os.SystemClock
 import com.example.marlonmoorer.streamkast.databinding.ActivityMediaPlayerBinding
+import com.example.marlonmoorer.streamkast.models.MediaPlayerModel
 import com.example.marlonmoorer.streamkast.viewModels.MediaViewModel
 
 
@@ -25,7 +22,7 @@ class MediaPlayerActivity : AppCompatActivity(),SeekBar.OnSeekBarChangeListener 
     private lateinit var binding: ActivityMediaPlayerBinding
     private  var controller: MediaControllerCompat?=null
     private  var mediaViewModel:MediaViewModel?=null
-    private  val mediaPlayerModel=MediaPlayerModel()
+    private  val mediaPlayerModel= MediaPlayerModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

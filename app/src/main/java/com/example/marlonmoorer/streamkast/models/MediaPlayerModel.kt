@@ -1,9 +1,10 @@
-package com.example.marlonmoorer.streamkast
+package com.example.marlonmoorer.streamkast.models
 
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import android.graphics.Bitmap
-import java.time.Duration
+import com.example.marlonmoorer.streamkast.BR
+import com.example.marlonmoorer.streamkast.toTime
 
 class MediaPlayerModel:BaseObservable() {
 

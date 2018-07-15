@@ -24,12 +24,10 @@ import java.util.concurrent.Executors
 
 class  BrowseViewModel:BaseViewModel() {
 
-
     fun getFeaturedByGenre(id:String): LiveData<List<Featured>> {
         val genre=MediaGenre.parse(id)!!
         return  repository.getFeaturedPostcasts(genre.id)
     }
-
     fun getPodcastByGenre(id:String):LiveData<List<Podcast>>{
         return repository.getShowsByGenre(id)
     }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +12,14 @@ import android.view.ViewGroup
 import android.widget.SeekBar
 import com.example.marlonmoorer.streamkast.*
 import com.example.marlonmoorer.streamkast.databinding.FragmentMediaplayerBinding
+import com.example.marlonmoorer.streamkast.models.EpisodeModel
+import com.example.marlonmoorer.streamkast.models.MediaPlayerModel
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.MediaViewModel
 
 import kotlinx.android.synthetic.main._now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_mediaplayer.*
-import org.jetbrains.anko.support.v4.startService
 
 
 class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
@@ -27,7 +27,7 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
 
     private var detailViewModel: DetailViewModel?=null
     var mediaViewModel:MediaViewModel?=null
-    var mediaPlayerModel=MediaPlayerModel()
+    var mediaPlayerModel= MediaPlayerModel()
     private var binding:FragmentMediaplayerBinding?=null
 
 
@@ -43,18 +43,18 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
             playPause.setOnClickListener(mediaViewModel)
             seekbar.setOnSeekBarChangeListener(this@MediaPlayerFragment)
         }
-        detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
-            episode?.let {
-                val media=MediaService.MediaItem(
-                        title=episode.title,
-                        author=episode.author,
-                        thumbnail=episode.thumbnail,
-                        url=episode.mediaUrl,
-                        description=episode.description
-                )
-                mediaViewModel?.setMedia(media)
-            }
-        })
+//        detailViewModel?.queuedEpisode?.observe(this, Observer {episode->
+//            episode?.let {
+//                val media=EpisodeModel(
+//                        title=episode.title,
+//                        author=episode.author,
+//                        thumbnail=episode.thumbnail,
+//                        url=episode.mediaUrl,
+//                        description=episode.description
+//                )
+//                mediaViewModel?.setMedia(media)
+//            }
+//        })
         mediaViewModel?.run{
             metadata.observe(this@MediaPlayerFragment, Observer { data->
                 data?.let {
@@ -90,16 +90,6 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
         super.onAttach(context)
         detailViewModel=createViewModel()
         mediaViewModel=createViewModel()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mediaViewModel?.connect()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        mediaViewModel?.disconnect()
     }
 
 

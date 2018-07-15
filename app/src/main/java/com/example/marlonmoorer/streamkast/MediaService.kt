@@ -21,14 +21,13 @@ import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaButtonReceiver
 import android.text.TextUtils
 import org.jetbrains.anko.intentFor
-import java.io.Serializable
-import android.graphics.Bitmap
 import android.util.Log
+import com.example.marlonmoorer.streamkast.models.EpisodeModel
 
 class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener,MediaPlayer.OnBufferingUpdateListener  {
 
     private var mediaSession: MediaSessionCompat?=null
-    private var mediaItem:MediaItem?=null
+    private var mediaItem: EpisodeModel?=null
     private var mediaPlayer:MediaPlayer
     private val playbackState
             get() = mediaSession?.controller?.playbackState?.state
@@ -81,7 +80,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     fun handleIntent(intent: Intent){
         if(intent.hasExtra(MEDIA)){
-            mediaItem = (intent.getSerializableExtra(MEDIA) as MediaItem).apply{
+            mediaItem = (intent.getSerializableExtra(MEDIA) as EpisodeModel).apply{
                 applicationContext.loadAsBitmap(this.thumbnail){bitmap->
                      this.bitmapImage = bitmap
                 }
@@ -248,14 +247,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             get() = mediaSession?.controller
 
     }
-    data class MediaItem(
-            var url:String?=null,
-            var title:String?=null,
-            var author:String?=null,
-            var thumbnail:String?=null,
-            var description: String?=null):Serializable{
-        var bitmapImage:Bitmap?=null
-    }
 
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -358,10 +349,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
         result.sendResult(null)
     }
-
-
-
-
 
 }
 

@@ -25,19 +25,22 @@ class EpisodeListFragment: BaseFragment(){
     lateinit var detailModel: DetailViewModel
     lateinit var episodeList:RecyclerView
 
+    lateinit var episodeListAdapter: EpisodeListAdapter
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         detailModel = createViewModel()
-        episodeList=RecyclerView(activity).apply{layoutManager= LinearLayoutManager(context)}
+        episodeListAdapter= EpisodeListAdapter(episodeListener)
+        episodeList=RecyclerView(context).apply{
+            layoutManager= LinearLayoutManager(context)
+            adapter= episodeListAdapter
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val episodeListAdapter= EpisodeListAdapter(episodeListener)
         detailModel.episodes.observe(this, Observer { episodes->
             episodeListAdapter.setEpisodes(episodes?: emptyList())
         })
-        return episodeList.apply {
-           adapter= episodeListAdapter
-        }
+        return episodeList
     }
 }

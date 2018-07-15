@@ -2,10 +2,8 @@ package com.example.marlonmoorer.streamkast.viewModels
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
-import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.MutableLiveData
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
@@ -17,27 +15,22 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.MediaService
-import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.toTime
-import kotlinx.android.synthetic.main.activity_media_player.*
-import org.jetbrains.anko.support.v4.intentFor
-import java.text.ParsePosition
+import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import java.util.*
 
-class MediaViewModel(application: Application):AndroidViewModel(application),ServiceConnection, View.OnClickListener {
+class MediaViewModel:BaseViewModel(),ServiceConnection, View.OnClickListener {
+
 
 
     private var previousState:PlaybackStateCompat?=null
-    val playState:MutableLiveData<Int>
     private var timer:Timer?=null
-
+    
+    val playState:MutableLiveData<Int>
     val position:MutableLiveData<Int>
     val metadata:MutableLiveData<MediaMetadataCompat>
     var bound:MutableLiveData<Boolean>
     var controls:MediaControllerCompat.TransportControls?=null
 
-    val application
-            get()=getApplication<App>()
 
 
     init {
@@ -48,14 +41,7 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
         bound.value=false
     }
 
-    fun connect(){
-        val intent= Intent(application,MediaService::class.java)
-        application.bindService(intent,this, AppCompatActivity.BIND_AUTO_CREATE)
-    }
-    fun disconnect() {
-        if(bound.value==true)
-            application.unbindService(this)
-    }
+
 
     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
         if (binder is MediaService.MediaBinder){
@@ -137,17 +123,6 @@ class MediaViewModel(application: Application):AndroidViewModel(application),Ser
     }
 
 
-    fun setMedia(media: MediaService.MediaItem){
-        if(!bound.value!!) {
-            val intent =Intent(application,MediaService::class.java)
-            intent.putExtra(MediaService.MEDIA,media)
-            application.startService(intent)
-        }else{
-            val broadcastIntent = Intent(MediaService.PLAY_AUDIO)
-            broadcastIntent.putExtra(MediaService.MEDIA,media)
-            application.sendBroadcast(broadcastIntent)
-        }
-    }
 
     override fun onClick(view :View?) {
         playbackState?.let {

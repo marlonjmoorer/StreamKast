@@ -69,4 +69,14 @@
         <item name="android:drawableEnd">@drawable/ic_check_circle</item>
     </style>
 
+    <style name="SearchView">
+        <item name="floatingSearch_backgroundColor">@color/colorPrimary</item>
+        <item name="floatingSearch_viewSearchInputTextColor">@color/white</item>
+        <item name="floatingSearch_viewSuggestionItemTextColor">@color/white</item>
+        <item name="floatingSearch_hintTextColor">@color/grey_400</item>
+        <item name="floatingSearch_clearBtnColor">@color/white</item>
+        <item name="floatingSearch_leftActionColor">@color/white</item>
+        <item name="floatingSearch_menuItemIconColor">@color/white</item>
+    </style>
+
 </resources>
