@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.viewModels
+package com.example .marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
@@ -69,6 +69,9 @@ class DetailViewModel :BaseViewModel() {
                     })
                 }
             }
+            podcast.postValue(podcast.value.apply {
+                this!!.subscribed= repository.isSubscribed(this!!.collectionId)
+            })
         }
     }
 

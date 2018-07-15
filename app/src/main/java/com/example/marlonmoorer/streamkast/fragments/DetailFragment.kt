@@ -99,17 +99,17 @@ class DetailFragment: BaseFragment(){
         }
     }
      fun onSubscribeClicked(){
-//         if(detailModel.isSubbed){
-//             alert("Unsubscribe from ${detailModel.title}?") {
-//                 positiveButton("Unsubscribe"){
-//                     detailModel.toggleSubscription()
-//                 }
-//                 cancelButton {}
-//             }.show()
-//         }else{
-//             detailModel.toggleSubscription()
-//         }
-         detailModel.toggleSubscription()
+         if(detailModel.isSubbed){
+             alert("Unsubscribe from ${detailModel.title}?") {
+                 positiveButton("Unsubscribe"){
+                     detailModel.toggleSubscription()
+                 }
+                 cancelButton {}
+             }.show()
+         }else{
+             detailModel.toggleSubscription()
+         }
+        // detailModel.toggleSubscription()
      }
 
 

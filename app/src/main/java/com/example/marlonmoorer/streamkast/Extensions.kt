@@ -78,12 +78,11 @@ fun AppCompatActivity.addFragment(id:Int,fragment: Fragment,withAnimation:Boolea
     val transaction= supportFragmentManager!!
    .beginTransaction().apply {
         if(withAnimation) {
-            setCustomAnimations(0,0,R.anim.enter_right,R.anim.exit_right)
+            setCustomAnimations(R.anim.enter_right,R.anim.abc_fade_out,R.anim.abc_fade_in,R.anim.exit_right)
         }
-    }.add(id,fragment)
+    }.replace(id,fragment)
     .addToBackStack("over")
     .commit()
-
 }
 
 fun AppCompatActivity.replaceFragment(id:Int,fragment: Fragment){
