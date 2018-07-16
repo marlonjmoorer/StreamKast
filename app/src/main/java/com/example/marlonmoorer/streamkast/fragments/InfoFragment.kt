@@ -20,15 +20,16 @@ class InfoFragment: Fragment(){
     private lateinit var detailModel: DetailViewModel
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding=FragmentInfoBinding.inflate(inflater,container,false)
+        return binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        detailModel = createViewModel()
         detailModel.podcastDetails.observe(this, Observer { podcast->
             binding.channel=podcast
             binding.executePendingBindings()
         })
-        return binding.root
-    }
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        detailModel = createViewModel()
     }
 
 }

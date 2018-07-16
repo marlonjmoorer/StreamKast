@@ -26,7 +26,6 @@ import kotlinx.android.synthetic.main.fragment_section.view.*
 
 class SectionFragment : BaseFragment() {
     private  val KEY = "SECTION_NAME"
-    private var title:String?=null
     lateinit var viewModel: BrowseViewModel
     private var podcastAdapter:PodcastListAdapter?=null
     private var featuredPodcastAdapter:FeaturedPodcastAdapter?=null
@@ -36,13 +35,12 @@ class SectionFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        podcastAdapter= PodcastListAdapter(podcastListener)
-        featuredPodcastAdapter= FeaturedPodcastAdapter(podcastListener)
         arguments?.let {
             MediaGenre.parse(it.getString(KEY))?.let { genre->
                 this.genre=genre
             }
         }
+        setHasOptionsMenu(true)
     }
 
     val featuredObserver= Observer<List<Featured>?> { podcasts->
@@ -58,8 +56,8 @@ class SectionFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_section, container, false)
-        viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
-        viewModel.getPodcastByGenre(genre.id).observe(this,podcastObserver)
+        podcastAdapter= PodcastListAdapter(podcastListener)
+        featuredPodcastAdapter= FeaturedPodcastAdapter(podcastListener)
         view.apply {
             section_items.apply {
                 layoutManager= LinearLayoutManager(activity)
@@ -82,17 +80,17 @@ class SectionFragment : BaseFragment() {
                 this.onBackPressed()
             }
         }
-        setHasOptionsMenu(true)
+
         return view
     }
 
 
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         viewModel = createViewModel()
+        viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
+        viewModel.getPodcastByGenre(genre.id).observe(this,podcastObserver)
     }
-
 
 
 

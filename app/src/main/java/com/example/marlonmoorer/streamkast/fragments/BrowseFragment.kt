@@ -31,11 +31,11 @@ import kotlinx.android.synthetic.main.fragment_browse.view.*
 class BrowseFragment : BaseFragment() {
 
     lateinit var browseViewModel: BrowseViewModel
-
+    lateinit var featuredPodcastAdapter:FeaturedPodcastAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_browse, container, false)
-        val featuredPodcastAdapter=FeaturedPodcastAdapter(podcastListener)
+        featuredPodcastAdapter=FeaturedPodcastAdapter(podcastListener)
         view?.apply {
             featured.layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
             featured.adapter = featuredPodcastAdapter
@@ -46,21 +46,17 @@ class BrowseFragment : BaseFragment() {
                 setSupportActionBar(toolbar)
             }
         }
-        browseViewModel.getFeaturedByGenre(MediaGenre.Featured.id).observe(this, Observer { podcast ->
-            podcast?.let {
-               featuredPodcastAdapter.setPodcasts(it)
-            }
-        })
         return view
     }
 
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         browseViewModel = createViewModel()
+        browseViewModel.getFeaturedByGenre(MediaGenre.Featured.id).observe(this, Observer { podcast ->
+            featuredPodcastAdapter.setPodcasts(podcast?: emptyList())
+        })
+
     }
-
-
 }
 
 

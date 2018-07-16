@@ -24,18 +24,12 @@ class SubscriptionFragment:BaseFragment(),ISubscriptionListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel=createViewModel()
-        adapter= SubscriptionAdapater(this)
-        viewModel.subscriptions.observe(this, Observer {subs->
-            subs?.let {
-                adapter.setSubList(it)
-            }
-        })
         setHasOptionsMenu(true)
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        adapter= SubscriptionAdapater(this)
         return inflater.inflate(R.layout.fragment_subscription,container,false).apply {
             subs.layoutManager=GridLayoutManager(activity,2)
             subs.adapter=adapter
@@ -43,6 +37,16 @@ class SubscriptionFragment:BaseFragment(),ISubscriptionListener {
                 setSupportActionBar(toolbar)
             }
         }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel=createViewModel()
+        viewModel.subscriptions.observe(this, Observer {subs->
+            subs?.let {
+                adapter.setSubList(it)
+            }
+        })
     }
 
     override fun subscribe(sub: Subscription) =viewModel.subscribe(sub)

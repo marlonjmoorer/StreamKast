@@ -29,14 +29,13 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
     private var detailViewModel: DetailViewModel?=null
     var mediaViewModel:MediaPlayerViewModel?=null
     var mediaPlayerModel= MediaPlayerModel()
-    private var binding:FragmentMediaplayerBinding?=null
+    private lateinit var binding:FragmentMediaplayerBinding
 
 
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding=FragmentMediaplayerBinding.inflate(inflater).apply{
-            model=mediaPlayerModel
             nowPlaying?.run {
                 title.isSelected=true
                 playPause.setOnClickListener(mediaViewModel)
@@ -44,30 +43,31 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
             playPause.setOnClickListener(mediaViewModel)
             seekbar.setOnSeekBarChangeListener(this@MediaPlayerFragment)
         }
-        mediaViewModel?.isBound?.observe(this, Observer {bound->
-              bound?.let {
-                  mediaViewModel?.run {
-                      if(bound){
-                          episode?.observe(this@MediaPlayerFragment,episodeObserver)
-                          playState?.observe(this@MediaPlayerFragment,playStateObserver)
-                          position?.observe(this@MediaPlayerFragment,positionObserver)
-                      }else{
-                          episode?.removeObserver(episodeObserver)
-                          playState?.removeObserver(playStateObserver)
-                          position?.removeObserver(positionObserver)
-                      }
-                      return@run
-                  }
-              }
-        })
-        return  binding?.root
+        return  binding.root
     }
 
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         detailViewModel=createViewModel()
         mediaViewModel=createViewModel()
+        binding.model=mediaPlayerModel
+        mediaViewModel?.isBound?.observe(this, Observer {bound->
+            bound?.let {
+                mediaViewModel?.run {
+                    if(bound){
+                        episode?.observe(this@MediaPlayerFragment,episodeObserver)
+                        playState?.observe(this@MediaPlayerFragment,playStateObserver)
+                        position?.observe(this@MediaPlayerFragment,positionObserver)
+                    }else{
+                        episode?.removeObserver(episodeObserver)
+                        playState?.removeObserver(playStateObserver)
+                        position?.removeObserver(positionObserver)
+                    }
+                    return@run
+                }
+            }
+        })
     }
 
 
@@ -81,9 +81,6 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
     override fun onStopTrackingTouch(bar: SeekBar) {
         mediaViewModel?.seekTo(bar.progress.toLong())
     }
-
-
-
 
     val episodeObserver= Observer<EpisodeModel> { ep->
        ep?.let{

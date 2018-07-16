@@ -2,6 +2,7 @@ package com.example.marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import android.arch.paging.DataSource
 import android.arch.paging.LivePagedListBuilder
@@ -19,35 +20,47 @@ import java.util.concurrent.Executors
 class SearchViewModel:BaseViewModel() {
 
     var searchResults:LiveData<PagedList<Podcast>>
+
     private var pagedListConfig: PagedList.Config
     private var executor:ExecutorService
+    private var query:String=""
+    private var factory:DataSource.Factory<Int,Podcast>
+    private var searching:MutableLiveData<Boolean>
+
+
+    val isSearchng:LiveData<Boolean>
+        get() = searching
 
     init {
+
          pagedListConfig = PagedList.Config.Builder()
                  .setPageSize(10)
                  .build()
          executor = Executors.newFixedThreadPool(5)
-         searchResults=MutableLiveData()
-    }
-
-    private fun createPagedList(query:String): LiveData<PagedList<Podcast>> {
-        val searchQuery= mutableMapOf(
-                "term" to query,
-                "entity" to "podcast"
-        )
-        val factory=object:DataSource.Factory<Int,Podcast>(){
+         searching= MutableLiveData()
+         factory=object:DataSource.Factory<Int,Podcast>(){
             override fun create(): DataSource<Int, Podcast> {
-                return PagedSearchDataSource(searchQuery,repository)
+                return PagedSearchDataSource(query,repository)
             }
-        }
-        val builder=LivePagedListBuilder(factory,pagedListConfig)
-        builder.setFetchExecutor(executor)
-        return builder.build()
+         }
+         searchResults=LivePagedListBuilder(factory,pagedListConfig)
+                .setFetchExecutor(executor).build()
+         Transformations.map(searchResults,{results->
+             if (searching.value==true){
+                 searching.postValue(false)
+             }
+         })
     }
 
-    fun getPagesSearchResults(query: String): LiveData<PagedList<Podcast>> {
-        searchResults = createPagedList(query)
-        return searchResults
+
+    private fun resetFactory(){
+       searchResults.value?.dataSource?.invalidate()
+    }
+
+    fun searchForPodcast(searchTerm: String){
+        query = searchTerm
+        resetFactory()
+        searching.postValue(true)
     }
 
 }

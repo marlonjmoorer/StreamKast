@@ -21,16 +21,16 @@ class LibraryFragment:Fragment(){
         val view= inflater.inflate(R.layout.fragment_library,container, false).apply {
             viewPager.adapter= ViewPagerAdapter(childFragmentManager)
             tabs.setupWithViewPager(viewPager)
-
         }
+        return  view
+    }
 
-        var viewModel=createViewModel<LibraryViewModel>()
-
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val viewModel=createViewModel<LibraryViewModel>()
         viewModel.getPlayBackHistory().observe(this, Observer { itens->
             Log.d("","")
         })
-
-        return  view
     }
 
 

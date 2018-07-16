@@ -21,18 +21,21 @@ class EpisodeFragment: BottomSheetDialogFragment() {
 
 
     lateinit var detailModel: DetailViewModel
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        detailModel = createViewModel()
-    }
+    lateinit var binding:FragmentEpisodeBinding
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = FragmentEpisodeBinding.inflate(inflater)
+        binding = FragmentEpisodeBinding.inflate(inflater)
+        binding.handler=activity as IEpisodeListener
+        return  binding.root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        detailModel = createViewModel()
         detailModel.getCurrentEpisode().observe(this, Observer { episode ->
             binding.episode=episode
         })
-        binding.handler=activity as IEpisodeListener
-        return  binding.root
     }
 
 }

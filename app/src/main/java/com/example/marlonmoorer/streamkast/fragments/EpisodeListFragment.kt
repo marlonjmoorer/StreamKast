@@ -21,26 +21,22 @@ import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 class EpisodeListFragment: BaseFragment(){
 
-
     lateinit var detailModel: DetailViewModel
-    lateinit var episodeList:RecyclerView
-
     lateinit var episodeListAdapter: EpisodeListAdapter
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        detailModel = createViewModel()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         episodeListAdapter= EpisodeListAdapter(episodeListener)
-        episodeList=RecyclerView(context).apply{
+        return RecyclerView(context).apply{
             layoutManager= LinearLayoutManager(context)
             adapter= episodeListAdapter
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        detailModel = createViewModel()
         detailModel.episodes.observe(this, Observer { episodes->
             episodeListAdapter.setEpisodes(episodes?: emptyList())
         })
-        return episodeList
     }
 }

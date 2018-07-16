@@ -10,17 +10,18 @@ import com.example.marlonmoorer.streamkast.onResponse
 import retrofit2.Call
 
 
-class PagedSearchDataSource(private val query:MutableMap<String, String>,private val repository: Repository): PositionalDataSource<Podcast>(){
+class PagedSearchDataSource(private val query:String,private val repository: Repository): PositionalDataSource<Podcast>(){
 
     private var totalCount:Int=1000
 
     private fun loadSearchResults(position:Int, loadSize:Int): Call<SearchResults> {
-        query.run{
-            put("offset","$position")
-            put("limit","$loadSize")
-            return@run
-        }
-       return repository.search(query)
+        val searchQuery= mutableMapOf(
+                "term" to query,
+                "entity" to "podcast",
+                "offset" to "$position",
+                "limit" to "$loadSize"
+        )
+       return repository.search(searchQuery)
     }
 
     override fun loadInitial(params: LoadInitialParams, callback: LoadInitialCallback<Podcast>) {

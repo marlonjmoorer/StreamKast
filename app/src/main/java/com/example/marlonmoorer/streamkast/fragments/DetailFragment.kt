@@ -41,30 +41,20 @@ class DetailFragment: BaseFragment(){
         arguments?.let {
             Id=it.getString(KEY)
         }
-        detailModel = createViewModel()
         setHasOptionsMenu(true)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding =FragmentDetailsBinding.inflate(inflater,container,false)
-
         (activity as AppCompatActivity).apply {
             setSupportActionBar(binding.toolbar)
             supportActionBar?.apply {
                 setDisplayHomeAsUpEnabled(true)
                 setHomeButtonEnabled(true)
-
             }
             binding.toolbar.setNavigationOnClickListener {
                 this.onBackPressed()
             }
         }
-        detailModel.podcastDetails.observe(this, Observer {details->
-            binding.channel=details
-        })
-        detailModel.loadPodcast(Id).observe(this, Observer { podast->
-            binding.podcast=podast
-        })
-
         binding.viewPager.adapter= ViewPagerAdapter(childFragmentManager)
         binding.tabs.run {
             setupWithViewPager(binding.viewPager)
@@ -72,13 +62,8 @@ class DetailFragment: BaseFragment(){
             getTabAt(1)?.setIcon(R.drawable.icons8_info_filled)
             return@run
         }
-        detailModel.subscribed.observe(this, Observer {subscribed->
-              subscribed?.let(this::setUpButton)
-        })
-
         return binding.root
     }
-
     private fun setUpButton(subscribed:Boolean){
         val button_text: String
         val icon:Int
@@ -98,7 +83,7 @@ class DetailFragment: BaseFragment(){
             }
         }
     }
-     fun onSubscribeClicked(){
+    private fun onSubscribeClicked(){
          if(detailModel.isSubbed){
              alert("Unsubscribe from ${detailModel.title}?") {
                  positiveButton("Unsubscribe"){
@@ -109,8 +94,22 @@ class DetailFragment: BaseFragment(){
          }else{
              detailModel.toggleSubscription()
          }
-        // detailModel.toggleSubscription()
-     }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        detailModel = createViewModel()
+        detailModel.podcastDetails.observe(this, Observer {details->
+            binding.channel=details
+        })
+        detailModel.loadPodcast(Id).observe(this, Observer {podast->
+            binding.podcast=podast
+        })
+
+        detailModel.subscribed.observe(this, Observer {subscribed->
+            subscribed?.let(this::setUpButton)
+        })
+    }
 
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

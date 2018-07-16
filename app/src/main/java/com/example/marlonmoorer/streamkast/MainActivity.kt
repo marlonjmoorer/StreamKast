@@ -85,7 +85,9 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         mediaPlayerFragment=supportFragmentManager.findFragmentById(R.id.mini_player) as MediaPlayerFragment
 
 
-        mediaViewModel?.restoreFromHistory()?.observe(this, Observer { ep->
+        val historyData= mediaViewModel?.restoreFromHistory()
+
+        historyData?.observe(this, Observer { ep->
             ep?.let {
                 val media=EpisodeModel(
                         guid = ep.guid,
@@ -95,6 +97,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
                         url=ep.url,
                         description=ep.description)
                 prepareMedia(media)
+                historyData.removeObservers(this)
             }
         })
     }

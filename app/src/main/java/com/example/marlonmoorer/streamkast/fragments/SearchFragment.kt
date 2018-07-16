@@ -25,26 +25,22 @@ import kotlinx.android.synthetic.main.fragment_search.view.*
 
 class SearchFragment:BaseFragment(){
 
-    var searchViewModel:SearchViewModel?=null
-    var browseViewModel:BrowseViewModel?=null
-    var adapter:PagedPodcastListAdapter? = null
+    private lateinit var searchViewModel:SearchViewModel
+    private lateinit var browseViewModel:BrowseViewModel
+    private lateinit var adapter:PagedPodcastListAdapter
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        searchViewModel=createViewModel()
-        browseViewModel=createViewModel()
-        adapter=PagedPodcastListAdapter(podcastListener)
-    }
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_search,container,false)
+        adapter=PagedPodcastListAdapter(podcastListener)
         view.apply {
             resultList?.adapter=adapter
             resultList.layoutManager= LinearLayoutManager(activity)
             search_view.setOnSearchListener(object:FloatingSearchView.OnSearchListener{
                 override fun onSearchAction(currentQuery: String) {
-                    searchViewModel?.getPagesSearchResults(currentQuery)?.observe(this@SearchFragment,resultsObserver)
+                    searchViewModel.searchForPodcast(currentQuery)
                 }
                 override fun onSuggestionClicked(searchSuggestion: SearchSuggestion?) {
 
@@ -55,14 +51,21 @@ class SearchFragment:BaseFragment(){
         return view
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        searchViewModel=createViewModel()
+        browseViewModel=createViewModel()
+        searchViewModel.searchResults.observe(this@SearchFragment,resultsObserver)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
-        searchViewModel?.searchResults?.removeObserver(resultsObserver)
+        searchViewModel.searchResults.removeObserver(resultsObserver)
     }
     private var resultsObserver= Observer<PagedList<Podcast>> {results->
         results?.let {
-            adapter?.submitList(results)
-            adapter?.notifyDataSetChanged()
+            adapter.submitList(results)
+            adapter.notifyDataSetChanged()
         }
     }
 
