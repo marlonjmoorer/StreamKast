@@ -20,6 +20,7 @@ import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
 
 import kotlinx.android.synthetic.main._now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_mediaplayer.*
+import org.jetbrains.anko.doAsync
 
 
 class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
@@ -82,13 +83,17 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
     }
 
 
+
+
     val episodeObserver= Observer<EpisodeModel> { ep->
-        mediaPlayerModel.run {
-            Image=ep!!.thumbnail!!
+       ep?.let{
+            mediaPlayerModel.run {
+            Image=ep.thumbnail!!
             Title=ep.title!!
             Author= ep.author!!
-            Duration=ep.duration!!
-        }
+            Duration=ep.duration
+         }
+       }
     }
     val playStateObserver= Observer<Int> { state->
         when(state) {
@@ -96,10 +101,13 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
                 now_playing.play_pause.setImageResource(R.drawable.icons8_pause)
                 play_pause.setImageResource(R.drawable.icons8_pause)
             }
+            PlaybackStateCompat.STATE_BUFFERING-> {
+
+            }
+
             PlaybackStateCompat.STATE_PAUSED,
             PlaybackStateCompat.STATE_NONE,
-            PlaybackStateCompat.STATE_STOPPED,
-            PlaybackStateCompat.STATE_BUFFERING-> {
+            PlaybackStateCompat.STATE_STOPPED-> {
                 now_playing.play_pause.setImageResource(R.drawable.icons8_play)
                 play_pause.setImageResource(R.drawable.icons8_play)
             }
@@ -111,5 +119,5 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
 
 
     fun fadeMiniPlayer(offset:Float)=now_playing?.fade(1 - (offset))
-    
+
 }

@@ -25,6 +25,7 @@ import com.airbnb.paris.Paris
 import com.bumptech.glide.request.target.NotificationTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.ethanhua.skeleton.Skeleton
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
 import org.w3c.dom.Document
@@ -116,10 +117,12 @@ fun View.fade(alpha:Float){
             });
 
 }
- fun View.applyStyle(id: Int){
-     Paris.style(this).apply(id)
+ fun View.showLoading(){
+     Skeleton.bind(this).load(R.layout._loading_screen).show()
  }
-
+fun View.hideLoading(){
+    Skeleton.bind(this).show().hide()
+}
 fun Context.loadAsBitmap(url:String?, callback:(bitmap:Bitmap)->Unit){
      Glide.with(this).asBitmap().load(url).into(object :SimpleTarget<Bitmap>(){
          override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
@@ -171,9 +174,7 @@ fun Element.text(key:String): String? {
     return this.getElementsByTagName(key).item(0).textContent
 }
 
-fun Element.getList(key:String): NodeList {
-    return this.getElementsByTagName(key)
-}
+
 fun Element.has(key: String):Boolean{
     return this.getElementsByTagName(key).length>0
 }

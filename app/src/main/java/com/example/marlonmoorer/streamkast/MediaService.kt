@@ -176,7 +176,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     }
 
     private fun prepareMediaPlayer(media:EpisodeModel) {
-        with(mediaPlayer){
+        mediaPlayer.run{
             reset()
             setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
             setAudioStreamType(AudioManager.STREAM_MUSIC)
@@ -185,7 +185,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             setOnPreparedListener{
                 media.duration=it.duration
                 episodeData.postValue(media)
-                transportControls?.play()
+                if(media.autoPlay){
+                    transportControls?.play()
+                }
             }
             setOnBufferingUpdateListener(this@MediaService)
             setOnErrorListener{mp,what, extra->
@@ -213,6 +215,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                 Log.w("info","state: $state")
                 transportControls?.stop()
             }
+            episodeData.postValue(media)
+            playbackStateData.postValue(PlaybackState.STATE_BUFFERING)
             prepareAsync()
         }
     }
@@ -312,21 +316,21 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     override fun onAudioFocusChange(action: Int) {
         when (action) {
             AudioManager.AUDIOFOCUS_LOSS -> {
-                if (mediaPlayer.isPlaying()) {
-                    transportControls?.stop()
-                }
+              //  if (mediaPlayer.isPlaying()) {
+                //    transportControls?.stop()
+                //}
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                transportControls?.pause()
+                //transportControls?.pause()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                mediaPlayer.setVolume(0.3f, 0.3f)
+                //mediaPlayer.setVolume(0.3f, 0.3f)
             }
             AudioManager.AUDIOFOCUS_GAIN -> {
-                if (!mediaPlayer.isPlaying()) {
-                    transportControls?.play()
-                }
-                mediaPlayer.setVolume(1.0f, 1.0f)
+              //  if (!mediaPlayer.isPlaying()) {
+                //    transportControls?.play()
+               // }
+                //mediaPlayer.setVolume(1.0f, 1.0f)
             }
         }
     }

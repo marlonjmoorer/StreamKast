@@ -26,6 +26,7 @@ import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
 import org.jetbrains.anko.contentView
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 
 
@@ -83,6 +84,19 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         episodeFragment= EpisodeFragment()
         mediaPlayerFragment=supportFragmentManager.findFragmentById(R.id.mini_player) as MediaPlayerFragment
 
+
+        mediaViewModel?.restoreFromHistory()?.observe(this, Observer { ep->
+            ep?.let {
+                val media=EpisodeModel(
+                        guid = ep.guid,
+                        title=ep.title,
+                        author=ep.author,
+                        thumbnail=ep.thumbnail,
+                        url=ep.url,
+                        description=ep.description)
+                prepareMedia(media)
+            }
+        })
     }
 
 
@@ -173,11 +187,19 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         episodeFragment.takeIf { it.isVisible }?.dismiss()
 
         val media=EpisodeModel(
+                guid = episode.guid,
                 title=episode.title,
                 author=episode.author,
                 thumbnail=episode.thumbnail,
                 url=episode.mediaUrl,
-                description=episode.description)
+                description=episode.description,
+                autoPlay = true)
+
+        prepareMedia(media)
+
+    }
+
+    private  fun prepareMedia(media:EpisodeModel){
         if(!isBound) {
             val intent =Intent(application,MediaService::class.java).apply {
                 putExtra(MediaService.MEDIA,media)

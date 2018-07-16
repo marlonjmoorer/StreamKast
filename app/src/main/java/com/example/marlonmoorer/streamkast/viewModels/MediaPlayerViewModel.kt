@@ -12,7 +12,9 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View
 import com.example.marlonmoorer.streamkast.MediaService
+import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
+import org.jetbrains.anko.doAsync
 import java.util.*
 
 class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListener {
@@ -32,7 +34,14 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
 
     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
         if (binder is MediaService.MediaBinder){
-            episode=binder.episdodeData
+            episode=Transformations.map(binder.episdodeData,{ep->
+                doAsync {
+                    if(ep.duration>0){
+                        addToHistory(ep)
+                    }
+                }
+                return@map ep
+            })
             playState= binder.playbackState
             controls=binder.controller?.transportControls
             position=binder.currentPosition
@@ -64,6 +73,25 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
     fun play()=controls?.play()
     fun pause()=controls?.pause()
     fun seekTo(position: Long)=controls?.seekTo(position)
+
+    fun addToHistory(episode: EpisodeModel){
+        doAsync {
+            if(repository.history.exist(episode.guid)){
+                return@doAsync
+            }
+            repository.history.insert(PlaybackHistory().apply {
+                url=episode.url!!
+                guid=episode.guid
+                title=episode.title!!
+                duration=episode.duration
+                author=episode.author
+                thumbnail=episode.thumbnail
+                description=episode.description
+            })
+        }
+    }
+    fun restoreFromHistory()= repository.history.getMostRecent()
+
 
     val playbackState
         get() = playState?.value

@@ -30,12 +30,14 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
     val subscriptions:SubscriptionDao
     val featuredItems:FeaturedDao
     val savedEpisodes:EpisodeDao
+    var history:HistoryDao
     private val LASTUPDATE="lastUpdateDate"
 
     init {
         subscriptions=database.SubscriptionDao()
         featuredItems= database.FeaturedDao()
         savedEpisodes=database.EpisodeDao()
+        history=database.HistoryDao()
     }
 
     fun search(query:Map<String, String>): Call<SearchResults> {

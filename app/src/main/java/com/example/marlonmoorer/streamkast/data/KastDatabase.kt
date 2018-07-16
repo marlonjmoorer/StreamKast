@@ -9,11 +9,13 @@ import android.support.annotation.NonNull
 
 
 
-@Database(entities = arrayOf(Subscription::class,Featured::class,SavedEpisode::class), version = 5)
+@Database(entities = arrayOf(Subscription::class,Featured::class,SavedEpisode::class,PlaybackHistory::class), version = 6)
 abstract class KastDatabase:RoomDatabase() {
     abstract  fun SubscriptionDao(): SubscriptionDao
     abstract  fun FeaturedDao():FeaturedDao
     abstract  fun EpisodeDao():EpisodeDao
+    abstract  fun HistoryDao():HistoryDao
+
     companion object {
         private var instance: KastDatabase? = null
         @Synchronized
