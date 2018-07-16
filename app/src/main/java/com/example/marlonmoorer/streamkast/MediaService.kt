@@ -3,6 +3,8 @@ package com.example.marlonmoorer.streamkast
 import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.Intent
 import android.support.v4.app.NotificationCompat
@@ -11,11 +13,12 @@ import android.content.BroadcastReceiver
 import android.media.AudioManager
 import android.content.IntentFilter
 import android.content.ComponentName
+import android.graphics.Bitmap
 import android.media.MediaPlayer
+import android.media.session.PlaybackState
 import android.os.*
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaButtonReceiver
@@ -23,20 +26,26 @@ import android.text.TextUtils
 import org.jetbrains.anko.intentFor
 import android.util.Log
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
+import org.jetbrains.anko.runOnUiThread
+import java.util.*
 
-class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnPreparedListener,MediaPlayer.OnBufferingUpdateListener  {
+class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnBufferingUpdateListener  {
 
     private var mediaSession: MediaSessionCompat?=null
-    private var mediaItem: EpisodeModel?=null
-    private var mediaPlayer:MediaPlayer
-    private val playbackState
-            get() = mediaSession?.controller?.playbackState?.state
+
+    private lateinit var mediaPlayer:MediaPlayer
+    private lateinit var episodeData:MutableLiveData<EpisodeModel>
+    private lateinit var playbackStateData: MutableLiveData<Int>
+    private lateinit var position:MutableLiveData<Int>
+    private var bitmapImage: Bitmap?=null
+    private lateinit var timer: Timer
+
     companion object {
-        const val NOTIFICATION_ID=8888
-        const val CHANNEL_ID="9999"
-        const val MEDIAPLAYER="MEDIAPLAYER"
-        const val MEDIA="MEDIA"
-        const val PLAY_AUDIO="PLAY_AUDIO"
+        val NOTIFICATION_ID=8888
+        val CHANNEL_ID="9999"
+        val MEDIAPLAYER="MEDIAPLAYER"
+        val MEDIA="MEDIA"
+        val PLAY_AUDIO="PLAY_AUDIO"
         val ACTION_PLAY = "ACTION_PLAY"
         val ACTION_PAUSE = "ACTION_PAUSE"
         val ACTION_PREVIOUS = "ACTION_PREVIOUS"
@@ -44,13 +53,11 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         val ACTION_STOP = "ACTION_STOP"
         val ACTION_FF = "ACTION_FF"
         val ACTION_RR = "ACTION_RR"
-
-
     }
 
-    init {
-        mediaPlayer= MediaPlayer()
-    }
+
+    val currentMedia
+        get()= episodeData.value
 
     val transportControls
         get() = mediaSession?.controller?.transportControls
@@ -68,7 +75,11 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             isActive=true
             setMediaButtonReceiver(pendingIntent)
         }
-
+        mediaPlayer= MediaPlayer()
+        episodeData=MutableLiveData()
+        playbackStateData=MutableLiveData()
+        position= MutableLiveData()
+        timer=Timer()
         registerReceiver(noisyReceiver,IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
         registerReceiver(playAudioReceiver, IntentFilter(PLAY_AUDIO))
     }
@@ -80,19 +91,17 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     fun handleIntent(intent: Intent){
         if(intent.hasExtra(MEDIA)){
-            mediaItem = (intent.getSerializableExtra(MEDIA) as EpisodeModel).apply{
-                applicationContext.loadAsBitmap(this.thumbnail){bitmap->
-                     this.bitmapImage = bitmap
-                }
+            val media= (intent.getSerializableExtra(MEDIA) as EpisodeModel)
+            applicationContext.loadAsBitmap(media.thumbnail){
+                bitmap-> bitmapImage = bitmap
             }
-            initMediaPlayer()
-            updateMetaData()
+            prepareMediaPlayer(media)
             if(sessionToken==null)
                 sessionToken=mediaSession?.sessionToken
         }
     }
     fun handleMediaButtonAction(intent: Intent){
-        mediaSession?.controller?.transportControls?.run{
+       transportControls?.run{
             when(intent.action){
                 ACTION_PLAY-> play()
                 ACTION_NEXT->skipToNext()
@@ -102,7 +111,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                 ACTION_RR-> rewind()
                 ACTION_FF->fastForward()
             }
-
         }
     }
 
@@ -146,21 +154,20 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             val activityIntent=intentFor<MainActivity>().apply {
                 action= MEDIAPLAYER
             }
-            val notif = NotificationCompat.Builder(this, CHANNEL_ID)
+           return  NotificationCompat.Builder(this, CHANNEL_ID)
                     .setShowWhen(false)
                     .setStyle(mediaStyle)
-                    .setLargeIcon(mediaItem?.bitmapImage)
+                    .setLargeIcon(bitmapImage)
                     .setSmallIcon(android.R.drawable.stat_sys_headset)
                     .addAction(android.R.drawable.ic_media_previous, "previous",createAction(3) )
                     .addAction(play_pause_icon, "play",play_pauseAction)
                     .addAction(android.R.drawable.ic_media_next, "next",createAction(2))
-                    .setContentText(mediaItem?.author)
-                    .setContentTitle(mediaItem?.title)
+                    .setContentText(currentMedia?.author)
+                    .setContentTitle(currentMedia?.title)
                     .setDeleteIntent(createAction(4))
                     .setContentIntent(PendingIntent.getActivity(this,0,activityIntent,0))
                     .setVisibility(Notification.VISIBILITY_PUBLIC)
                     .build()
-            return notif
         }
 
 
@@ -168,14 +175,18 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         return MediaBinder()
     }
 
-    private fun initMediaPlayer(){
+    private fun prepareMediaPlayer(media:EpisodeModel) {
         with(mediaPlayer){
             reset()
             setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
             setAudioStreamType(AudioManager.STREAM_MUSIC)
             setVolume(1.0f, 1.0f)
-            setDataSource(mediaItem?.url)
-            setOnPreparedListener(this@MediaService)
+            setDataSource(media.url)
+            setOnPreparedListener{
+                media.duration=it.duration
+                episodeData.postValue(media)
+                transportControls?.play()
+            }
             setOnBufferingUpdateListener(this@MediaService)
             setOnErrorListener{mp,what, extra->
                 when(what){
@@ -187,34 +198,27 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                 return@setOnErrorListener true
             }
             setOnInfoListener{mp,what, extra->
-//                when(what){
-//                    MediaPlayer.MEDIA_INFO_BUFFERING_START-> transportControls?.pause()
-//                      //  transportControls?.stop()
-//                    MediaPlayer.MEDIA_INFO_BUFFERING_END -> transportControls?.play()
-//                       // transportControls?.pause()
-//
-//                }
-                Log.w("info","code: $what")
-                return@setOnInfoListener true
+                when(what){
+                    MediaPlayer.MEDIA_INFO_BUFFERING_START->  stopSeekbarUpdate()
+                    MediaPlayer.MEDIA_INFO_BUFFERING_END-> startSeekbarUpdate()
+                    else-> return@setOnInfoListener false
+                }
+                return@setOnInfoListener  true
             }
             setOnSeekCompleteListener {mp->
+
+            }
+            setOnCompletionListener {
                 val state= mediaSession?.controller?.playbackState?.state
                 Log.w("info","state: $state")
-                transportControls?.play()
+                transportControls?.stop()
             }
             prepareAsync()
         }
     }
 
 
-    private fun updateMetaData(){
-        mediaSession?.setMetadata(MediaMetadataCompat.Builder()
-            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART,mediaItem?.bitmapImage)
-            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, mediaItem?.author)
-            .putString(MediaMetadataCompat.METADATA_KEY_TITLE, mediaItem?.title)
-            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION,mediaPlayer.duration.toLong())
-            .build())
-    }
+
     fun updateNotification(){
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID,notification)
@@ -223,28 +227,22 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         startForeground(NOTIFICATION_ID,notification)
     }
 
-    override fun onPrepared(player: MediaPlayer) {
-        transportControls?.play()
-        updateMetaData()
-        //startForeground()
-    }
 
     override fun onBufferingUpdate(plater: MediaPlayer?, percent: Int) {
         Log.w("Buffer","$percent %")
     }
 
-    private fun setPlaybackState(state: Int) {
-        val action=if (state == PlaybackStateCompat.STATE_PLAYING)PlaybackStateCompat.ACTION_PAUSE
-        else PlaybackStateCompat.ACTION_PLAY
-        val playbackstateBuilder = PlaybackStateCompat.Builder()
-                .setActions(action)
-                .setState(state, mediaPlayer.currentPosition.toLong(),1.0f, SystemClock.elapsedRealtime())
-        mediaSession?.setPlaybackState(playbackstateBuilder.build())
-    }
 
     inner class MediaBinder: Binder() {
         val controller
             get() = mediaSession?.controller
+        val episdodeData:LiveData<EpisodeModel>
+            get() = this@MediaService.episodeData
+        val playbackState:LiveData<Int>
+            get() =  this@MediaService.playbackStateData
+        val currentPosition:LiveData<Int>
+            get() =  this@MediaService.position
+
 
     }
 
@@ -269,7 +267,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             if(successfullyRetrievedAudioFocus()){
                 mediaPlayer.start()
                 mediaSession?.setActive(true)
-                setPlaybackState(PlaybackStateCompat.STATE_PLAYING)
+                playbackStateData.postValue(PlaybackStateCompat.STATE_PLAYING)
+                startSeekbarUpdate()
                 startForeground()
             }
         }
@@ -277,10 +276,10 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         override fun onPause() {
             super.onPause()
             mediaPlayer.pause()
-            setPlaybackState(PlaybackStateCompat.STATE_PAUSED)
+            playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
             stopForeground(false)
+            stopSeekbarUpdate()
             updateNotification()
-
         }
 
         override fun onStop() {
@@ -293,20 +292,20 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         }
 
         override fun onSeekTo(pos: Long) {
-           // mediaPlayer.pause()
+            stopSeekbarUpdate()
             mediaPlayer.seekTo(pos.toInt())
+            startSeekbarUpdate()
+
         }
 
         override fun onRewind() {
             mediaPlayer.seekTo(mediaPlayer.currentPosition-30000)
-            setPlaybackState(playbackState!!)
-
         }
 
         override fun onFastForward() {
             mediaPlayer.seekTo(mediaPlayer.currentPosition+30000)
-            setPlaybackState(playbackState!!)
         }
+
 
 
     }
@@ -348,6 +347,26 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     override fun onLoadChildren(parentId: String, result: Result<MutableList<MediaBrowserCompat.MediaItem>>) {
         result.sendResult(null)
+    }
+
+     private fun updateProgress(){
+         if(playbackStateData.value==PlaybackState.STATE_PLAYING){
+             position.postValue(mediaPlayer.currentPosition)
+         }
+     }
+
+
+    private fun startSeekbarUpdate() {
+        stopSeekbarUpdate()
+        timer= Timer()
+        timer.scheduleAtFixedRate(object : TimerTask(){
+            override fun run() {
+                updateProgress()
+            }
+        },0,1000)
+    }
+    private fun stopSeekbarUpdate() {
+        timer.cancel()
     }
 
 }

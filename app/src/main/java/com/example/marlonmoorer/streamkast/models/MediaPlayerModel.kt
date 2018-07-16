@@ -12,7 +12,7 @@ class MediaPlayerModel:BaseObservable() {
     private  var duration=0
     private  var title=""
     private  var author=""
-    private  var image:Bitmap?=null
+    private  var image:String?=null
 
 
     var Elapsed

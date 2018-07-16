@@ -52,11 +52,6 @@
             <!--</intent-filter>-->
         <!--</receiver>-->
 
-        <activity
-            android:name=".MediaPlayerActivity"
-            android:label="@string/title_activity_media_player"
-            android:launchMode="singleTask"
-            android:theme="@style/NoActionBar"/>
     </application>
 
 </manifest>

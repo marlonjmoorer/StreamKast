@@ -1,13 +1,8 @@
 package com.example.marlonmoorer.streamkast
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.app.FragmentManager
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.Transformations
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.AppBarLayout
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
@@ -17,7 +12,6 @@ import android.view.Menu
 import android.view.MenuItem
 
 import com.example.marlonmoorer.streamkast.fragments.*
-import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -26,16 +20,12 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.api.models.rss.Episode
-import com.example.marlonmoorer.streamkast.data.Subscription
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.listeners.IGenreListener
 import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
-import com.example.marlonmoorer.streamkast.listeners.ISubscriptionListener
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
-import com.example.marlonmoorer.streamkast.viewModels.MediaViewModel
-import kotlinx.android.synthetic.main.item_podcast.*
+import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
 import org.jetbrains.anko.contentView
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.intentFor
 
 
@@ -45,7 +35,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
 
     private var detailViewModel: DetailViewModel?=null
     private var subscriptionViewModel:SubscriptionViewModel?=null
-    private var mediaViewModel:MediaViewModel?=null
+    private var mediaViewModel:MediaPlayerViewModel?=null
     private val targetId:Int=R.id.main
     private lateinit var searchFragment:SearchFragment
     private lateinit var mediaPlayerFragment:MediaPlayerFragment
@@ -79,7 +69,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
                     nav.animate()
                             .translationY(slideOffset*nav.height)
                             .setDuration(0)
-                    mediaPlayerFragment?.fadeMiniPlayer(slideOffset)
+                    mediaPlayerFragment.fadeMiniPlayer(slideOffset)
                 }
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
 
@@ -138,10 +128,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
 
     override fun onDestroy() {
         super.onDestroy()
-        val i=intentFor<MediaService>().apply {
-            action= MediaService.ACTION_STOP
-        }
-        startService(i)
+        unbindService(mediaViewModel)
     }
 
     private fun updateMargin () {
@@ -197,6 +184,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
             }
             application.startService(intent)
             bindService(intent,mediaViewModel,AppCompatActivity.BIND_AUTO_CREATE)
+            isBound=true
         }else{
             val broadcastIntent = Intent(MediaService.PLAY_AUDIO).apply{
                 putExtra(MediaService.MEDIA,media)
@@ -218,7 +206,6 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
             super.onBackPressed()
         }
     }
-
 
 }
 
