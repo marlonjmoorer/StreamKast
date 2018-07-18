@@ -6,7 +6,6 @@ import java.util.*
 class Channel{
     var title=""
     var link=""
-    var lastUpdateDate:Date?=null
     var description=""
     var author=""
     var thumbnail=""
