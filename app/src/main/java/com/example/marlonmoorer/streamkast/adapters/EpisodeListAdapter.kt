@@ -4,7 +4,7 @@ import android.databinding.DataBindingUtil
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.rss.*
+import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener

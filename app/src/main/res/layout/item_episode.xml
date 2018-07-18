@@ -5,7 +5,7 @@
     <data>
         <variable
             name="episode"
-            type="com.example.marlonmoorer.streamkast.api.models.rss.Episode"/>
+            type="com.example.marlonmoorer.streamkast.api.models.Episode"/>
         <variable
             name="handler"
             type="com.example.marlonmoorer.streamkast.listeners.IEpisodeListener"/>

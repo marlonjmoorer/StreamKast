@@ -1,8 +1,8 @@
 package com.example.marlonmoorer.streamkast
 
 import android.util.Xml
-import com.example.marlonmoorer.streamkast.api.models.rss.Channel
-import com.example.marlonmoorer.streamkast.api.models.rss.Episode
+import com.example.marlonmoorer.streamkast.api.models.Channel
+import com.example.marlonmoorer.streamkast.api.models.Episode
 import org.w3c.dom.*
 import java.io.InputStream
 import org.xmlpull.v1.XmlPullParser

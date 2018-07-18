@@ -2,8 +2,10 @@ package com.example .marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.*
 import com.example.marlonmoorer.streamkast.App
+import com.example.marlonmoorer.streamkast.api.models.Channel
+import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.api.models.Podcast
-import com.example.marlonmoorer.streamkast.api.models.rss.*
+
 
 
 import com.example.marlonmoorer.streamkast.data.Subscription

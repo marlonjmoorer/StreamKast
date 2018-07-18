@@ -52,7 +52,8 @@ class BrowseFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         browseViewModel = createViewModel()
-        browseViewModel.getFeaturedByGenre(MediaGenre.Featured.id).observe(this, Observer { podcast ->
+        browseViewModel.setGenre(MediaGenre.Featured.id)
+        browseViewModel.featuredPodcast.observe(this, Observer { podcast ->
             featuredPodcastAdapter.setPodcasts(podcast?: emptyList())
         })
 

@@ -32,7 +32,7 @@ class  SubscriptionViewModel:BaseViewModel(){
 //
 //            }
         }
-        return subscribed
+        return repository.isSubscribed(id)
     }
 
     fun subscribe(sub:Subscription){

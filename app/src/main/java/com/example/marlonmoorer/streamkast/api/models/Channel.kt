@@ -1,14 +1,16 @@
-package com.example.marlonmoorer.streamkast.api.models.rss
+package com.example.marlonmoorer.streamkast.api.models
 
-import android.graphics.Bitmap
-import java.util.*
+import com.example.marlonmoorer.streamkast.models.IPodcast
 
-class Channel{
-    var title=""
-    var link=""
-    var description=""
-    var author=""
-    var thumbnail=""
+
+class Channel:IPodcast {
+    override var id=""
+    override var title=""
+    override var link=""
+    override var description=""
+    override var author=""
+    override var thumbnail=""
+
     var categories:MutableList<String> = mutableListOf()
     var episodes:MutableList<Episode> = mutableListOf()
     val count
@@ -16,16 +18,4 @@ class Channel{
 
 }
 
-class  Episode{
-    var title=""
-    var guid=""
-    var publishedDate:Date?=null
-    var thumbnail=""
-    var duration=""
-    var description=""
-    var mediaUrl=""
-    var length=""
-    var imageBitmap: Bitmap?=null
-    var author=""
-}
 

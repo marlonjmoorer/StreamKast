@@ -13,7 +13,7 @@ import android.view.ViewGroup
 import com.ethanhua.skeleton.Skeleton
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
-import com.example.marlonmoorer.streamkast.api.models.rss.Episode
+import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.viewModel

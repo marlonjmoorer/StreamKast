@@ -2,6 +2,8 @@ package com.example.marlonmoorer.streamkast.api.models
 
 import android.databinding.BaseObservable
 import android.databinding.Bindable
+import android.databinding.Observable
+import com.example.marlonmoorer.streamkast.models.IPodcast
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
@@ -18,9 +20,26 @@ class SearchResults{
 
 }
 
-class Podcast:BaseObservable(){
+class Podcast:BaseObservable(),IPodcast{
 
+    override var id: String=""
+        get() = collectionId
 
+    override var title: String=""
+        get() =  collectionName
+
+    override var description: String=""
+
+    override var author: String=""
+        get() = artistName
+
+    override var thumbnail: String=""
+        get() = artworkUrl100
+
+    override var link: String=""
+        get() = feedUrl
+    @Bindable
+    var subscribed= false
 
     @SerializedName("collectionId")
     @Expose
@@ -34,17 +53,17 @@ class Podcast:BaseObservable(){
     var trackId: Long? = null
     @SerializedName("artistName")
     @Expose
-    var artistName: String? = null
+    var artistName: String = ""
     @SerializedName("collectionName")
     @Expose
-    var collectionName: String? = null
+    var collectionName: String = ""
     @SerializedName("trackName")
     @Expose
     var trackName: String? = null
 
     @SerializedName("feedUrl")
     @Expose
-    var feedUrl: String? = null
+    var feedUrl: String=""
 
     @SerializedName("artworkUrl30")
     @Expose
@@ -54,7 +73,7 @@ class Podcast:BaseObservable(){
     var artworkUrl60: String? = null
     @SerializedName("artworkUrl100")
     @Expose
-    var artworkUrl100: String? = null
+    var artworkUrl100: String = ""
 
     @SerializedName("releaseDate")
     @Expose
@@ -69,8 +88,6 @@ class Podcast:BaseObservable(){
     @Expose
     var artworkUrl600: String? = null
 
-    @Bindable
-    var subscribed= false
 
 
 

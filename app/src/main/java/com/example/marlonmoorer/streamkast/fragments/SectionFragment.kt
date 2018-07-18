@@ -88,8 +88,9 @@ class SectionFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = createViewModel()
-        viewModel.getFeaturedByGenre(genre.id).observe(this,featuredObserver)
-        viewModel.getPodcastByGenre(genre.id).observe(this,podcastObserver)
+        viewModel.setGenre(genre.id)
+        viewModel.featuredPodcast.observe(this,featuredObserver)
+        viewModel.latestPodcast.observe(this,podcastObserver)
     }
 
 

@@ -4,12 +4,12 @@ package com.example.marlonmoorer.streamkast.models
 import java.io.Serializable
 
 data class EpisodeModel(
-        var guid:String="",
-        var url:String?=null,
-        var title:String?=null,
-        var author:String?=null,
-        var thumbnail:String?=null,
-        var description: String?=null,
+        override var guid:String="",
+        override var url:String="",
+        override var title:String="",
+        override var author:String="",
+        override var thumbnail:String="",
+        override var description: String="",
         var duration:Int=0,
         var autoPlay:Boolean=false
-): Serializable
+): Serializable,IEposide

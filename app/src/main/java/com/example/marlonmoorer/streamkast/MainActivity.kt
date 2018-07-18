@@ -19,7 +19,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.Podcast
-import com.example.marlonmoorer.streamkast.api.models.rss.Episode
+import com.example.marlonmoorer.streamkast.api.models.Episode
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.listeners.IGenreListener
 import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
@@ -92,10 +92,10 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
                 val media=EpisodeModel(
                         guid = ep.guid,
                         title=ep.title,
-                        author=ep.author,
-                        thumbnail=ep.thumbnail,
+                        author= ep.author!!,
+                        thumbnail= ep.thumbnail!!,
                         url=ep.url,
-                        description=ep.description)
+                        description= ep.description!!)
                 prepareMedia(media)
                 historyData.removeObservers(this)
             }

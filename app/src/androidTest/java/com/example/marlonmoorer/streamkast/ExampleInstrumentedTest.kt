@@ -42,7 +42,7 @@ class ExampleInstrumentedTest {
             var response = httpClient.newCall(request).execute()
             response.body()?.byteStream().use {
                 val startTime = System.currentTimeMillis()
-                Utils.parseFeed(it!!)
+               // Utils.parseFeed(it!!)
                 val endTime = System.currentTimeMillis()
                 dom="Dom  took " + (endTime - startTime) + " milliseconds"
             }
@@ -50,7 +50,7 @@ class ExampleInstrumentedTest {
             var response2 = httpClient.newCall(request).execute()
             response2.body()?.byteStream().use {
                 val startTime = System.currentTimeMillis()
-                Utils.pullParse(it!!)
+               // Utils.pullParse(it!!)
                 val endTime = System.currentTimeMillis()
                 pp="PullParser  took " + (endTime - startTime) + " milliseconds"
             }
