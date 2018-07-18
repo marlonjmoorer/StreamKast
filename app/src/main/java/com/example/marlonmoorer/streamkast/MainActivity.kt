@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
 
 
 
-    private var detailViewModel: DetailViewModel?=null
+
     private var subscriptionViewModel:SubscriptionViewModel?=null
     private var mediaViewModel:MediaPlayerViewModel?=null
     private val targetId:Int=R.id.main
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         setContentView(R.layout.activity_main)
 
 
-        detailViewModel = createViewModel()
+        //detailViewModel = createViewModel()
         subscriptionViewModel= createViewModel()
         mediaViewModel=createViewModel()
 
@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
     }
 
     override fun viewEpisode(episode: Episode) {
-        detailViewModel?.setEpisode(episode)
+       // detailViewModel?.setEpisode(episode)
         this.addFragment(targetId,episodeFragment)
         //episodeFragment.show(supportFragmentManager,"")
     }

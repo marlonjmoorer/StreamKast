@@ -7,18 +7,17 @@ import com.example.marlonmoorer.streamkast.api.models.rss.Episode
 import com.example.marlonmoorer.streamkast.di.AppComponent
 import com.example.marlonmoorer.streamkast.di.AppModule
 import com.example.marlonmoorer.streamkast.di.DaggerAppComponent
-import org.w3c.dom.Element
-import org.w3c.dom.Node
-import org.w3c.dom.NodeList
-import org.w3c.dom.Text
+import org.w3c.dom.*
+import java.io.InputStream
 import java.net.URL
 import java.util.concurrent.Executors
+import java.util.stream.BaseStream
 
 class Utils{
     companion object {
-       fun parseFeed(url:String):Channel{
+       fun parseFeed(stream: InputStream):Channel{
            val channel:Channel
-           val doc = URL(url).asXmlDoc()
+           val doc = stream.toDocument()
            val channelElement=doc["rss"]["channel"]
            channel=Channel().apply {
                channelElement.childNodes.forEach {node->

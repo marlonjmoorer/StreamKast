@@ -77,6 +77,7 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
     fun addToHistory(episode: EpisodeModel){
         doAsync {
             if(repository.history.exist(episode.guid)){
+                repository.history.uppdateLastPlayed(Date(),episode.guid)
                 return@doAsync
             }
             repository.history.insert(PlaybackHistory().apply {
@@ -87,6 +88,7 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
                 author=episode.author
                 thumbnail=episode.thumbnail
                 description=episode.description
+                lastPlayed=Date()
             })
         }
     }

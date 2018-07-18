@@ -3,8 +3,7 @@ package com.example.marlonmoorer.streamkast.data
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import java.io.Serializable
-
-
+import java.util.*
 
 
 @Entity()
@@ -17,6 +16,8 @@ class PlaybackHistory {
     var thumbnail:String?=null
     var description: String?=null
     var duration:Int=0
+    @TypeConverters(Converters::class)
+    var lastPlayed:Date?=null
 }
 
 @Dao
@@ -40,6 +41,9 @@ interface HistoryDao {
     @Delete
     fun delete(episode: PlaybackHistory)
 
-    @Query("SELECT * FROM playbackhistory ORDER BY guid DESC LIMIT 1")
+    @Query("SELECT * FROM playbackhistory ORDER BY lastPlayed DESC LIMIT 1")
     fun getMostRecent():LiveData<PlaybackHistory>
+
+    @Query("UPDATE playbackhistory SET lastPlayed = :date WHERE guid= :id ")
+    fun uppdateLastPlayed(date: Date,id:String)
 }

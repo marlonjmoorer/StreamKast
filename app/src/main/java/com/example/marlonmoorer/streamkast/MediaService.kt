@@ -187,6 +187,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                 episodeData.postValue(media)
                 if(media.autoPlay){
                     transportControls?.play()
+                }else{
+                    playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
                 }
             }
             setOnBufferingUpdateListener(this@MediaService)

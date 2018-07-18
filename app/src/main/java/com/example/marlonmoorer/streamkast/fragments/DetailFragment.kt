@@ -2,31 +2,23 @@ package com.example.marlonmoorer.streamkast.fragments
 
 
 import android.arch.lifecycle.Observer
-import android.content.Context
+import android.databinding.ObservableBoolean
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.view.*
-import android.widget.Button
-import com.ethanhua.skeleton.Skeleton
 import com.example.marlonmoorer.streamkast.R
 
-import com.example.marlonmoorer.streamkast.api.models.rss.Episode
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
-import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
-import org.jetbrains.anko.backgroundDrawable
 import org.jetbrains.anko.cancelButton
-import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
 
-import org.jetbrains.anko.yesButton
-import org.jetbrains.anko.design.snackbar
 /**
  * Created by marlonmoorer on 3/24/18.
  */
@@ -35,7 +27,7 @@ class DetailFragment: BaseFragment(){
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
     private  var Id:String=""
-
+    private var loading= ObservableBoolean(true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -99,11 +91,19 @@ class DetailFragment: BaseFragment(){
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         detailModel = createViewModel()
-        detailModel.podcastDetails.observe(this, Observer {details->
-            binding.channel=details
-        })
-        detailModel.loadPodcast(Id).observe(this, Observer {podast->
+        detailModel.loadPodcast(Id)
+        binding.loading=loading
+        detailModel.getPodcast().observe(this, Observer {podast->
             binding.podcast=podast
+        })
+        detailModel.podcastDetails.observe(this, Observer {details->
+            if(details==null){
+                loading.set(true)
+            }else{
+                binding.channel=details
+                loading.set(false)
+            }
+            binding.executePendingBindings()
         })
 
         detailModel.subscribed.observe(this, Observer {subscribed->
@@ -116,11 +116,15 @@ class DetailFragment: BaseFragment(){
         menu.clear()
     }
 
+    override fun onStop() {
+        super.onStop()
+        detailModel.podcastDetails.removeObservers(this)
+        detailModel.episodes.removeObservers(this)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        detailModel.podcastDetails.removeObservers(this)
-        detailModel.episodes.removeObservers(this)
+
     }
 
 

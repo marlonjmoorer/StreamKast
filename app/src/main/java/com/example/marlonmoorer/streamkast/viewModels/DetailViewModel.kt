@@ -1,56 +1,46 @@
 package com.example .marlonmoorer.streamkast.viewModels
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
-import com.example.marlonmoorer.streamkast.BR
-import com.example.marlonmoorer.streamkast.api.Repository
+import android.arch.lifecycle.*
+import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.api.models.rss.*
 
 
 import com.example.marlonmoorer.streamkast.data.Subscription
-import kotlinx.coroutines.experimental.async
 import org.jetbrains.anko.doAsync
 
 
 /**
  * Created by marlonmoorer on 3/22/18.
  */
-class DetailViewModel :BaseViewModel() {
+class DetailViewModel:BaseViewModel() {
 
-    var podcastDetails:LiveData<Channel>
-    val episodes:LiveData<List<Episode>>
-    val subscribed:LiveData<Boolean>
+    lateinit var podcastDetails:LiveData<Channel>
+    lateinit  var episodes:LiveData<List<Episode>>
+    lateinit  var subscribed:LiveData<Boolean>
 
-    private val podcast:MutableLiveData<Podcast>
-    private  val selectedEpisode=MutableLiveData<Episode>()
+    private lateinit var podcast:LiveData<Podcast>
+    private val selectedEpisode=MutableLiveData<Episode>()
     private var podcastId=""
 
-    init {
-        podcast=MutableLiveData()
+
+    fun loadPodcast(id: String){
+        podcastId=id
+        podcast=repository.getPodcastById(podcastId)
         podcastDetails=Transformations.switchMap(podcast,{p->
             return@switchMap repository.parseFeed(p.feedUrl!!)
         })
         episodes=Transformations.map(podcastDetails,{channel-> channel.episodes })
-        subscribed=Transformations.map(podcast,{p->p.subscribed})
+        subscribed=Transformations.switchMap(podcast,{p->repository.isSubscribed(p.collectionId)})
     }
 
 
+    fun getPodcast()=podcast
 
     fun getCurrentEpisode():LiveData<Episode> = selectedEpisode
     fun setEpisode(episode: Episode)=selectedEpisode.postValue(episode)
 
-    fun loadPodcast(id:String): LiveData<Podcast> {
-        doAsync {
-            podcastId=id
-            val result= repository.getPodcastById(id)
-            result?.subscribed=repository.isSubscribed(id)
-            podcast.postValue(result)
-        }
-        return  podcast
-    }
+
     val isSubbed
         get() = subscribed.value==true
     val title
@@ -59,20 +49,24 @@ class DetailViewModel :BaseViewModel() {
 
     fun toggleSubscription(){
         doAsync {
-            if(repository.isSubscribed(podcastId)){
+            if(isSubbed){
                 repository.unsubscribe(podcastId)
             }else{
                 podcastDetails.value?.let{
                     repository.subscribe(Subscription().also{sub->
                         sub.title=it.title
                         sub.thumbnail=it.thumbnail
-                        sub.podcastId=podcastId.toInt()
+                        sub.podcastId= podcastId.toInt()
                     })
                 }
             }
-            podcast.postValue(podcast.value.apply {
-                this!!.subscribed= repository.isSubscribed(this!!.collectionId)
-            })
+        }
+    }
+    class Factory(val id:String): ViewModelProvider.NewInstanceFactory() {
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            val vm=DetailViewModel()
+            //App.component?.inject(vm as BaseViewModel)
+            return  vm as T
         }
     }
 }

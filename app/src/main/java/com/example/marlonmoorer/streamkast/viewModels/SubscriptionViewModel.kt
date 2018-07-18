@@ -17,20 +17,20 @@ class  SubscriptionViewModel:BaseViewModel(){
     fun toggleSubscription(id:String):LiveData<Boolean>{
         val subscribed=MutableLiveData<Boolean>()
         doAsync {
-            if(repository.isSubscribed(id)){
-                repository.unsubscribe(id)
-                subscribed.postValue(false)
-            }else{
-                repository.getPodcastById(id)?.let{podcast->
-                    repository.subscribe(Subscription().apply {
-                        title=podcast.collectionName
-                        thumbnail=podcast.artworkUrl600
-                        podcastId=podcast.collectionId.toInt()
-                    })
-                    subscribed.postValue(true)
-                }
-
-            }
+//            if(repository.isSubscribed(id)){
+//                repository.unsubscribe(id)
+//                subscribed.postValue(false)
+//            }else{
+//                repository.getPodcastById(id)?.let{podcast->
+//                    repository.subscribe(Subscription().apply {
+//                      //  title=podcast.collectionName
+//                       // thumbnail=podcast.artworkUrl600
+//                       // podcastId=podcast.collectionId.toInt()
+//                    })
+//                    subscribed.postValue(true)
+//                }
+//
+//            }
         }
         return subscribed
     }

@@ -1,15 +1,13 @@
 package com.example.marlonmoorer.streamkast.data
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.InvalidationTracker
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.*
 import android.content.Context
 import android.support.annotation.NonNull
 
 
 
-@Database(entities = arrayOf(Subscription::class,Featured::class,SavedEpisode::class,PlaybackHistory::class), version = 6)
+@Database(entities = arrayOf(Subscription::class,Featured::class,SavedEpisode::class,PlaybackHistory::class), version = 7)
+@TypeConverters(Converters::class)
 abstract class KastDatabase:RoomDatabase() {
     abstract  fun SubscriptionDao(): SubscriptionDao
     abstract  fun FeaturedDao():FeaturedDao
@@ -25,7 +23,6 @@ abstract class KastDatabase:RoomDatabase() {
                         KastDatabase::class.java, "podcast.db")
                         .fallbackToDestructiveMigration()
                         .build()
-
             }
             return instance!!
         }

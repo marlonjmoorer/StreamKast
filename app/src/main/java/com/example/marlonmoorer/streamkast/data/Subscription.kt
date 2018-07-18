@@ -29,7 +29,7 @@ interface SubscriptionDao {
     fun getById(id:String):Subscription
 
     @Query("SELECT EXISTS(SELECT 1  FROM subscription WHERE  podcastId = :id)")
-    fun exist(id :String):Boolean
+    fun exist(id :String):LiveData<Boolean>
 
     @Insert
     fun insert(subscription:Subscription)

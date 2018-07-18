@@ -35,6 +35,7 @@ import org.w3c.dom.NodeList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.InputStream
 import java.net.URL
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -73,6 +74,12 @@ inline fun <reified T : ViewModel> Fragment.createViewModel(): T {
         ViewModelProviders.of(this.activity!!).get(T::class.java)
     }
     return ViewModelProviders.of(this.activity!!, BaseViewModel.ViewModelFactory()).get(T::class.java)
+}
+inline fun <reified T : ViewModel> Fragment.createViewModel(factory:ViewModelProvider.NewInstanceFactory): T {
+    return ViewModelProviders.of(this,factory).get(T::class.java)
+}
+inline fun <reified T : ViewModel> Fragment.viewModel(): T {
+    return ViewModelProviders.of(this).get(T::class.java)
 }
 
 fun AppCompatActivity.addFragment(id:Int,fragment: Fragment,withAnimation:Boolean=false){
@@ -158,6 +165,9 @@ fun Date.toDateString(): String? {
 
 fun URL.asXmlDoc(): Document {
     return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this.openStream())
+}
+fun InputStream.toDocument():Document{
+    return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
 }
 operator fun Element.get(key:String):Element{
     return this.getElementsByTagName(key).item(0) as Element

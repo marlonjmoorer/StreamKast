@@ -1,7 +1,6 @@
 package com.example.marlonmoorer.streamkast.di
 
 import android.content.Context
-import android.content.SharedPreferences
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.ItunesService
 import com.example.marlonmoorer.streamkast.api.Repository
@@ -9,6 +8,7 @@ import com.example.marlonmoorer.streamkast.api.RssToJsonService
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import dagger.Module
 import dagger.Provides
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -30,8 +30,8 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideRepository(database: KastDatabase,itunesService: ItunesService):Repository{
-        return Repository(database,itunesService,context.getSharedPreferences(context.packageName,0))
+    fun provideRepository(database: KastDatabase,itunesService: ItunesService, okHttpClient: OkHttpClient):Repository{
+        return Repository(database,itunesService,okHttpClient,context.getSharedPreferences(context.packageName,0))
     }
 
     @Provides
@@ -64,6 +64,11 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun provideGsonFactory()= GsonConverterFactory.create()
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient()= OkHttpClient()
+
 
 
 }

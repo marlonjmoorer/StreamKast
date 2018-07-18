@@ -14,18 +14,16 @@ import com.example.marlonmoorer.streamkast.api.models.rss.Channel
 
 
 import com.example.marlonmoorer.streamkast.data.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.jetbrains.anko.doAsync
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
-class Repository @Inject constructor(database: KastDatabase,val itunesService: ItunesService,val preferences: SharedPreferences) {
+class Repository @Inject constructor(database: KastDatabase, val itunesService: ItunesService, val httpClient: OkHttpClient, val preferences: SharedPreferences) {
 
     val subscriptions:SubscriptionDao
     val featuredItems:FeaturedDao
@@ -52,15 +50,26 @@ class Repository @Inject constructor(database: KastDatabase,val itunesService: I
         }
         return emptyList()
     }
-    fun getPodcastById(id:String):Podcast?{
-        return lookup(mapOf("id" to id))?.firstOrNull()
+    fun getPodcastById(id:String): MutableLiveData<Podcast> {
+        val podcast=MutableLiveData<Podcast>()
+        doAsync{
+           podcast.postValue(lookup(mapOf("id" to id))?.firstOrNull())
+        }
+        return podcast
     }
 
     fun parseFeed(feedUrl:String):LiveData<Channel>{
         val channel=MutableLiveData<Channel>()
         doAsync {
             try {
-                val result=Utils.parseFeed(feedUrl)
+                val request = Request.Builder()
+                        .url(feedUrl)
+                        .build()
+
+                val response = httpClient.newCall(request).execute()
+                val result= response.body()?.byteStream()?.let {
+                    Utils.parseFeed(it)
+                }
                 channel.postValue(result)
             }
             catch (ex:Exception){

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentInfoBinding
+import com.example.marlonmoorer.streamkast.viewModel
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 
 

@@ -26,7 +26,7 @@ import org.jetbrains.anko.doAsync
 class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
 
 
-    private var detailViewModel: DetailViewModel?=null
+
     var mediaViewModel:MediaPlayerViewModel?=null
     var mediaPlayerModel= MediaPlayerModel()
     private lateinit var binding:FragmentMediaplayerBinding
@@ -38,9 +38,13 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
         binding=FragmentMediaplayerBinding.inflate(inflater).apply{
             nowPlaying?.run {
                 title.isSelected=true
-                playPause.setOnClickListener(mediaViewModel)
+                playPause.setOnClickListener{
+                    mediaViewModel?.onClick(it)
+                }
             }
-            playPause.setOnClickListener(mediaViewModel)
+            playPause.setOnClickListener{
+                mediaViewModel?.onClick(it)
+            }
             seekbar.setOnSeekBarChangeListener(this@MediaPlayerFragment)
         }
         return  binding.root
@@ -49,7 +53,7 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        detailViewModel=createViewModel()
+
         mediaViewModel=createViewModel()
         binding.model=mediaPlayerModel
         mediaViewModel?.isBound?.observe(this, Observer {bound->
