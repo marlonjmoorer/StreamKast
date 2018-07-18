@@ -1,6 +1,8 @@
 package com.example.marlonmoorer.streamkast
 
 import com.example.marlonmoorer.streamkast.api.Repository
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -9,9 +11,7 @@ import java.net.URL
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
-import com.rometools.rome.io.SyndFeedInput
-import com.rometools.rome.feed.synd.SyndFeed
-import com.rometools.rome.io.XmlReader
+
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -27,12 +27,19 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
 
         arrayOf(
-                "https://feeds.megaphone.fm/stuffyoushouldknow",
-                "https://rss.art19.com/id10t",
-                "https://www.npr.org/rss/podcast.php?id=381444908",
-                "https://www.npr.org/rss/podcast.php?id=510289"
+                "https://feeds.megaphone.fm/stuffyoushouldknow" //,
+              //  "https://rss.art19.com/id10t",
+              //  "https://www.npr.org/rss/podcast.php?id=381444908",
+              //  "https://www.npr.org/rss/podcast.php?id=510289"
         ).forEach {
-            var ch=Utils.parseFeed(it)
+            val request = Request.Builder()
+                    .url(it)
+                    .build()
+            val httpClient= OkHttpClient()
+            val response = httpClient.newCall(request).execute()
+            val result= response.body()?.byteStream()
+
+            var ch=Utils.pullParse(result!!)
 
             print("Done")
         }

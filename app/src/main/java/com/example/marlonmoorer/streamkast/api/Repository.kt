@@ -17,7 +17,9 @@ import com.example.marlonmoorer.streamkast.data.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.jetbrains.anko.doAsync
+import org.joda.time.DateTime
 import retrofit2.Call
+import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -65,10 +67,9 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
                 val request = Request.Builder()
                         .url(feedUrl)
                         .build()
-
                 val response = httpClient.newCall(request).execute()
-                val result= response.body()?.byteStream()?.let {
-                    Utils.parseFeed(it)
+                val result= response.body()?.byteStream()?.use {
+                    Utils.parse(it)
                 }
                 channel.postValue(result)
             }
@@ -81,10 +82,11 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
     }
 
     private fun syncFeatured(id:String) {
-        val key= "${LASTUPDATE}_${id}"
-        val lastSyncDate = preferences.getString(key, null)
-        val hoursAgo=Date(System.currentTimeMillis() - TimeUnit.HOURS.toMillis(1)).toDateString()!!
-        if (lastSyncDate==null||lastSyncDate < hoursAgo) {
+        val key= "sync${id}"
+        val lastSyncDate = preferences.getLong(key,0)
+
+        val hoursAgo= DateTime.now().minusHours(1).millis
+        if (lastSyncDate < hoursAgo) {
 
             val call=when (id) {
                 MediaGenre.Featured.id -> itunesService.topPodcast()
@@ -108,7 +110,7 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
                         featuredItems.insertAll(it)
                     }
                 }
-                preferences.edit().putString(key,Date().toDateString()).apply()
+                preferences.edit().putLong(key,DateTime.now().millis).apply()
             }
         }
     }

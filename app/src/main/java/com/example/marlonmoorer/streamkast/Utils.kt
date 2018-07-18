@@ -1,75 +1,140 @@
 package com.example.marlonmoorer.streamkast
 
-import android.app.Application
-import android.util.Log
+import android.util.Xml
 import com.example.marlonmoorer.streamkast.api.models.rss.Channel
 import com.example.marlonmoorer.streamkast.api.models.rss.Episode
-import com.example.marlonmoorer.streamkast.di.AppComponent
-import com.example.marlonmoorer.streamkast.di.AppModule
-import com.example.marlonmoorer.streamkast.di.DaggerAppComponent
 import org.w3c.dom.*
 import java.io.InputStream
-import java.net.URL
-import java.util.concurrent.Executors
-import java.util.stream.BaseStream
+import org.xmlpull.v1.XmlPullParser
+import org.xmlpull.v1.XmlPullParserFactory
+
+
+
 
 class Utils{
     companion object {
-       fun parseFeed(stream: InputStream):Channel{
-           val channel:Channel
-           val doc = stream.toDocument()
-           val channelElement=doc["rss"]["channel"]
-           channel=Channel().apply {
-               channelElement.childNodes.forEach {node->
-                   if(node.nodeType== Node.ELEMENT_NODE && node is  Element){
-                       when(node.nodeName){
-                           "title"-> title=node.textContent
-                           "link"->link=node.textContent
-                           "description"-> description=node.textContent
-                           "itunes:author"->author=node.textContent
-                           "image"-> node.childNodes.forEach {n->
-                               if(n.nodeName=="url"){
-                                   thumbnail=n.textContent
-                               }
-                           }
-                          // "itunes:image"-> thumbnail=node.getAttribute("href")
-                           "itunes:category"-> categories.add(node.getAttribute("text"))
-                           "item"-> {
-                               val ep=parseEpisode(node)
-                               if(ep.thumbnail==""){
-                                   ep.thumbnail=thumbnail
-                               }
-                               episodes.add(ep)
-                           }
-                       }
-                   }
-               }
-           }
+        fun parse(inputStream: InputStream):Channel?{
 
-          return channel
-       }
-        fun parseEpisode(node:Element):Episode{
-              return Episode().apply {
-                    node.childNodes.forEach {node->
-                        if(node.nodeType== Node.ELEMENT_NODE && node is  Element){
-                        when(node.nodeName){
-                            "title"-> title=node.textContent
-                            "guid"-> guid= node.textContent
-                            "pubDate"->publishedDate= node.textContent.toDate()
-                            "itunes:author"-> node.textContent
-                            "itunes:duration"-> duration = when{
-                                node.textContent.contains(":")-> node.textContent
-                                else ->(node.textContent.toInt() *1000).toTime()
+
+            val factory = XmlPullParserFactory.newInstance()
+            factory.isNamespaceAware = true
+            val parser = factory.newPullParser()
+
+            parser.setInput(inputStream,null)
+            var eventType = parser.eventType
+            var channel:Channel?=null
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                try {
+                    when(eventType){
+                        XmlPullParser.START_DOCUMENT-> {}
+                        XmlPullParser.START_TAG->{
+                            val name= parser.name
+                            when(name){
+                                "channel"->{
+                                    channel= parseChannel(parser)
+                                    return  channel
+                                }
                             }
-                            "itunes:image"-> thumbnail=node.getAttribute("href")
-                            "enclosure"->{
-                                mediaUrl= node.getAttribute("url")
-                                length= node.getAttribute("length")
-                            }
-                            "description"-> description=node.textContent
-                        }}
+                        }
+                        XmlPullParser.END_TAG->{}
+
                     }
-              }
+                    eventType = parser.next()
+                }catch (ex:Exception){
+                    ex.printStackTrace()
+                    throw ex
+                }
+
+            }
+            return  channel
+        }
+        fun parseChannel(parser: XmlPullParser):Channel{
+            val ch= Channel()
+            while (!(parser.eventType==XmlPullParser.END_TAG && parser.name=="channel")){
+                val event= parser.eventType
+                when(event){
+                    XmlPullParser.START_TAG->{
+                        val name=parser.name
+                        when(name){
+                            "title"-> ch.title =parser.nextText()
+                            "link"->ch.link=parser.nextText()
+                            "description"-> ch.description=parser.nextText()
+                            "itunes:author"->ch.author=parser.nextText()
+                            "image"->{
+                                val prefix= parser.prefix
+                                if(prefix==null){
+                                    val url=parseImage(parser)
+                                    ch.thumbnail=url
+                                }
+                            }
+                            "category"-> {
+                                val prefix= parser.prefix
+                                if(prefix=="itunes"){
+                                 ch.categories.add(parser.getAttributeValue(null,"text"))
+                                }
+                            }
+                            "item"-> {
+                                val ep= parseItem(parser)
+                                if(ep?.thumbnail==""){
+                                    ep?.thumbnail=ch.thumbnail
+                                }
+                                ep?.let { ch.episodes.add(it) }
+                            }
+
+                        }
+                    }
+
+
+                }
+                parser.next()
+
+            }
+            return  ch
+
+        }
+        fun parseItem(parser: XmlPullParser):Episode?{
+            val episode=Episode().apply{
+                while (!(parser.eventType==XmlPullParser.END_TAG && parser.name=="item")){
+                    val event= parser.eventType
+                    when(event){
+                        XmlPullParser.START_TAG->{
+                            val name=parser.name
+                            when(name){
+                                "title"-> title= parser.nextText()
+                                "guid"-> guid= parser.nextText()
+                                "author"-> author= parser.nextText()
+                                "image"->{
+                                    if(parser.prefix=="itunes"){
+                                        thumbnail= parser.nextText()
+                                    }
+                                }
+                                "enclosure"->{
+                                    mediaUrl= parser.getAttributeValue(null,"url")
+                                    length= parser.getAttributeValue(null,"length")
+                                }
+                                "description"-> description=parser.nextText()
+                            }
+                        }
+                    }
+                    parser.next()
+                }
+            }
+            return episode
+        }
+        fun parseImage(parser: XmlPullParser): String {
+            while (!(parser.eventType==XmlPullParser.END_TAG && parser.name=="image")){
+                val event= parser.eventType
+                when(event){
+                    XmlPullParser.START_TAG->{
+                        val name=parser.name
+                        when(name){
+                            "url"-> return  parser.nextText()
+                        }
+                    }
+                }
+                parser.next()
+            }
+            return ""
         }
     }
 }

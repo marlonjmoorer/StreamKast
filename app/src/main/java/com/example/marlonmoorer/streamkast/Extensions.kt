@@ -32,10 +32,12 @@ import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
+import org.xml.sax.InputSource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.InputStream
+import java.io.StringReader
 import java.net.URL
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -167,8 +169,20 @@ fun URL.asXmlDoc(): Document {
     return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this.openStream())
 }
 fun InputStream.toDocument():Document{
-    return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this)
+    val factory=DocumentBuilderFactory.newInstance()
+    val builder=factory.newDocumentBuilder()
+    val doc= builder.parse(this)
+
+    return doc
 }
+fun String.toDocument():Document{
+    val factory=DocumentBuilderFactory.newInstance()
+    val builder=factory.newDocumentBuilder()
+    val doc= builder.parse(InputSource(StringReader(this)))
+
+    return doc
+}
+
 operator fun Element.get(key:String):Element{
     return this.getElementsByTagName(key).item(0) as Element
 }
