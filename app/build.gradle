@@ -90,6 +90,7 @@ dependencies {
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
     compile 'joda-time:joda-time:2.10'
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
 
 
 

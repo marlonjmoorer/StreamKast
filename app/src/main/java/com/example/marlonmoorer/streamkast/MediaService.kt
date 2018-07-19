@@ -16,6 +16,7 @@ import android.content.ComponentName
 import android.graphics.Bitmap
 import android.media.MediaPlayer
 import android.media.session.PlaybackState
+import android.net.Uri
 import android.os.*
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
@@ -25,15 +26,26 @@ import android.support.v4.media.session.MediaButtonReceiver
 import android.text.TextUtils
 import org.jetbrains.anko.intentFor
 import android.util.Log
+import com.example.marlonmoorer.streamkast.listeners.IMediaListener
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.TrackSelection
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import org.jetbrains.anko.runOnUiThread
 import java.util.*
 
 class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnBufferingUpdateListener  {
 
     private var mediaSession: MediaSessionCompat?=null
-
-    private lateinit var mediaPlayer:MediaPlayer
+    private lateinit var exoPlayer: SimpleExoPlayer
+    private val BANDWIDTH_METER = DefaultBandwidthMeter()
+    //private lateinit var mediaPlayer:MediaPlayer
     private lateinit var episodeData:MutableLiveData<EpisodeModel>
     private lateinit var playbackStateData: MutableLiveData<Int>
     private lateinit var position:MutableLiveData<Int>
@@ -75,7 +87,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             isActive=true
             setMediaButtonReceiver(pendingIntent)
         }
-        mediaPlayer= MediaPlayer()
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(
+                DefaultRenderersFactory(this),
+                DefaultTrackSelector(BANDWIDTH_METER), DefaultLoadControl());
         episodeData=MutableLiveData()
         playbackStateData=MutableLiveData()
         position= MutableLiveData()
@@ -133,12 +147,16 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         MediaButtonReceiver.handleIntent(mediaSession, intent)
         return START_STICKY
     }
+    private  val isPlaying
+            get() = exoPlayer.run {
+               playWhenReady  && playbackState==Player.STATE_READY
+            }
 
     val notification:Notification
         get(){
             val play_pauseAction:PendingIntent
             val play_pause_icon:Int
-            if(mediaPlayer.isPlaying) {
+            if(isPlaying) {
                 play_pauseAction=createAction(1)
                 play_pause_icon= R.drawable.icons8_pause
             }
@@ -175,52 +193,60 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         return MediaBinder()
     }
 
+
+    private  fun buildMediaSource(uri:Uri)= ExtractorMediaSource.Factory(
+            DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri)
+
+
     private fun prepareMediaPlayer(media:EpisodeModel) {
-        mediaPlayer.run{
-            reset()
-            setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
-            setAudioStreamType(AudioManager.STREAM_MUSIC)
-            setVolume(1.0f, 1.0f)
-            setDataSource(media.url)
-            setOnPreparedListener{
-                media.duration=it.duration
-                episodeData.postValue(media)
-                if(media.autoPlay){
-                    transportControls?.play()
-                }else{
-                    playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
-                }
-            }
-            setOnBufferingUpdateListener(this@MediaService)
-            setOnErrorListener{mp,what, extra->
-                when(what){
-                    MediaPlayer.MEDIA_ERROR_TIMED_OUT->
-                            transportControls?.stop()
-                    MediaPlayer.MEDIA_ERROR_IO ->
-                            transportControls?.pause()
-                }
-                return@setOnErrorListener true
-            }
-            setOnInfoListener{mp,what, extra->
-                when(what){
-                    MediaPlayer.MEDIA_INFO_BUFFERING_START->  stopSeekbarUpdate()
-                    MediaPlayer.MEDIA_INFO_BUFFERING_END-> startSeekbarUpdate()
-                    else-> return@setOnInfoListener false
-                }
-                return@setOnInfoListener  true
-            }
-            setOnSeekCompleteListener {mp->
+
+
+        val uri = Uri.parse(media.url)
+        val mediaSource = buildMediaSource(uri);
+        exoPlayer.prepare(mediaSource, true, false)
+        episodeData.postValue(media)
+        if(media.autoPlay){
+            transportControls?.play()
+        }else{
+            playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
+        }
+
+        exoPlayer.addListener(object :IMediaListener{
+            override fun onSeekProcessed() {
+                Log.e("","")
 
             }
-            setOnCompletionListener {
-                val state= mediaSession?.controller?.playbackState?.state
-                Log.w("info","state: $state")
-                transportControls?.stop()
+            override fun onPlayerError(error: ExoPlaybackException?) {
+                Log.e("","")
             }
-            episodeData.postValue(media)
-            playbackStateData.postValue(PlaybackState.STATE_BUFFERING)
-            prepareAsync()
-        }
+            override fun onPositionDiscontinuity(reason: Int) {
+                Log.e("","")
+            }
+
+            override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
+                Log.e("","")
+                if (media.duration<10){
+                    media.duration = exoPlayer.duration.toInt()
+                    episodeData.postValue(media)
+                }
+
+            }
+
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                when(playbackState){
+                    Player.STATE_BUFFERING->{
+                        playbackStateData.postValue(PlaybackState.STATE_BUFFERING)
+                    }
+                    Player.STATE_READY->{
+                        val state=if(playWhenReady)PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+                        playbackStateData.postValue(state)
+                    }
+                }
+            }
+
+        })
+
+
     }
 
 
@@ -254,7 +280,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     private val noisyReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (mediaPlayer.isPlaying==true) {
+            if (isPlaying) {
                 transportControls?.pause()
             }
         }
@@ -271,9 +297,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         override fun onPlay() {
             super.onPlay()
             if(successfullyRetrievedAudioFocus()){
-                mediaPlayer.start()
+                exoPlayer.playWhenReady=true
                 mediaSession?.setActive(true)
-                playbackStateData.postValue(PlaybackStateCompat.STATE_PLAYING)
+
                 startSeekbarUpdate()
                 startForeground()
             }
@@ -281,7 +307,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
         override fun onPause() {
             super.onPause()
-            mediaPlayer.pause()
+            exoPlayer.playWhenReady=false
             playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
             stopForeground(false)
             stopSeekbarUpdate()
@@ -290,30 +316,24 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
         override fun onStop() {
 
-            mediaPlayer.reset()
-            mediaPlayer.release()
+            exoPlayer.stop()
+            exoPlayer.release()
             stopForeground(true)
             stopSelf()
 
         }
-
         override fun onSeekTo(pos: Long) {
             stopSeekbarUpdate()
-            mediaPlayer.seekTo(pos.toInt())
+            exoPlayer.seekTo(pos)
             startSeekbarUpdate()
 
         }
-
         override fun onRewind() {
-            mediaPlayer.seekTo(mediaPlayer.currentPosition-30000)
+            exoPlayer.seekTo(exoPlayer.currentPosition-30000)
         }
-
         override fun onFastForward() {
-            mediaPlayer.seekTo(mediaPlayer.currentPosition+30000)
+            exoPlayer.seekTo(exoPlayer.currentPosition+30000)
         }
-
-
-
     }
     override fun onAudioFocusChange(action: Int) {
         when (action) {
@@ -327,6 +347,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
                 //mediaPlayer.setVolume(0.3f, 0.3f)
+
             }
             AudioManager.AUDIOFOCUS_GAIN -> {
               //  if (!mediaPlayer.isPlaying()) {
@@ -340,7 +361,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     private fun successfullyRetrievedAudioFocus(): Boolean {
         val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
-        
+
         return result == AudioManager.AUDIOFOCUS_GAIN
     }
 
@@ -358,7 +379,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
      private fun updateProgress(){
          if(playbackStateData.value==PlaybackState.STATE_PLAYING){
-             position.postValue(mediaPlayer.currentPosition)
+             position.postValue(exoPlayer.currentPosition.toInt())
          }
      }
 

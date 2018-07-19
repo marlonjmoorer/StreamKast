@@ -75,10 +75,13 @@ class Utils{
                             }
                             "item"-> {
                                 val ep= parseItem(parser)
-                                if(ep?.thumbnail==""){
-                                    ep?.thumbnail=ch.thumbnail
+
+                                ep?.let {
+                                    if(ep.thumbnail==""){
+                                        ep.thumbnail=ch.thumbnail
+                                    }
+                                    ch.episodes.add(ep)
                                 }
-                                ep?.let { ch.episodes.add(it) }
                             }
 
                         }
