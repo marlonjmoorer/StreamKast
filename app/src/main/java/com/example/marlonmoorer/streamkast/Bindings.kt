@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
-
+import java.util.*
 
 
 object BindingAdapters{
@@ -70,6 +70,12 @@ object BindingAdapters{
     @BindingAdapter("visibility")
     fun setVisibility(view: View, value: Boolean) {
         view.setVisibility(if (value) View.VISIBLE else View.GONE)
+    }
+
+    @JvmStatic
+    @BindingAdapter("date")
+    fun setDate(view:TextView,date: Date?){
+        view.text=date?.toDateString()
     }
 
 }

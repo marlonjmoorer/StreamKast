@@ -10,6 +10,6 @@ data class EpisodeModel(
         override var author:String="",
         override var thumbnail:String="",
         override var description: String="",
-        var duration:Int=0,
+        override var duration:Int?=0,
         var autoPlay:Boolean=false
-): Serializable,IEposide
+): Serializable,IEpisode

@@ -10,7 +10,7 @@ import java.util.*
 @Dao
 interface HistoryDao {
 
-    @get:Query("SELECT * FROM playbackhistory")
+    @get:Query("SELECT * FROM playbackhistory ORDER BY lastPlayed DESC")
     val all: LiveData<List<PlaybackHistory>>
 
     @Query("SELECT * FROM  playbackhistory WHERE  guid=:id")

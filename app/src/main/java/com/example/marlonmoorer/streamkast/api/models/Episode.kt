@@ -1,17 +1,16 @@
 package com.example.marlonmoorer.streamkast.api.models
 
 import android.graphics.Bitmap
+import com.example.marlonmoorer.streamkast.models.IEpisode
 import java.util.*
 
-class  Episode{
-    var title=""
-    var guid=""
-    var publishedDate: Date?=null
-    var thumbnail=""
-    var duration=""
-    var description=""
-    var mediaUrl=""
+class  Episode:IEpisode{
+    override  var title=""
+    override  var guid=""
+    override var thumbnail=""
+    override var duration: Int?=0
+    override var description=""
+    override var url=""
     var length=""
-    var imageBitmap: Bitmap?=null
-    var author=""
+    override var author=""
 }

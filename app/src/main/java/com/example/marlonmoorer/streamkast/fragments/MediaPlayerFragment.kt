@@ -92,7 +92,7 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
             Image=ep.thumbnail!!
             Title=ep.title!!
             Author= ep.author!!
-            Duration=ep.duration
+            Duration=ep.duration?:0
          }
        }
     }

@@ -12,6 +12,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View
 import com.example.marlonmoorer.streamkast.MediaService
+import com.example.marlonmoorer.streamkast.Utils
 import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import org.jetbrains.anko.doAsync
@@ -35,8 +36,9 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
     override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
         if (binder is MediaService.MediaBinder){
             episode=Transformations.map(binder.episdodeData,{ep->
-                doAsync {
-                    if(ep.duration>0){
+                doAsync(Utils.exceptionHandler){
+                    if(ep.duration!=0){
+
                         addToHistory(ep)
                     }
                 }
@@ -75,16 +77,16 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
     fun seekTo(position: Long)=controls?.seekTo(position)
 
     fun addToHistory(episode: EpisodeModel){
-        doAsync {
+        doAsync(Utils.exceptionHandler) {
             if(repository.history.exist(episode.guid)){
                 repository.history.uppdateLastPlayed(Date(),episode.guid)
                 return@doAsync
             }
             repository.history.insert(PlaybackHistory().apply {
-                url=episode.url!!
+                url=episode.url
                 guid=episode.guid
-                title=episode.title!!
-                duration=episode.duration
+                title=episode.title
+                duration=episode.duration?:0
                 author=episode.author
                 thumbnail=episode.thumbnail
                 description=episode.description

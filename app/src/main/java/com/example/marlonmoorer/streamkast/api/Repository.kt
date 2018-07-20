@@ -13,11 +13,16 @@ import com.example.marlonmoorer.streamkast.api.models.*
 
 
 import com.example.marlonmoorer.streamkast.data.*
+
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import org.jetbrains.anko.doAsync
 import org.joda.time.DateTime
+
 import retrofit2.Call
+import retrofit2.Callback
+import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -30,6 +35,7 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
     val featuredItems:FeaturedDao
     val savedEpisodes:EpisodeDao
     var history:HistoryDao
+    var exceptionHanlder:LiveData<Exception>
     private val LASTUPDATE="lastUpdateDate"
 
     init {
@@ -37,6 +43,7 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
         featuredItems= database.FeaturedDao()
         savedEpisodes=database.EpisodeDao()
         history=database.HistoryDao()
+        exceptionHanlder= MutableLiveData()
     }
 
     fun search(query:Map<String, String>): Call<SearchResults> {
@@ -61,22 +68,21 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
 
     fun parseFeed(feedUrl:String):LiveData<Channel>{
         val channel=MutableLiveData<Channel>()
-        doAsync {
-            try {
-                val request = Request.Builder()
-                        .url(feedUrl)
-                        .build()
-                val response = httpClient.newCall(request).execute()
+        val request = Request.Builder()
+                .url(feedUrl)
+                .build()
+        httpClient.newCall(request).enqueue(object :okhttp3.Callback{
+            override fun onResponse(call: okhttp3.Call?, response: Response) {
                 val result= response.body()?.byteStream()?.use {
                     Utils.parse(it)
                 }
                 channel.postValue(result)
             }
-            catch (ex:Exception){
-                ex.printStackTrace()
-                Log.e("help",ex.message)
+
+            override fun onFailure(call: okhttp3.Call?, e: IOException?) {
+
             }
-        }
+        })
         return channel
     }
 
@@ -84,37 +90,35 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
         val key= "sync${id}"
         val lastSyncDate = preferences.getLong(key,0)
 
-        val hoursAgo= DateTime.now().minusHours(1).millis
+
+        val hoursAgo= DateTime.now().minusHours(3).millis
         if (lastSyncDate < hoursAgo) {
 
             val call=when (id) {
                 MediaGenre.Featured.id -> itunesService.topPodcast()
                 else -> itunesService.topPodcastByGenre(id)
             }
-
-            call.onResponse {feed->
-                val entries = feed.rss?.entries?.map {
-                    Featured().apply {
-                        name = it.Name!!
-                        podcastId = it.Id!!
-                        imageUrl = it.Image!!
-                        author = it.Artist!!
-                        summary = it.Summary!!
-                        genreId = id
-                    }
+            val feed=call.execute().body()
+            val entries = feed?.rss?.entries?.map {
+                Featured().apply {
+                    name = it.Name!!
+                    podcastId = it.Id!!
+                    imageUrl = it.Image!!
+                    author = it.Artist!!
+                    summary = it.Summary!!
+                    genreId = id
                 }
-                entries?.let {
-                    doAsync {
-                        featuredItems.clearGenreItems(id)
-                        featuredItems.insertAll(it)
-                    }
-                }
-                preferences.edit().putLong(key,DateTime.now().millis).apply()
             }
+            entries?.let {
+                featuredItems.clearGenreItems(id)
+                featuredItems.insertAll(it)
+            }
+
+            preferences.edit().putLong(key,System.currentTimeMillis()).apply()
         }
     }
     fun getFeaturedPostcasts(id: String): LiveData<List<Featured>> {
-        syncFeatured(id)
+       // syncFeatured(id)
         return featuredItems.getByGenreId(id)
     }
 
@@ -131,10 +135,10 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
                 results.postValue(result.results)
         }
         return results
-
     }
 
     fun isSubscribed(id: String) = subscriptions.exist(id)
+
     fun unsubscribe(podcastId: String) = with(subscriptions) {
         val sub = this.getById(podcastId)
         this.delete(sub)

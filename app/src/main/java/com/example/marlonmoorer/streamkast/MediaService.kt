@@ -212,25 +212,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         }
 
         exoPlayer.addListener(object :IMediaListener{
-            override fun onSeekProcessed() {
-                Log.e("","")
-
-            }
-            override fun onPlayerError(error: ExoPlaybackException?) {
-                Log.e("","")
-            }
-            override fun onPositionDiscontinuity(reason: Int) {
-                Log.e("","")
-            }
-
-            override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
-                Log.e("","")
-                if (media.duration<10){
-                    media.duration = exoPlayer.duration.toInt()
-                    episodeData.postValue(media)
-                }
-
-            }
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when(playbackState){
@@ -322,6 +303,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             stopSelf()
 
         }
+
         override fun onSeekTo(pos: Long) {
             stopSeekbarUpdate()
             exoPlayer.seekTo(pos)

@@ -39,7 +39,11 @@ class ExampleUnitTest {
             val response = httpClient.newCall(request).execute()
             val result= response.body()?.byteStream()
 
-            var ch=Utils.pullParse(result!!)
+            val startTime = System.currentTimeMillis()
+
+            val endTime = System.currentTimeMillis()
+            var dom="Sax took " + (endTime - startTime) + " milliseconds"
+
 
             print("Done")
         }

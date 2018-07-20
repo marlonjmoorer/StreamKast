@@ -88,7 +88,7 @@ fun AppCompatActivity.addFragment(id:Int,fragment: Fragment,withAnimation:Boolea
     val transaction= supportFragmentManager!!
    .beginTransaction().apply {
         if(withAnimation) {
-            setCustomAnimations(R.anim.enter_right,R.anim.abc_fade_out,R.anim.abc_fade_in,R.anim.exit_right)
+            setCustomAnimations(R.anim.enter_right,R.anim.nothing,R.anim.nothing,R.anim.exit_right)
         }
     }.replace(id,fragment)
     .addToBackStack("over")
@@ -161,72 +161,16 @@ fun String.toDateTime(): Date? {
     return SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(this)
 }
 fun Date.toDateString(): String? {
-    return SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(this)
+    return SimpleDateFormat("EEE, d MMM yyyy").format(this)
 }
 
 
-fun URL.asXmlDoc(): Document {
-    return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this.openStream())
-}
-fun InputStream.toDocument():Document{
-    val factory=DocumentBuilderFactory.newInstance()
-    val builder=factory.newDocumentBuilder()
-    val doc= builder.parse(this)
-
-    return doc
-}
-fun String.toDocument():Document{
-    val factory=DocumentBuilderFactory.newInstance()
-    val builder=factory.newDocumentBuilder()
-    val doc= builder.parse(InputSource(StringReader(this)))
-
-    return doc
-}
-
-operator fun Element.get(key:String):Element{
-    return this.getElementsByTagName(key).item(0) as Element
-}
-operator fun Document.get(key:String):Element {
-    return this.getElementsByTagName(key).item(0) as Element
-}
 
 
-fun Element.text(key:String): String? {
-    if(!this.has(key)){
-        return  null
-    }
-    return this.getElementsByTagName(key).item(0).textContent
-}
 
 
-fun Element.has(key: String):Boolean{
-    return this.getElementsByTagName(key).length>0
-}
 
-val NodeList.Nodes:List<Node>
-    get(){
-       return mutableListOf<Node>().also{list->
-           for (i in 0..length-1) {
-               list.add(item(i))
-           }
-       }
-    }
-inline fun  NodeList.forEach(action: (Node) -> Unit){
-    for (i in 0..this.length) {
-        val element=  this.item(i)
-        element?.let(action)
-    }
-}
-inline fun < R> NodeList.map(transform: (Node) -> R): List<R> {
-    val list= mutableListOf<R>()
-    for (i in 0..this.length) {
-        val element=this.item(i)
-        element?.let{
-            list.add(transform(element))
-        }
-    }
-    return list
-}
+
 
  fun <T> Call<T>.onResponse(callback:(T)->Unit){
     this.enqueue(object : Callback<T> {

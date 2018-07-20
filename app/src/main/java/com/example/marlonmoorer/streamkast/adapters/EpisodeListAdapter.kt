@@ -8,13 +8,14 @@ import com.example.marlonmoorer.streamkast.api.models.*
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
+import com.example.marlonmoorer.streamkast.models.IEpisode
 
 
 /**
  * Created by marlonmoorer on 3/29/18.
  */
 class EpisodeListAdapter(val listener:IEpisodeListener):DataBoundAdapter<ItemEpisodeBinding> (){
-    private var episodes:List<Episode>? = null
+    private var episodes:List<IEpisode>? = null
     override fun getItemCount()=  episodes?.size?:0
 
     override fun onBindViewHolder(holder: DataViewHolder<ItemEpisodeBinding>, position: Int) {
@@ -30,7 +31,7 @@ class EpisodeListAdapter(val listener:IEpisodeListener):DataBoundAdapter<ItemEpi
         return DataViewHolder(viewDataBinding)
     }
 
-    fun setEpisodes(episodes: List<Episode>){
+    fun setEpisodes(episodes: List<IEpisode>){
         this.episodes=episodes
         notifyDataSetChanged()
     }

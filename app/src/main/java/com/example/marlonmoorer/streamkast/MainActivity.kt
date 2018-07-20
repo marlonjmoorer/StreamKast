@@ -1,6 +1,8 @@
 package com.example.marlonmoorer.streamkast
 
+import android.app.AlertDialog
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -8,6 +10,7 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 
@@ -24,6 +27,8 @@ import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.listeners.IGenreListener
 import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
+import com.example.marlonmoorer.streamkast.models.IEpisode
+import com.example.marlonmoorer.streamkast.models.IPodcast
 import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
@@ -57,7 +62,9 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         setContentView(R.layout.activity_main)
 
 
-        //detailViewModel = createViewModel()
+
+
+        Utils.AppExceptionHandler(this)
         subscriptionViewModel= createViewModel()
         mediaViewModel=createViewModel()
 
@@ -81,7 +88,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         nav.setOnNavigationItemSelectedListener(this)
         nav.selectedItemId=R.id.menu_browse
         searchFragment=SearchFragment()
-        episodeFragment= EpisodeFragment()
+        episodeFragment=EpisodeFragment()
         mediaPlayerFragment=supportFragmentManager.findFragmentById(R.id.mini_player) as MediaPlayerFragment
 
 
@@ -134,7 +141,10 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+               var r =4/0
+               return true
+            }
             R.id.action_open_search->{
                 this.addFragment(targetId,searchFragment)
                 return  true
@@ -162,10 +172,10 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         addFragment(targetId,fragment,true)
     }
 
-    override fun viewEpisode(episode: Episode) {
-       // detailViewModel?.setEpisode(episode)
-        this.addFragment(targetId,episodeFragment)
-        //episodeFragment.show(supportFragmentManager,"")
+    override fun viewEpisode(episode: IEpisode) {
+
+        episodeFragment=EpisodeFragment.newInstance(episode)
+        episodeFragment.show(supportFragmentManager,"")
     }
 
     override fun selectGenre(genre: MediaGenre) {
@@ -174,7 +184,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
     }
 
     override fun toggleSubscription(podcast: Podcast) {
-        subscriptionViewModel?.toggleSubscription(podcast.collectionId)?.observe(this, Observer {subbed->
+        subscriptionViewModel?.toggleSubscription(podcast)?.observe(this, Observer { subbed->
               subbed?.let {
                   podcast.subscribed=subbed
                   val messageId=if(it) R.string.message_subscribe else R.string.message_unsubscribe
@@ -185,7 +195,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         })
     }
 
-    override fun playEpisode(episode: Episode) {
+    override fun playEpisode(episode: IEpisode) {
 
         episodeFragment.takeIf { it.isVisible }?.dismiss()
 
@@ -194,7 +204,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
                 title=episode.title,
                 author=episode.author,
                 thumbnail=episode.thumbnail,
-                url=episode.mediaUrl,
+                url=episode.url,
                 description=episode.description,
                 autoPlay = true)
 

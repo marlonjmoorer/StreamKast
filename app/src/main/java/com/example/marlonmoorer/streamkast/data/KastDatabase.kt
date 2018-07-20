@@ -6,7 +6,7 @@ import android.support.annotation.NonNull
 
 
 
-@Database(entities = arrayOf(Subscription::class,Featured::class,SavedEpisode::class,PlaybackHistory::class), version = 7)
+@Database(entities = arrayOf(Subscription::class,Featured::class,SavedEpisode::class,PlaybackHistory::class), version = 8)
 @TypeConverters(Converters::class)
 abstract class KastDatabase:RoomDatabase() {
     abstract  fun SubscriptionDao(): SubscriptionDao
