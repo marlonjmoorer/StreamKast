@@ -86,7 +86,7 @@ inline fun <reified T : ViewModel> Fragment.viewModel(): T {
 }
 
 fun AppCompatActivity.addFragment(id:Int,fragment: Fragment,withAnimation:Boolean=false){
-    val transaction= supportFragmentManager!!
+    supportFragmentManager!!
    .beginTransaction().apply {
         if(withAnimation) {
             setCustomAnimations(R.anim.enter_right,R.anim.nothing,R.anim.nothing,R.anim.exit_right)
@@ -138,7 +138,7 @@ fun Context.loadAsBitmap(url:String?, callback:(bitmap:Bitmap)->Unit){
      })
 }
 
-fun Int.toByteSize():String{
+fun Long.toByteSize():String{
     val unit = 1000
     if (this < unit) return "$this B"
     val exp = (Math.log(this.toDouble()) / Math.log(unit.toDouble())).toInt()

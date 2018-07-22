@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.fragments
+package com.example.marlonmoorer.streamkast.ui.fragments
 
 
 import android.arch.lifecycle.Observer
@@ -83,6 +83,7 @@ class DetailFragment: BaseFragment(){
                      detailModel.toggleSubscription()
                  }
                  cancelButton {}
+
              }.show()
          }else{
              detailModel.toggleSubscription()

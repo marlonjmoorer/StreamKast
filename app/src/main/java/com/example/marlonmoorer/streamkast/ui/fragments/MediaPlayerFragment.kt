@@ -1,10 +1,8 @@
-package com.example.marlonmoorer.streamkast.fragments
+package com.example.marlonmoorer.streamkast.ui.fragments
 
 import android.arch.lifecycle.Observer
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -15,12 +13,10 @@ import com.example.marlonmoorer.streamkast.databinding.FragmentMediaplayerBindin
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.example.marlonmoorer.streamkast.models.MediaPlayerModel
 
-import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
 
 import kotlinx.android.synthetic.main._now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_mediaplayer.*
-import org.jetbrains.anko.doAsync
 
 
 class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{

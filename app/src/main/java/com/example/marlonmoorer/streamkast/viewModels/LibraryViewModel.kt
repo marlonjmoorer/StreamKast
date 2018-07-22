@@ -7,6 +7,7 @@ import android.os.Environment
 import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 import com.example.marlonmoorer.streamkast.data.SavedEpisode
 import com.example.marlonmoorer.streamkast.models.IEpisode
+import com.example.marlonmoorer.streamkast.toByteSize
 import com.tonyodev.fetch2.*
 import com.tonyodev.fetch2core.DownloadBlock
 import org.jetbrains.anko.doAsync
@@ -16,6 +17,7 @@ class LibraryViewModel:BaseViewModel(){
 
 
     private var downloads:MutableLiveData<List<Download>>
+    private val models= MutableLiveData<List<DownloadedEpisodeModel>>()
     init {
         downloads= MutableLiveData()
     }
@@ -26,14 +28,17 @@ class LibraryViewModel:BaseViewModel(){
         }
 
     fun getDownloads():LiveData<List<DownloadedEpisodeModel>>{
-        val models= MutableLiveData<List<DownloadedEpisodeModel>>()
+
         fetch.getDownloads{results->
           doAsync {
               val eps= mutableListOf<DownloadedEpisodeModel>()
               results.filter { download ->download.tag!==null}.forEach{dl->
                   val ep=repository.savedEpisodes.getById(dl.tag!!)
                   ep?.let {
-                      eps.add(DownloadedEpisodeModel(ep,dl))
+                      eps.add(IEpisode.fromEpisode<DownloadedEpisodeModel>(ep).apply {
+                          url=dl.file
+                          size=dl.total.toByteSize()
+                      })
                   }
               }
               models.postValue(eps)
@@ -54,12 +59,11 @@ class LibraryViewModel:BaseViewModel(){
         fetch.enqueue(request)
         val entry=DownloadData(request.id)
         fetch.addListener(entry,true)
-        val se:SavedEpisode=SavedEpisode().fromEpisode(episode)
+        val se:SavedEpisode=IEpisode.fromEpisode(episode)
         doAsync {
             repository.savedEpisodes.insert(se.apply {
                 downloadId=request.id
             })
-
         }
         return entry
     }
@@ -76,16 +80,21 @@ class LibraryViewModel:BaseViewModel(){
         return  downloadData
     }
 
+    fun clearDownloads(){
+        fetch.deleteAll()
+        models.postValue(emptyList())
+    }
 
-    class DownloadedEpisodeModel(episode: SavedEpisode, download:Download): IEpisode {
-        override var title =episode.title
-        override var guid = episode.guid
-        override var thumbnail = episode.thumbnail
-        override var duration: Int? = episode.duration
-        override var description = episode.description
-        override var url=download.file
-        override var author = episode.author
 
+    class DownloadedEpisodeModel: IEpisode {
+        override var title =""
+        override var guid = ""
+        override var thumbnail = ""
+        override var duration: Int? = 0
+        override var description = ""
+        override var url=""
+        override var author = ""
+        var size=""
     }
 
     class DownloadData(private var id:Int=-1):LiveData<Download>(),FetchListener{

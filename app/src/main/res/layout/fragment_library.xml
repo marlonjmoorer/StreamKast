@@ -29,11 +29,8 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
-            app:tabTextColor="@color/white"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            app:layout_anchorGravity="bottom"
-            app:tabIndicatorColor="@color/colorPrimary" />
+            style="@style/AppTabLayout"
+            app:layout_anchorGravity="bottom" />
     </android.support.design.widget.AppBarLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"

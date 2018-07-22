@@ -1,17 +1,13 @@
-package com.example.marlonmoorer.streamkast.fragments
+package com.example.marlonmoorer.streamkast.ui.fragments
 
 import android.arch.lifecycle.Observer
-import android.arch.paging.PagedList
-import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
-import com.example.marlonmoorer.streamkast.adapters.PagedPodcastListAdapter
 import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.Podcast

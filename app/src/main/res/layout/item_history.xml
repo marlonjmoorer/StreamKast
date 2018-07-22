@@ -14,7 +14,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/outlined_tile"
+        android:background="@drawable/list_item_background"
         android:clickable="true"
         android:onClick="@{e->handler.viewEpisode(episode)}">
 

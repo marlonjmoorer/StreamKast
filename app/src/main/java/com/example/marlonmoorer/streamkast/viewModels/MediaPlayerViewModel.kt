@@ -15,6 +15,7 @@ import com.example.marlonmoorer.streamkast.MediaService
 import com.example.marlonmoorer.streamkast.Utils
 import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
+import com.example.marlonmoorer.streamkast.models.IEpisode
 import org.jetbrains.anko.doAsync
 import java.util.*
 
@@ -82,7 +83,7 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
                 repository.history.uppdateLastPlayed(Date(),episode.guid)
                 return@doAsync
             }
-            repository.history.insert(PlaybackHistory().fromEpisode<PlaybackHistory>(episode).apply {
+            repository.history.insert(IEpisode.fromEpisode<PlaybackHistory>(episode).apply {
                 lastPlayed=Date()
             })
         }

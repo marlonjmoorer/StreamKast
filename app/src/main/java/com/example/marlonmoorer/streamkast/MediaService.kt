@@ -14,7 +14,6 @@ import android.media.AudioManager
 import android.content.IntentFilter
 import android.content.ComponentName
 import android.graphics.Bitmap
-import android.media.MediaPlayer
 import android.media.session.PlaybackState
 import android.net.Uri
 import android.os.*
@@ -25,21 +24,16 @@ import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.support.v4.media.session.MediaButtonReceiver
 import android.text.TextUtils
 import org.jetbrains.anko.intentFor
-import android.util.Log
 import android.webkit.URLUtil
+import com.example.marlonmoorer.streamkast.ui.activities.MainActivity
 import com.example.marlonmoorer.streamkast.listeners.IMediaListener
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelection
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.*
-import org.jetbrains.anko.runOnUiThread
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.*
 
 class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener {
@@ -215,7 +209,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             fileDataSource.open(dataSpec)
             return ExtractorMediaSource.Factory(factory).createMediaSource(uri)
         }else{
-            throw  Exception("")
+            throw FileNotFoundException()
         }
 
     }
@@ -223,33 +217,38 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     private fun prepareMediaPlayer(media:EpisodeModel) {
 
-        val mediaSource = buildMediaSource(media.url);
-        exoPlayer.prepare(mediaSource, true, false)
-        episodeData.postValue(media)
-        if(media.autoPlay){
-            transportControls?.play()
-        }else{
-            playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
-        }
+        try {
 
-        exoPlayer.addListener(object :IMediaListener{
-
-            override fun onPlayerError(error: ExoPlaybackException?) {
-                super.onPlayerError(error)
+            val mediaSource = buildMediaSource(media.url)
+            exoPlayer.prepare(mediaSource, true, false)
+            episodeData.postValue(media)
+            if(media.autoPlay){
+                transportControls?.play()
+            }else{
+                playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
             }
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                when(playbackState){
-                    Player.STATE_BUFFERING->{
-                        playbackStateData.postValue(PlaybackState.STATE_BUFFERING)
-                    }
-                    Player.STATE_READY->{
-                        val state=if(playWhenReady)PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
-                        playbackStateData.postValue(state)
+
+            exoPlayer.addListener(object :IMediaListener{
+
+                override fun onPlayerError(error: ExoPlaybackException?) {
+                    super.onPlayerError(error)
+                }
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    when(playbackState){
+                        Player.STATE_BUFFERING->{
+                            playbackStateData.postValue(PlaybackState.STATE_BUFFERING)
+                        }
+                        Player.STATE_READY->{
+                            val state=if(playWhenReady)PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+                            playbackStateData.postValue(state)
+                        }
                     }
                 }
-            }
 
-        })
+            })
+        }catch (ex:FileNotFoundException){
+            stopSelf()
+        }
 
 
     }

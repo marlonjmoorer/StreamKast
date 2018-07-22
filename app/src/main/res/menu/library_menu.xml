@@ -1,16 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".ui.activities.MainActivity"
     xmlns:appcompat="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_history"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/action_edit_history"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_open_search"
-        android:title="action_settings"
-        android:icon="@drawable/icons8_search"
-        appcompat:showAsAction="always" />
+        android:id="@+id/action_downloads"
+        android:orderInCategory="100"
+        android:title="@string/action_edit_downloads"
+        app:showAsAction="never" />
+
 </menu>

@@ -1,7 +1,8 @@
-package com.example.marlonmoorer.streamkast
+package com.example.marlonmoorer.streamkast.ui.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.example.marlonmoorer.streamkast.R
 import kotlinx.android.synthetic.main.activity_error.*
 
 class ErrorActivity : AppCompatActivity() {

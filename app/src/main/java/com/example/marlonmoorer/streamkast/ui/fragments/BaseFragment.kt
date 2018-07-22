@@ -1,6 +1,5 @@
-package com.example.marlonmoorer.streamkast.fragments
+package com.example.marlonmoorer.streamkast.ui.fragments
 
-import android.content.Context
 import android.support.v4.app.Fragment
 
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener

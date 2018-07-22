@@ -1,35 +1,21 @@
-package com.example.marlonmoorer.streamkast.fragments
+package com.example.marlonmoorer.streamkast.ui.fragments
 
-import android.app.DownloadManager
 import android.arch.lifecycle.Observer
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Context.DOWNLOAD_SERVICE
-import android.content.Intent
-import android.content.IntentFilter
-import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.Episode
 
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentEpisodeBinding
-import com.example.marlonmoorer.streamkast.fade
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.setIcon
-import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Status
-import kotlinx.android.synthetic.main.fragment_mediaplayer.*
-import org.jetbrains.anko.support.v4.toast
-import java.util.*
 
 
 class EpisodeFragment: BottomSheetDialogFragment() {
@@ -58,7 +44,7 @@ class EpisodeFragment: BottomSheetDialogFragment() {
             }
             Status.DOWNLOADING->{
                 binding.actionButtonDownload.apply{
-                    text = "${it.progress}% ..."
+                    text = "Downloading (${it.progress}%) ..."
                     setIcon(0)
                     isEnabled=false
                 }

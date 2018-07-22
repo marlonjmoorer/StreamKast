@@ -19,8 +19,5 @@ class SavedEpisode:IEpisode {
     var downloadId=0
     var podcastId=""
 
-    fun fromEpisode(){
-
-    }
 }
 

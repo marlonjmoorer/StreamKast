@@ -15,16 +15,22 @@ interface IEpisode:Serializable{
     val time
         get() = duration?.toTime()
 
-    fun < T :IEpisode> fromEpisode(episode: IEpisode):T{
-        guid= episode.guid
-        title=episode.title
-        author=episode.author
-        thumbnail=episode.thumbnail
-        description=episode.description
-        duration=episode.duration
-        url=episode.url
-        return this as T
+    companion object {
+        inline  fun < reified T :IEpisode>  fromEpisode(episode: IEpisode):T{
+            val ep= T::class.java.newInstance().apply {
+                guid= episode.guid
+                title=episode.title
+                author=episode.author
+                thumbnail=episode.thumbnail
+                description=episode.description
+                duration=episode.duration
+                url=episode.url
+            }
+            return  ep
+        }
     }
 }
+
+
 
 

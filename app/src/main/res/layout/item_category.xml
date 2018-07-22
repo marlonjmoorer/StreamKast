@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:background="@drawable/outlined_tile"
+        android:background="@drawable/list_item_background"
         android:onClick="@{e->handler.selectGenre(genre)}"
         android:clickable="true"
         android:padding="10dp">

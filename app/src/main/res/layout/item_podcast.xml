@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:background="@drawable/outlined_tile"
+        android:background="@drawable/list_item_background"
         android:layout_marginBottom="4dp"
         android:onClick="@{e -> handler.viewPodcast(show.collectionId)}"
         >
