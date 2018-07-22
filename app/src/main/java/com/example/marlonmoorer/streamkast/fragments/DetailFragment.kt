@@ -13,6 +13,7 @@ import com.example.marlonmoorer.streamkast.R
 
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
+import com.example.marlonmoorer.streamkast.setIcon
 
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
@@ -61,15 +62,15 @@ class DetailFragment: BaseFragment(){
         val icon:Int
         if(subscribed){
             button_text=resources.getString(R.string.action_subbed)
-            icon=R.drawable.icons8_checked_user_male
+            icon=R.drawable.icons8_check_mark_symbol
         }
         else{
             button_text=resources.getString(R.string.action_sub)
-            icon=R.drawable.icons8_add_user_male
+            icon=R.drawable.icons8_add
         }
         binding.detailCard?.followBtn?.run {
             text=button_text
-            setCompoundDrawablesWithIntrinsicBounds(0,0,icon,0)
+            setIcon(icon)
             setOnClickListener{
                 onSubscribeClicked()
             }

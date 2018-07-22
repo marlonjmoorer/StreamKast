@@ -119,6 +119,9 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
     }
     fun getFeaturedPostcasts(id: String): LiveData<List<Featured>> {
        // syncFeatured(id)
+        doAsync {
+            syncFeatured(id)
+        }
         return featuredItems.getByGenreId(id)
     }
 

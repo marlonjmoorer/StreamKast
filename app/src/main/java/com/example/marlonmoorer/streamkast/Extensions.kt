@@ -20,6 +20,7 @@ import android.arch.persistence.room.Room
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
+import android.widget.Button
 import android.widget.RemoteViews
 import com.airbnb.paris.Paris
 import com.bumptech.glide.request.target.NotificationTarget
@@ -126,11 +127,8 @@ fun View.fade(alpha:Float){
             });
 
 }
- fun View.showLoading(){
-     Skeleton.bind(this).load(R.layout._loading_screen).show()
- }
-fun View.hideLoading(){
-    Skeleton.bind(this).show().hide()
+fun Button.setIcon(id:Int){
+    this.setCompoundDrawablesWithIntrinsicBounds(0,0,id,0)
 }
 fun Context.loadAsBitmap(url:String?, callback:(bitmap:Bitmap)->Unit){
      Glide.with(this).asBitmap().load(url).into(object :SimpleTarget<Bitmap>(){

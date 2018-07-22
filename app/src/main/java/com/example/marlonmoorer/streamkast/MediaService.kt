@@ -26,21 +26,23 @@ import android.support.v4.media.session.MediaButtonReceiver
 import android.text.TextUtils
 import org.jetbrains.anko.intentFor
 import android.util.Log
+import android.webkit.URLUtil
 import com.example.marlonmoorer.streamkast.listeners.IMediaListener
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelection
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.*
 import org.jetbrains.anko.runOnUiThread
+import java.io.File
 import java.util.*
 
-class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener,MediaPlayer.OnBufferingUpdateListener  {
+class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeListener {
 
     private var mediaSession: MediaSessionCompat?=null
     private lateinit var exoPlayer: SimpleExoPlayer
@@ -194,15 +196,34 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     }
 
 
-    private  fun buildMediaSource(uri:Uri)= ExtractorMediaSource.Factory(
-            DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri)
+    private  fun buildMediaSource(url:String):ExtractorMediaSource{
+
+
+        if(URLUtil.isHttpUrl(url)||URLUtil.isHttpsUrl(url)){
+            val uri= Uri.parse(url)
+           return ExtractorMediaSource.Factory(
+                    DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri)
+        }else if (File(url).exists()){
+            val uri= Uri.fromFile(File(url))
+            val dataSpec = DataSpec(uri)
+            val fileDataSource = FileDataSource()
+            val factory = object : DataSource.Factory {
+                override fun createDataSource(): DataSource {
+                    return fileDataSource
+                }
+            }
+            fileDataSource.open(dataSpec)
+            return ExtractorMediaSource.Factory(factory).createMediaSource(uri)
+        }else{
+            throw  Exception("")
+        }
+
+    }
 
 
     private fun prepareMediaPlayer(media:EpisodeModel) {
 
-
-        val uri = Uri.parse(media.url)
-        val mediaSource = buildMediaSource(uri);
+        val mediaSource = buildMediaSource(media.url);
         exoPlayer.prepare(mediaSource, true, false)
         episodeData.postValue(media)
         if(media.autoPlay){
@@ -213,6 +234,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
         exoPlayer.addListener(object :IMediaListener{
 
+            override fun onPlayerError(error: ExoPlaybackException?) {
+                super.onPlayerError(error)
+            }
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when(playbackState){
                     Player.STATE_BUFFERING->{
@@ -240,10 +264,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         startForeground(NOTIFICATION_ID,notification)
     }
 
-
-    override fun onBufferingUpdate(plater: MediaPlayer?, percent: Int) {
-        Log.w("Buffer","$percent %")
-    }
 
 
     inner class MediaBinder: Binder() {

@@ -1,20 +1,26 @@
 package com.example.marlonmoorer.streamkast.data
 
 import android.arch.persistence.room.*
+import com.example.marlonmoorer.streamkast.models.IEpisode
 
 @Entity()
-class SavedEpisode {
-
+class SavedEpisode:IEpisode {
     @PrimaryKey()
-    var guid=""
-    var podcastId=""
-    var imageUrl=""
-    var summary=""
-    var author=""
-    var pupDate= ""
-    var title=""
-    var duration=0
+    override var guid=""
+    override var url: String=""
+    override var thumbnail=""
+    override var description=""
+    override var author=""
+    override var title=""
+    override var duration:Int?=0
     var length=0
     var link=""
+    var pupDate= ""
+    var downloadId=0
+    var podcastId=""
+
+    fun fromEpisode(){
+
+    }
 }
 

@@ -6,6 +6,8 @@ import com.example.marlonmoorer.streamkast.api.ItunesService
 import com.example.marlonmoorer.streamkast.api.Repository
 import com.example.marlonmoorer.streamkast.api.RssToJsonService
 import com.example.marlonmoorer.streamkast.data.KastDatabase
+import com.tonyodev.fetch2.Fetch
+import com.tonyodev.fetch2.FetchConfiguration
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -68,6 +70,15 @@ class AppModule(context: Context) {
     @Provides
     @Singleton
     fun provideOkHttpClient()= OkHttpClient()
+
+    @Provides
+    @Singleton
+    fun proviedFetch(context: Context): Fetch {
+        val fetchConfiguration = FetchConfiguration.Builder(context)
+                .setDownloadConcurrentLimit(5)
+                .build()
+       return Fetch.getInstance(fetchConfiguration)
+    }
 
 
 

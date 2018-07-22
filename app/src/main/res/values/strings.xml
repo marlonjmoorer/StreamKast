@@ -21,5 +21,11 @@
     <string name="message_unsubscribe">Removed from Library</string>
 
     <string name="action_download">Download</string>
+    <string name="action_downloading">Downloading</string>
     <string name="action_play">Play</string>
+    <string name="title_activity_settings2">Settings</string>
+    <string name="key_storage">Storage</string>
+    <string name="key_wifi_only">Wifi Only</string>
+    <!-- Strings related to Settings -->
+
 </resources>

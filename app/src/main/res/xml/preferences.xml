@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <PreferenceCategory android:title="General">
+     <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="true"
+        android:key="wifi_only"
+        android:title="Download on Wifi-Only"
+        android:summary="Turn this option on or off"/>
+
+     <ListPreference
+         android:defaultValue="0"
+         android:dialogTitle="Storage"
+         android:entries="@array/pref_storage"
+         android:entryValues="@array/pref_storage_values"
+         android:key="@string/key_storage"
+         android:summary="Internal or Extenal Storage"
+         android:title="Storage" />
+     </PreferenceCategory>
+</PreferenceScreen>

@@ -48,8 +48,9 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.4.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.google.code.gson:gson:2.8.2'
+    implementation ("com.tonyodev.fetch2:fetch2:2.1.0-RC14")
 
-    String archVersion = "1.0.0"
+    String archVersion = "1.1.1"
     implementation "android.arch.lifecycle:runtime:1.1.1"
     implementation "android.arch.lifecycle:extensions:1.1.1"
     kapt "android.arch.lifecycle:compiler:$archVersion"
@@ -92,6 +93,8 @@ dependencies {
 
     implementation 'com.google.android.exoplayer:exoplayer:2.8.2'
     implementation 'net.danlew:android.joda:2.9.9.4'
+    implementation 'com.android.support:preference-v7:25.0.1'
+
 
 
 }

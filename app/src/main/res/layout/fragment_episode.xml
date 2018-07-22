@@ -21,10 +21,7 @@
         <android.support.v7.widget.CardView
             style="@style/CardView.Light"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp">
+            android:layout_height="wrap_content">
 
             <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
@@ -71,7 +68,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/action_button_1"
+                android:id="@+id/action_button_play"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,7 +88,7 @@
             </Button>
 
             <Button
-                android:id="@+id/action_button_2"
+                android:id="@+id/action_button_download"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,17 +99,26 @@
                 android:paddingStart="8dp"
                 android:text="@string/action_download"
                 android:textColor="@color/white"
-                app:layout_constraintStart_toEndOf="@+id/action_button_1"
-                app:layout_constraintTop_toTopOf="@+id/action_button_1" />
+                app:layout_constraintStart_toEndOf="@+id/action_button_play"
+                app:layout_constraintTop_toTopOf="@+id/action_button_play" />
 
         </android.support.constraint.ConstraintLayout>
-
+            <ProgressBar
+                android:id="@+id/download_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_gravity="bottom"
+                android:max="800"
+                android:progress="400"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:layout_marginBottom="-4dp"/>
         </android.support.v7.widget.CardView>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
+
 
 
             <TextView

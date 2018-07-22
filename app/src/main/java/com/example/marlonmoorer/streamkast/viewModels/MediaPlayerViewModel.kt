@@ -82,14 +82,7 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
                 repository.history.uppdateLastPlayed(Date(),episode.guid)
                 return@doAsync
             }
-            repository.history.insert(PlaybackHistory().apply {
-                url=episode.url
-                guid=episode.guid
-                title=episode.title
-                duration=episode.duration?:0
-                author=episode.author
-                thumbnail=episode.thumbnail
-                description=episode.description
+            repository.history.insert(PlaybackHistory().fromEpisode<PlaybackHistory>(episode).apply {
                 lastPlayed=Date()
             })
         }

@@ -10,6 +10,7 @@ import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.preference.PreferenceManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -61,9 +62,6 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
-
         Utils.AppExceptionHandler(this)
         subscriptionViewModel= createViewModel()
         mediaViewModel=createViewModel()
@@ -96,17 +94,13 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
 
         historyData?.observe(this, Observer { ep->
             ep?.let {
-                val media=EpisodeModel(
-                        guid = ep.guid,
-                        title=ep.title,
-                        author= ep.author!!,
-                        thumbnail= ep.thumbnail!!,
-                        url=ep.url,
-                        description= ep.description!!)
+                val media=EpisodeModel().fromEpisode<EpisodeModel>(ep)
                 prepareMedia(media)
                 historyData.removeObservers(this)
             }
         })
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
 
 
@@ -142,7 +136,8 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-               var r =4/0
+                val intent = Intent(this, SettingsActivity::class.java)
+                startActivity(intent)
                return true
             }
             R.id.action_open_search->{
@@ -206,6 +201,7 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
                 thumbnail=episode.thumbnail,
                 url=episode.url,
                 description=episode.description,
+                duration = episode.duration,
                 autoPlay = true)
 
         prepareMedia(media)
