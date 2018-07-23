@@ -7,8 +7,9 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.databinding.ItemDownloadBinding
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
+import okhttp3.internal.http2.PushObserver
 
-class DownloadListAdapter(private var listener: IEpisodeListener) :DataBoundAdapter<ItemDownloadBinding>(){
+class DownloadListAdapter(private var listener: IEpisodeListener?=null) :DataBoundAdapter<ItemDownloadBinding>(){
 
     private var episodes:List<LibraryViewModel.DownloadedEpisodeModel>? = null
     override fun onBindViewHolder(holder: DataViewHolder<ItemDownloadBinding>, position: Int) {
@@ -28,6 +29,9 @@ class DownloadListAdapter(private var listener: IEpisodeListener) :DataBoundAdap
     fun setEpisodes(episodes: List<LibraryViewModel.DownloadedEpisodeModel>){
         this.episodes=episodes
         notifyDataSetChanged()
+
     }
+
+    var sub=PublishSubject.create ();
 
 }

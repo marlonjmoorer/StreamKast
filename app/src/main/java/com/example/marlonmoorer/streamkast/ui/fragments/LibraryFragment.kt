@@ -15,8 +15,11 @@ import com.example.marlonmoorer.streamkast.adapters.DownloadListAdapter
 import com.example.marlonmoorer.streamkast.adapters.HistoryListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
+import com.example.marlonmoorer.streamkast.ui.activities.DeleteActivity
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import kotlinx.android.synthetic.main.fragment_library.view.*
+import org.jetbrains.anko.support.v4.intentFor
+import org.jetbrains.anko.support.v4.startActivity
 
 
 class LibraryFragment:Fragment(){
@@ -56,7 +59,7 @@ class LibraryFragment:Fragment(){
 
         when(item?.itemId){
             R.id.action_downloads->{
-                viewModel?.clearDownloads()
+                startActivity<DeleteActivity>()
                 return true
             }
         }
