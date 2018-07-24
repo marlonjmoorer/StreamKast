@@ -2,7 +2,9 @@ package com.example.marlonmoorer.streamkast.ui.fragments
 
 import android.arch.lifecycle.Observer
 import android.arch.paging.PagedList
+import android.content.Context
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
@@ -13,24 +15,31 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.PagedPodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.createViewModel
+import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 
 import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
 import com.example.marlonmoorer.streamkast.viewModels.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 
-class SearchFragment:BaseFragment(){
+class SearchFragment: Fragment(){
 
     private lateinit var searchViewModel:SearchViewModel
     private lateinit var browseViewModel:BrowseViewModel
     private lateinit var adapter:PagedPodcastListAdapter
 
+    private  var listener: FragmentEvenListener?=null
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        listener= context as FragmentEvenListener
+    }
 
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_search,container,false)
-        adapter=PagedPodcastListAdapter(podcastListener)
+        adapter=PagedPodcastListAdapter()
         view.apply {
             resultList?.adapter=adapter
             resultList.layoutManager= LinearLayoutManager(activity)
@@ -52,6 +61,12 @@ class SearchFragment:BaseFragment(){
         searchViewModel=createViewModel()
         browseViewModel=createViewModel()
         searchViewModel.searchResults.observe(this@SearchFragment,resultsObserver)
+        adapter.openEvent.subscribe{
+            listener?.viewPodcast(it.collectionId)
+        }
+        adapter.toggleSubEvent.subscribe{
+            listener?.toggleSubscription(it)
+        }
     }
 
     override fun onDestroyView() {

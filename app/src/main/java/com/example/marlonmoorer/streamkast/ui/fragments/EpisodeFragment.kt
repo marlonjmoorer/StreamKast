@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.ui.fragments
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialogFragment
 import android.view.LayoutInflater
@@ -10,9 +11,10 @@ import com.example.marlonmoorer.streamkast.R
 
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentEpisodeBinding
-import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
+
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.setIcon
+import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Status
@@ -24,7 +26,12 @@ class EpisodeFragment: BottomSheetDialogFragment() {
     lateinit var episode: IEpisode
     lateinit var binding:FragmentEpisodeBinding
     private lateinit var libraryViewModel: LibraryViewModel
+    private  var listener: FragmentEvenListener?=null
 
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        listener= context as FragmentEvenListener
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,8 +75,10 @@ class EpisodeFragment: BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEpisodeBinding.inflate(inflater)
-        binding.handler=activity as IEpisodeListener
         binding.episode=episode
+        binding.actionButtonPlay.setOnClickListener {
+            listener?.playEpisode(episode)
+        }
         binding.actionButtonDownload.setOnClickListener {
             binding.downloadProgress.max=100
             libraryViewModel.queDownload(episode).observe(this,observer)

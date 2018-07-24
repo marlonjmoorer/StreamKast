@@ -2,6 +2,7 @@ package com.example.marlonmoorer.streamkast.ui.fragments
 
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.databinding.ObservableBoolean
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,6 +15,7 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
 import com.example.marlonmoorer.streamkast.setIcon
+import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 
 
 import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
@@ -23,12 +25,20 @@ import org.jetbrains.anko.support.v4.alert
 /**
  * Created by marlonmoorer on 3/24/18.
  */
-class DetailFragment: BaseFragment(){
+class DetailFragment:Fragment(){
 
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
     private  var Id:String=""
     private var loading= ObservableBoolean(true)
+
+    private  var listener:FragmentEvenListener?=null
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        listener= context as FragmentEvenListener
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {

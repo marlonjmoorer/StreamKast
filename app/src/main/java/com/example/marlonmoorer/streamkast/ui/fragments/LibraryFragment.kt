@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast.ui.fragments
 
 import android.arch.lifecycle.Observer
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -14,16 +15,14 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.DownloadListAdapter
 import com.example.marlonmoorer.streamkast.adapters.HistoryListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
-import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
 import com.example.marlonmoorer.streamkast.ui.activities.DeleteActivity
+import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import kotlinx.android.synthetic.main.fragment_library.view.*
-import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 
 
 class LibraryFragment:Fragment(){
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view= inflater.inflate(R.layout.fragment_library,container, false).apply {
@@ -35,19 +34,6 @@ class LibraryFragment:Fragment(){
         }
         setHasOptionsMenu(true)
         return  view
-    }
-
-    private var viewModel: LibraryViewModel?=null
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel=createViewModel<LibraryViewModel>()
-        viewModel?.getPlayBackHistory()?.observe(this, Observer { history->
-            Log.d("","")
-        })
-        viewModel?.getDownloads()?.observe(this, Observer {downloads->
-
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -68,16 +54,26 @@ class LibraryFragment:Fragment(){
 
     class PlaybackHistoryFragment:Fragment(){
         private lateinit var episodeAdapter:HistoryListAdapter
+        private  var listener: FragmentEvenListener?=null
+
+
+        override fun onAttach(context: Context?) {
+            super.onAttach(context)
+            listener= context as FragmentEvenListener
+        }
         override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
 
+            episodeAdapter.clickEvent.subscribe{
+                listener?.viewEpisode(it)
+            }
             val viewModel=createViewModel<LibraryViewModel>()
             viewModel.getPlayBackHistory().observe(this, Observer { episodes->
                 episodes?.let { episodeAdapter.setEpisodes(it) }
             })
         }
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            episodeAdapter= HistoryListAdapter(activity as IEpisodeListener)
+            episodeAdapter= HistoryListAdapter()
             return RecyclerView(context).apply{
                 adapter=episodeAdapter
                 layoutManager= LinearLayoutManager(context)
@@ -87,6 +83,13 @@ class LibraryFragment:Fragment(){
 
     class DownloadListFragment:Fragment(){
         private lateinit var episodeAdapter:DownloadListAdapter
+        private  var listener: FragmentEvenListener?=null
+
+
+        override fun onAttach(context: Context?) {
+            super.onAttach(context)
+            listener= context as FragmentEvenListener
+        }
         override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
 
@@ -95,9 +98,17 @@ class LibraryFragment:Fragment(){
                 downloads?.let { episodeAdapter.setEpisodes(it) }
             })
 
+            episodeAdapter.clickEvent.subscribe{
+                listener?.viewEpisode(it)
+            }
+            episodeAdapter.deleteEvent.subscribe {
+                viewModel.removeDownload(it.downloadId!!)
+            }
+
         }
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            episodeAdapter= DownloadListAdapter(activity as IEpisodeListener)
+            episodeAdapter= DownloadListAdapter()
+
             return RecyclerView(context).apply{
                 layoutManager= LinearLayoutManager(context)
                 adapter=episodeAdapter

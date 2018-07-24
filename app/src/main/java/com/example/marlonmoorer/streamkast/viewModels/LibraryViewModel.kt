@@ -2,10 +2,10 @@ package com.example.marlonmoorer.streamkast.viewModels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
 import android.os.Environment
 import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 import com.example.marlonmoorer.streamkast.data.SavedEpisode
+import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.toByteSize
 import com.tonyodev.fetch2.*
@@ -28,7 +28,6 @@ class LibraryViewModel:BaseViewModel(){
         }
 
     fun getDownloads():LiveData<List<DownloadedEpisodeModel>>{
-
         fetch.getDownloads{results->
           doAsync {
               val eps= mutableListOf<DownloadedEpisodeModel>()
@@ -38,6 +37,7 @@ class LibraryViewModel:BaseViewModel(){
                       eps.add(IEpisode.fromEpisode<DownloadedEpisodeModel>(ep).apply {
                           url=dl.file
                           size=dl.total.toByteSize()
+                          downloadId=dl.id
                       })
                   }
               }
@@ -80,22 +80,15 @@ class LibraryViewModel:BaseViewModel(){
         return  downloadData
     }
 
+    fun removeDownload(id:Int){
+        fetch.remove(id)
+
+    }
     fun clearDownloads(){
         fetch.deleteAll()
         models.postValue(emptyList())
     }
 
-
-    class DownloadedEpisodeModel: IEpisode {
-        override var title =""
-        override var guid = ""
-        override var thumbnail = ""
-        override var duration: Int? = 0
-        override var description = ""
-        override var url=""
-        override var author = ""
-        var size=""
-    }
 
     class DownloadData(private var id:Int=-1):LiveData<Download>(),FetchListener{
 

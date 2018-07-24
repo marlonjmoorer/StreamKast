@@ -20,16 +20,14 @@ import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.*
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.Podcast
-import com.example.marlonmoorer.streamkast.listeners.IEpisodeListener
-import com.example.marlonmoorer.streamkast.listeners.IGenreListener
-import com.example.marlonmoorer.streamkast.listeners.IPodcastListener
+
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
 import org.jetbrains.anko.contentView
 
 
-class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenreListener,BottomNavigationView.OnNavigationItemSelectedListener{
+class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationView.OnNavigationItemSelectedListener{
 
 
 
@@ -222,7 +220,16 @@ class MainActivity : AppCompatActivity(),IPodcastListener,IEpisodeListener,IGenr
     }
 
 }
+interface FragmentEvenListener{
+    fun viewEpisode(episode: IEpisode)
 
+    fun playEpisode(episode: IEpisode)
+    fun selectGenre(genre: MediaGenre)
+
+    fun viewPodcast(podcastId:String)
+
+    fun toggleSubscription(podcast:Podcast)
+}
 
 
 

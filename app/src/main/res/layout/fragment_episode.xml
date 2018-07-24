@@ -7,9 +7,7 @@
         <variable
             name="episode"
             type="com.example.marlonmoorer.streamkast.models.IEpisode"/>
-        <variable
-            name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.IEpisodeListener"/>
+
     </data>
 
     <LinearLayout
@@ -76,7 +74,7 @@
                 android:layout_marginTop="16dp"
                 android:drawableEnd="@drawable/ic_play_arrow"
                 android:minWidth="0dp"
-                android:onClick="@{e->handler.playEpisode(episode)}"
+
                 android:paddingEnd="8dp"
                 android:paddingStart="8dp"
                 android:text="@string/action_play"
@@ -118,8 +116,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-
-
 
             <TextView
                 android:id="@+id/textView10"

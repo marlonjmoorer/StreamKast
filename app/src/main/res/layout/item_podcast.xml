@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
         <variable
-            name="show"
+            name="podcast"
             type="com.example.marlonmoorer.streamkast.api.models.Podcast"/>
-        <variable
-            name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.IPodcastListener"/>
+       <variable
+           name="listener"
+           type="android.view.View.OnClickListener"/>
     </data>
     <android.support.constraint.ConstraintLayout
 
@@ -17,7 +17,7 @@
         android:clickable="true"
         android:background="@drawable/list_item_background"
         android:layout_marginBottom="4dp"
-        android:onClick="@{e -> handler.viewPodcast(show.collectionId)}"
+        android:onClick="@{listener::onClick}"
         >
 
 
@@ -37,20 +37,19 @@
                 android:id="@+id/item_image"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                app:src="@{show.artworkUrl100}"/>
+                app:src="@{podcast.artworkUrl100}"/>
         </FrameLayout>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/subscribe_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-
-            android:onClick="@{v->handler.toggleSubscription(show)}"
-            android:background="@{show.subscribed?@drawable/ic_check_box_white_24dp:@drawable/icons8_add}"
+            android:background="@{podcast.subscribed?@drawable/ic_check_box_white_24dp:@drawable/icons8_add}"
+            android:onClick="@{listener::onClick}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.52"
@@ -64,7 +63,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@{show.collectionName}"
+            android:text="@{podcast.collectionName}"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/item_frame"

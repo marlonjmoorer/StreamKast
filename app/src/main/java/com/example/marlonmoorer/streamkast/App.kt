@@ -4,7 +4,7 @@ import android.app.Application
 import com.example.marlonmoorer.streamkast.di.AppComponent
 import com.example.marlonmoorer.streamkast.di.AppModule
 import com.example.marlonmoorer.streamkast.di.DaggerAppComponent
-import com.squareup.leakcanary.LeakCanary
+
 import net.danlew.android.joda.JodaTimeAndroid
 
 class App : Application(){
@@ -22,10 +22,7 @@ class App : Application(){
                 .build()
 
 
-        if (LeakCanary.isInAnalyzerProcess(this)) {
-            return
-        }
-        LeakCanary.install(this)
+
         JodaTimeAndroid.init(this);
 
     }

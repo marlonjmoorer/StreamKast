@@ -22,11 +22,11 @@ import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.Button
 import android.widget.RemoteViews
-import com.airbnb.paris.Paris
+
 import com.bumptech.glide.request.target.NotificationTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.ethanhua.skeleton.Skeleton
+
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
 import org.w3c.dom.Document

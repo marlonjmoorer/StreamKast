@@ -7,8 +7,8 @@
             name="episode"
             type="com.example.marlonmoorer.streamkast.models.IEpisode"/>
         <variable
-            name="handler"
-            type="com.example.marlonmoorer.streamkast.listeners.IEpisodeListener"/>
+            name="listener"
+            type="android.view.View.OnClickListener"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/list_item_background"
         android:clickable="true"
-        android:onClick="@{e->handler.viewEpisode(episode)}">
+        android:onClick="@{listener::onClick}">
 
         <TextView
             android:id="@+id/textView12"
@@ -32,14 +32,14 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/textView4"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/button2"
+            app:layout_constraintStart_toEndOf="@+id/play_button"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
 
 
         <ImageButton
-            android:id="@+id/button2"
+            android:id="@+id/play_button"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginBottom="16dp"
@@ -47,7 +47,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:background="@drawable/circle"
-            android:onClick="@{e->handler.playEpisode(episode)}"
+            android:onClick="@{listener::onClick}"
             android:padding="4dp"
             android:src="@drawable/icons8_play"
             app:layout_constraintBottom_toBottomOf="parent"
