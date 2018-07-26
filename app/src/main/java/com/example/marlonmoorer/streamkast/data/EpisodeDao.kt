@@ -10,7 +10,7 @@ import android.arch.persistence.room.Query
 interface EpisodeDao {
 
     @get:Query("SELECT * FROM savedepisode")
-    val all: List<SavedEpisode>
+    val all:LiveData<List<SavedEpisode>>
 
     @Query("SELECT * FROM savedepisode WHERE downloadId IN (:ids)")
     fun queryObjects(ids:List<Int>):SavedEpisode
@@ -19,7 +19,7 @@ interface EpisodeDao {
     fun getByDownloadId(id:Int):SavedEpisode
 
     @Query("SELECT * FROM  savedepisode  WHERE  guid=:id")
-    fun getById(id:String): SavedEpisode?
+    fun getById(id:String):LiveData<SavedEpisode?>
 
     @Query("SELECT EXISTS(SELECT * FROM savedepisode WHERE  guid = :id)")
     fun exist(id:String):Boolean

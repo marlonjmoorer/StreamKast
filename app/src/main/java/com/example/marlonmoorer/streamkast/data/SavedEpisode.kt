@@ -16,7 +16,7 @@ class SavedEpisode:IEpisode {
     var length=0
     var link=""
     var pupDate= ""
-    var downloadId=0
+    var downloadId:Long=0
     var podcastId=""
 
 }

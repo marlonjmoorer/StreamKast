@@ -24,9 +24,9 @@ class DeleteActivity : AppCompatActivity() {
             adapter=listAdapter
             layoutManager=LinearLayoutManager(context)
         }
-        viewModel.getDownloads().observe(this, Observer { downloads->
-            downloads?.let { listAdapter.setEpisodes(it) }
-        })
+//        viewModel.getDownloads().observe(this, Observer { downloads->
+//            downloads?.let { listAdapter.setEpisodes(it) }
+//        })
 
     }
 }

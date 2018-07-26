@@ -7,6 +7,9 @@ import com.example.marlonmoorer.streamkast.di.DaggerAppComponent
 
 import net.danlew.android.joda.JodaTimeAndroid
 
+
+
+
 class App : Application(){
 
     companion object {
@@ -24,6 +27,9 @@ class App : Application(){
 
 
         JodaTimeAndroid.init(this);
+
+
+
 
     }
 }

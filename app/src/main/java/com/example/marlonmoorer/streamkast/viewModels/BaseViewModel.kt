@@ -7,7 +7,7 @@ import android.content.Context
 import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.api.Repository
 import com.example.marlonmoorer.streamkast.data.KastDatabase
-import com.tonyodev.fetch2.Fetch
+
 import javax.inject.Inject
 
 abstract class BaseViewModel:ViewModel() {
@@ -17,9 +17,6 @@ abstract class BaseViewModel:ViewModel() {
 
     @Inject
     lateinit var context:Context
-
-    @Inject
-    lateinit var  fetch: Fetch
 
 
 

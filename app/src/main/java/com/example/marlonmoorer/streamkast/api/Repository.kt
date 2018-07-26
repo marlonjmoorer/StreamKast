@@ -2,10 +2,10 @@ package com.example.marlonmoorer.streamkast.api
 
 
 
+import android.app.DownloadManager
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
-import android.util.Log
 import com.example.marlonmoorer.streamkast.*
 
 
@@ -21,22 +21,18 @@ import org.jetbrains.anko.doAsync
 import org.joda.time.DateTime
 
 import retrofit2.Call
-import retrofit2.Callback
 import java.io.IOException
-import java.time.LocalDateTime
-import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
-class Repository @Inject constructor(database: KastDatabase, val itunesService: ItunesService, val httpClient: OkHttpClient, val preferences: SharedPreferences) {
+class Repository @Inject constructor(database: KastDatabase, val itunesService: ItunesService, val httpClient: OkHttpClient, val preferences: SharedPreferences, val downloadManager: DownloadManager) {
 
     val subscriptions:SubscriptionDao
     val featuredItems:FeaturedDao
     val savedEpisodes:EpisodeDao
     var history:HistoryDao
     var exceptionHanlder:LiveData<Exception>
-    private val LASTUPDATE="lastUpdateDate"
+
 
     init {
         subscriptions=database.SubscriptionDao()
@@ -118,7 +114,6 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
         }
     }
     fun getFeaturedPostcasts(id: String): LiveData<List<Featured>> {
-       // syncFeatured(id)
         doAsync {
             syncFeatured(id)
         }

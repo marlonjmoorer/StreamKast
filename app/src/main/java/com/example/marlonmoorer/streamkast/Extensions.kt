@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import org.jetbrains.anko.image
 import android.arch.persistence.room.Room
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.View
@@ -160,6 +161,14 @@ fun String.toDateTime(): Date? {
 }
 fun Date.toDateString(): String? {
     return SimpleDateFormat("EEE, d MMM yyyy").format(this)
+}
+
+fun Cursor.getString(string: String):String{
+ return this.getString(this.getColumnIndex(string))
+}
+
+fun Cursor.getInt(string: String):Int{
+    return this.getInt(this.getColumnIndex(string))
 }
 
 

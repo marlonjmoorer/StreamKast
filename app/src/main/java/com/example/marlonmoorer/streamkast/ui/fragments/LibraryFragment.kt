@@ -1,5 +1,6 @@
 package com.example.marlonmoorer.streamkast.ui.fragments
 
+import android.app.DownloadManager
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
@@ -15,11 +16,15 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.DownloadListAdapter
 import com.example.marlonmoorer.streamkast.adapters.HistoryListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
+import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
+import com.example.marlonmoorer.streamkast.models.IEpisode
+import com.example.marlonmoorer.streamkast.toByteSize
 import com.example.marlonmoorer.streamkast.ui.activities.DeleteActivity
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import kotlinx.android.synthetic.main.fragment_library.view.*
 import org.jetbrains.anko.support.v4.startActivity
+import java.io.File
 
 
 class LibraryFragment:Fragment(){
@@ -94,15 +99,22 @@ class LibraryFragment:Fragment(){
             super.onActivityCreated(savedInstanceState)
 
             val viewModel=createViewModel<LibraryViewModel>()
-            viewModel.getDownloads().observe(this, Observer {downloads->
-                downloads?.let { episodeAdapter.setEpisodes(it) }
+            viewModel.getDownloaded().observe(this, Observer {downloads->
+                downloads?.map {
+                    IEpisode.fromEpisode<DownloadedEpisodeModel>(it).apply {
+                        size= File(url).totalSpace.toByteSize()
+                        downloadId=it.downloadId.toInt()
+
+
+                    }
+                }.let {episodeAdapter.setEpisodes(it!!) }
             })
 
             episodeAdapter.clickEvent.subscribe{
                 listener?.viewEpisode(it)
             }
             episodeAdapter.deleteEvent.subscribe {
-                viewModel.removeDownload(it.downloadId!!)
+                viewModel.removeDownload(it.guid)
             }
 
         }

@@ -1,5 +1,6 @@
 package com.example.marlonmoorer.streamkast.ui.fragments
 
+import android.app.DownloadManager
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
@@ -16,8 +17,7 @@ import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.setIcon
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
-import com.tonyodev.fetch2.Download
-import com.tonyodev.fetch2.Status
+
 
 
 class EpisodeFragment: BottomSheetDialogFragment() {
@@ -41,34 +41,34 @@ class EpisodeFragment: BottomSheetDialogFragment() {
 
     }
 
-    var observer=Observer<Download>{
+
+    var observer=Observer<LibraryViewModel.DownloadInfo>{
         when(it?.status){
-            Status.FAILED->{
-
+            DownloadManager.STATUS_PENDING->{
+                binding.actionButtonDownload.apply{
+                    text = "Pending ..."
+                    setIcon(0)
+                    isEnabled=false
+                }
             }
-            Status.ADDED->{
-
-            }
-            Status.DOWNLOADING->{
+            DownloadManager.STATUS_RUNNING->{
                 binding.actionButtonDownload.apply{
                     text = "Downloading (${it.progress}%) ..."
                     setIcon(0)
                     isEnabled=false
                 }
             }
-            Status.COMPLETED-> {
+            DownloadManager.STATUS_SUCCESSFUL->{
                 binding.downloadProgress.progress=0
                 binding.actionButtonDownload.apply {
                     text="Downloaded"
                     setIcon(R.drawable.icons8_check_mark_symbol)
                 }
             }
-            else->{
-                print("")
-            }
         }
 
     }
+
 
 
 
@@ -91,7 +91,7 @@ class EpisodeFragment: BottomSheetDialogFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         libraryViewModel=createViewModel()
-        libraryViewModel.findExistingDownload(episode.guid).observe(this,observer)
+        libraryViewModel.findPreviousDownload(episode.guid).observe(this,observer)
     }
     companion object {
         private const val KEY = "EPISODE"
