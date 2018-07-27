@@ -22,6 +22,8 @@ import com.example.marlonmoorer.streamkast.toByteSize
 import com.example.marlonmoorer.streamkast.ui.activities.DeleteActivity
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_library.view.*
 import org.jetbrains.anko.support.v4.startActivity
 import java.io.File
@@ -99,15 +101,15 @@ class LibraryFragment:Fragment(){
             super.onActivityCreated(savedInstanceState)
 
             val viewModel=createViewModel<LibraryViewModel>()
-            viewModel.getDownloaded().observe(this, Observer {downloads->
-                downloads?.map {
-                    IEpisode.fromEpisode<DownloadedEpisodeModel>(it).apply {
-                        size= File(url).totalSpace.toByteSize()
-                        downloadId=it.downloadId.toInt()
-
-
+            viewModel.downloadChangeEvent
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe{
+                        episodeAdapter.update(it)
                     }
-                }.let {episodeAdapter.setEpisodes(it!!) }
+
+            viewModel.getDownloaded().observe(this, Observer {downloads->
+                downloads?.let {episodeAdapter.setEpisodes(it) }
             })
 
             episodeAdapter.clickEvent.subscribe{
@@ -116,6 +118,7 @@ class LibraryFragment:Fragment(){
             episodeAdapter.deleteEvent.subscribe {
                 viewModel.removeDownload(it.guid)
             }
+
 
         }
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -15,8 +15,7 @@ abstract class BaseViewModel:ViewModel() {
     @Inject
     lateinit var repository: Repository
 
-    @Inject
-    lateinit var context:Context
+
 
 
 

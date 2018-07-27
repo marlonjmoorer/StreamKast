@@ -1,11 +1,15 @@
 package com.example.marlonmoorer.streamkast.viewModels
 
+import android.app.Application
 import android.app.DownloadManager
+import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.ApplicationInfo
 import android.database.ContentObserver
 import android.database.Cursor
 import android.media.MediaPlayer
@@ -13,89 +17,131 @@ import android.net.Uri
 import android.os.Environment
 import android.os.FileObserver
 import android.os.Handler
+import android.provider.MediaStore
+import com.example.marlonmoorer.streamkast.App
+import com.example.marlonmoorer.streamkast.api.Repository
 
 
 import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 import com.example.marlonmoorer.streamkast.data.SavedEpisode
 import com.example.marlonmoorer.streamkast.getInt
+import com.example.marlonmoorer.streamkast.getString
 import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.toByteSize
+import io.reactivex.subjects.PublishSubject
 import org.jetbrains.anko.AnkoAsyncContext
 
 
 import org.jetbrains.anko.doAsync
 import java.io.File
 import java.util.*
+import javax.inject.Inject
 
 
-class LibraryViewModel:BaseViewModel(){
+class LibraryViewModel(app:Application):AndroidViewModel(app){
 
-
+    @Inject
+    lateinit var repository: Repository
     private var downloads:MutableLiveData<List<DownloadedEpisodeModel>>
-    private val models= MutableLiveData<List<DownloadedEpisodeModel>>()
+    private lateinit var preferences:SharedPreferences
+    private lateinit var  downloadManager:DownloadManager
+    private val observer=object :ContentObserver(Handler()){
+        override fun onChange(selfChange: Boolean, uri: Uri?) {
+            super.onChange(selfChange, uri)
+            uri?.lastPathSegment?.toLongOrNull()?.let {
+                checkStatus(it)
+            }
+        }
+    }
 
     init {
         downloads= MutableLiveData()
+        App.component?.inject(this)
+        app.run {
+            preferences=getSharedPreferences(packageName,0)
+            downloadManager=getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            contentResolver.registerContentObserver(Uri.parse( "content://downloads/my_downloads/"),true,observer)
+        }
     }
 
-    val prefs
-        get() = context.getSharedPreferences(context.packageName,0)
 
     val downloadLocation:String
         get() {
-          return prefs.getString("location","${Environment.getExternalStorageDirectory().absolutePath}/podcast")
+          return preferences.getString("location","${Environment.getExternalStorageDirectory()}/podcast")
         }
+
+
+    val downloadChangeEvent=PublishSubject.create<DownloadInfo>()
+
+    private fun checkStatus(id: Long):DownloadInfo{
+        val query=DownloadManager.Query()
+        query. setFilterById(id)
+        val info= DownloadInfo(id)
+        val cursor= downloadManager.query(query)
+        if(cursor.moveToFirst()){
+            val bytes=cursor.getInt(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR).toDouble()
+            val total=cursor.getInt(DownloadManager.COLUMN_TOTAL_SIZE_BYTES).toDouble()
+            val location= cursor.getString(DownloadManager.COLUMN_LOCAL_URI)
+            info.apply{
+                status=cursor.getInt(DownloadManager.COLUMN_STATUS)
+                progress= ((bytes/total*100)).toInt()
+                path=location?:""
+            }
+            downloadChangeEvent.onNext(info)
+        }
+        return info
+    }
+
 
 
     fun getPlayBackHistory(): LiveData<List<PlaybackHistory>> {
         return repository.history.all
     }
 
-    fun queDownload(episode: IEpisode):LiveData<DownloadInfo>{
+    fun queDownload(episode: IEpisode):Long{
 
-
-        val data= DowndLoadLiveData(context)
         val request= DownloadManager.Request(Uri.parse(episode.url)).run {
             setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE);
             setAllowedOverRoaming(false)
             setTitle(episode.title)
             setVisibleInDownloadsUi(true)
-            setDestinationInExternalPublicDir(downloadLocation,"${episode.guid}.mp3")
+            setDestinationInExternalPublicDir("/podcast","${episode.guid.replace("[^a-zA-Z0-9]+","")}.mp3")
         }
         val savedEpisode= IEpisode.fromEpisode<SavedEpisode>(episode)
-        savedEpisode.downloadId=data.sendRequest(request)
-        savedEpisode.url = createPath(episode.guid)
+        val downloadId=downloadManager.enqueue(request)
+        val meta= checkStatus(downloadId)
+        savedEpisode.downloadId= downloadId
+        savedEpisode.url =meta.path
         doAsync {
             repository.savedEpisodes.insert(savedEpisode)
         }
-        return  data
+        return downloadId
     }
 
     private fun createPath(name:String):String{
-        return "${downloadLocation}/${name}.mp3"
+        return "${downloadLocation}/${name.replace("[^a-zA-Z0-9]+","")}.mp3"
     }
 
-    fun getDownloaded(): LiveData<List<SavedEpisode>> {
-
-
-        return repository.savedEpisodes.all
+    fun getDownloaded(): LiveData<List<DownloadedEpisodeModel>> {
+        return Transformations.map(repository.savedEpisodes.all,{savedEpisodes->
+           return@map savedEpisodes.map {
+                IEpisode.fromEpisode<DownloadedEpisodeModel>(it).apply {
+                    val file= File(createPath(guid))
+                    size= file.length().toByteSize()
+                    downloadId=it.downloadId
+                    progress=100
+                    status= checkStatus(it.downloadId).status
+                }
+            }
+        })
     }
 
-    fun findPreviousDownload(guid:String): LiveData<DownloadInfo> {
-        return Transformations.switchMap(repository.savedEpisodes.getById(guid),{ep->
+    fun findPreviousDownload(guid:String):LiveData<Long> {
+        return Transformations.map(repository.savedEpisodes.getById(guid),{ep->
            ep?.let{
-               if(File(ep.url).exists()){
-                    return@switchMap DowndLoadLiveData(context).apply {
-                           setDownloadId(ep.downloadId)
-                    }
-               }else{
-                   doAsync {
-                       repository.savedEpisodes.delete(ep)
-                   }
-                  return@switchMap null
-               }
-
+               checkStatus(ep.downloadId)
+               return@map ep.downloadId
            }
         })
     }
@@ -111,73 +157,7 @@ class LibraryViewModel:BaseViewModel(){
             }
         }
     }
-    fun clearDownloads(){
-        models.postValue(emptyList())
-    }
 
-    data class DownloadInfo(var progress:Int=0,var status:Int=0)
+    data class DownloadInfo(var id:Long,var progress:Int=0,var status:Int=0,var path:String="")
 
-
-    class DowndLoadLiveData(val context: Context):LiveData<DownloadInfo>(){
-
-
-        private val downloadManager:DownloadManager
-        private var downloadId:Long?=null
-        private var query:DownloadManager.Query?=null
-        private val model:DownloadInfo
-
-
-
-        init {
-            downloadManager= context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            model= DownloadInfo()
-        }
-
-        fun setDownloadId(id: Long){
-            downloadId=id
-            query=DownloadManager.Query().apply {
-                setFilterById(id)
-            }
-            checkStatus()
-            val requestUri=Uri.parse( "content://downloads/my_downloads/$id" )
-            context.contentResolver.registerContentObserver(requestUri, true,observer)
-
-        }
-
-        private fun checkStatus(){
-            downloadId?.let {
-                val cursor= downloadManager.query(query)
-                if(cursor.moveToFirst()){
-                    val bytes=cursor.getInt(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR).toDouble()
-                    val total=cursor.getInt(DownloadManager.COLUMN_TOTAL_SIZE_BYTES).toDouble()
-                    model.run {
-                        status=cursor.getInt(DownloadManager.COLUMN_STATUS)
-                        progress= ((bytes/total*100)).toInt()
-                    }
-                    postValue(model)
-                }
-                when(model.status){
-                    DownloadManager.STATUS_SUCCESSFUL,
-                    DownloadManager.STATUS_FAILED-> context.contentResolver.unregisterContentObserver(observer)
-                }
-            }
-        }
-
-        fun sendRequest(request:DownloadManager.Request):Long{
-            val id=downloadManager.enqueue(request)
-            setDownloadId(id)
-            return id
-        }
-
-
-        private val observer=object :ContentObserver(Handler()){
-            override fun onChange(selfChange: Boolean, uri: Uri?) {
-                super.onChange(selfChange, uri)
-                if (uri?.encodedPath?.contains("$downloadId")==true)
-                    checkStatus()
-            }
-        }
-
-
-    }
 }

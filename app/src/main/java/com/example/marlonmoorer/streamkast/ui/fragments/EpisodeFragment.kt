@@ -17,7 +17,9 @@ import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.setIcon
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
-
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 
 
 class EpisodeFragment: BottomSheetDialogFragment() {
@@ -27,10 +29,11 @@ class EpisodeFragment: BottomSheetDialogFragment() {
     lateinit var binding:FragmentEpisodeBinding
     private lateinit var libraryViewModel: LibraryViewModel
     private  var listener: FragmentEvenListener?=null
+    private  var downloadId:Long?=null
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        listener= context as FragmentEvenListener
+        listener = context as FragmentEvenListener
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,17 +84,51 @@ class EpisodeFragment: BottomSheetDialogFragment() {
         }
         binding.actionButtonDownload.setOnClickListener {
             binding.downloadProgress.max=100
-            libraryViewModel.queDownload(episode).observe(this,observer)
+            libraryViewModel.queDownload(episode)
         }
+
         return  binding.root
     }
 
 
+    private var disposeable: Disposable?=null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         libraryViewModel=createViewModel()
-        libraryViewModel.findPreviousDownload(episode.guid).observe(this,observer)
+        libraryViewModel.findPreviousDownload(episode.guid).observe(this, Observer {id->
+            downloadId=id
+        })
+        disposeable=libraryViewModel.downloadChangeEvent
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter {info->info.id==downloadId }
+                .subscribe{
+                    when(it?.status){
+                        DownloadManager.STATUS_PENDING->{
+                            binding.actionButtonDownload.apply{
+                                text = "Pending ..."
+                                setIcon(0)
+                                isEnabled=false
+                            }
+                        }
+                        DownloadManager.STATUS_RUNNING->{
+                            binding.actionButtonDownload.apply{
+                                text = "Downloading (${it.progress}%) ..."
+                                setIcon(0)
+                                isEnabled=false
+                            }
+                        }
+                        DownloadManager.STATUS_SUCCESSFUL->{
+                            binding.downloadProgress.progress=0
+                            binding.actionButtonDownload.apply {
+                                text="Downloaded"
+                                setIcon(R.drawable.icons8_check_mark_symbol)
+                            }
+                            disposeable?.dispose()
+                        }
+                    }
+                }
     }
     companion object {
         private const val KEY = "EPISODE"

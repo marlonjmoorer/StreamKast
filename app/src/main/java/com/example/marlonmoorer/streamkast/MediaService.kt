@@ -192,13 +192,13 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     private  fun buildMediaSource(url:String):ExtractorMediaSource{
 
-
+        val uri= Uri.parse(url)
         if(URLUtil.isHttpUrl(url)||URLUtil.isHttpsUrl(url)){
-            val uri= Uri.parse(url)
+
            return ExtractorMediaSource.Factory(
                     DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri)
-        }else if (File(url).exists()){
-            val uri= Uri.fromFile(File(url))
+        }else {
+            //val uri= Uri.fromFile(File(url))
             val dataSpec = DataSpec(uri)
             val fileDataSource = FileDataSource()
             val factory = object : DataSource.Factory {
@@ -208,8 +208,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             }
             fileDataSource.open(dataSpec)
             return ExtractorMediaSource.Factory(factory).createMediaSource(uri)
-        }else{
-            throw FileNotFoundException()
         }
 
     }
@@ -246,7 +244,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                 }
 
             })
-        }catch (ex:FileNotFoundException){
+        }catch (ex:Exception){
             stopSelf()
         }
 

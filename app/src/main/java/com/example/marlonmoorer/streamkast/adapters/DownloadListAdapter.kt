@@ -1,15 +1,21 @@
 package com.example.marlonmoorer.streamkast.adapters
 
+import android.app.DownloadManager
+import android.databinding.BindingAdapter
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.databinding.ItemDownloadBinding
 import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
+import com.example.marlonmoorer.streamkast.toDateString
+import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import io.reactivex.subjects.PublishSubject
+import java.util.*
 
 class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>(){
 
@@ -31,6 +37,28 @@ class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>()
     fun setEpisodes(episodes: List<DownloadedEpisodeModel>){
         this.episodes=episodes
         notifyDataSetChanged()
+    }
+
+    fun update(info: LibraryViewModel.DownloadInfo) {
+        episodes?.find{ it.downloadId==info.id }?.run {
+            status=info.status
+            progress=info.progress
+            notifyChange()
+        }
+
+    }
+
+    companion object {
+        @JvmStatic
+        @BindingAdapter("status")
+        fun setStatus(view: TextView, status:Int){
+            view.text=when(status){
+                DownloadManager.STATUS_PENDING->"Pending"
+                DownloadManager.STATUS_RUNNING->"Running"
+                DownloadManager.STATUS_SUCCESSFUL->"Ready"
+                else->""
+            }
+        }
     }
 
 

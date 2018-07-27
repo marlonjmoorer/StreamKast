@@ -163,8 +163,12 @@ fun Date.toDateString(): String? {
     return SimpleDateFormat("EEE, d MMM yyyy").format(this)
 }
 
-fun Cursor.getString(string: String):String{
- return this.getString(this.getColumnIndex(string))
+fun Cursor.getString(string: String):String?{
+    try {
+        return this.getString(this.getColumnIndex(string))
+    }catch (ex:Exception){
+        return null
+    }
 }
 
 fun Cursor.getInt(string: String):Int{
