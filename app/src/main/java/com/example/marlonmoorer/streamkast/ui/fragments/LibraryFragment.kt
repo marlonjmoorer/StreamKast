@@ -1,6 +1,5 @@
 package com.example.marlonmoorer.streamkast.ui.fragments
 
-import android.app.DownloadManager
 import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
@@ -10,26 +9,24 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.*
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.adapters.DownloadListAdapter
 import com.example.marlonmoorer.streamkast.adapters.HistoryListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
-import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
-import com.example.marlonmoorer.streamkast.models.IEpisode
-import com.example.marlonmoorer.streamkast.toByteSize
-import com.example.marlonmoorer.streamkast.ui.activities.DeleteActivity
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_library.*
 import kotlinx.android.synthetic.main.fragment_library.view.*
-import org.jetbrains.anko.support.v4.startActivity
-import java.io.File
 
 
-class LibraryFragment:Fragment(){
+interface IModeChangeListener{
+    fun onModeChange(inEditMode:Boolean)
+}
+
+class LibraryFragment:Fragment(),IModeChangeListener{
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view= inflater.inflate(R.layout.fragment_library,container, false).apply {
@@ -39,25 +36,21 @@ class LibraryFragment:Fragment(){
         (activity as AppCompatActivity).apply {
             setSupportActionBar(view.toolbar)
         }
-        setHasOptionsMenu(true)
+        //setHasOptionsMenu(true)
         return  view
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        menu?.clear()
-        inflater?.inflate(R.menu.library_menu,menu)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-
-        when(item?.itemId){
-            R.id.action_downloads->{
-                startActivity<DeleteActivity>()
-                return true
-            }
+    override fun onModeChange(inEditMode: Boolean) {
+        if(inEditMode){
+            tabs.visibility=View.GONE
+        }else{
+            tabs.visibility=View.VISIBLE
         }
-        return false
+        viewPager.setOnTouchListener { v, event -> inEditMode }
     }
+
+
 
     class PlaybackHistoryFragment:Fragment(){
         private lateinit var episodeAdapter:HistoryListAdapter
@@ -88,15 +81,27 @@ class LibraryFragment:Fragment(){
         }
     }
 
-    class DownloadListFragment:Fragment(){
+
+   class DownloadListFragment:Fragment(),ActionMode.Callback{
         private lateinit var episodeAdapter:DownloadListAdapter
         private  var listener: FragmentEvenListener?=null
-
 
         override fun onAttach(context: Context?) {
             super.onAttach(context)
             listener= context as FragmentEvenListener
         }
+         override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+             menu?.clear()
+             inflater?.inflate(R.menu.library_menu,menu)
+         }
+         override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+             when(item?.itemId){
+                 R.id.action_downloads->{
+                     activity?.startActionMode(this)
+                 }
+             }
+             return false
+         }
         override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
 
@@ -123,16 +128,40 @@ class LibraryFragment:Fragment(){
         }
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             episodeAdapter= DownloadListAdapter()
+            setHasOptionsMenu(true)
+            return RecyclerView(context).apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = episodeAdapter
+                setOnLongClickListener {
 
-            return RecyclerView(context).apply{
-                layoutManager= LinearLayoutManager(context)
-                adapter=episodeAdapter
+                    return@setOnLongClickListener true
+                }
             }
         }
 
-    }
+       override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+           mode?.finish()
+           return true
+       }
 
-    class ViewPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(manager) {
+       override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+           mode?.menuInflater?.inflate(R.menu.edit_menu,menu)
+           return true
+       }
+
+       override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+           (parentFragment as  IModeChangeListener).onModeChange(true)
+           episodeAdapter.setEditeMode(true)
+           return true
+       }
+
+       override fun onDestroyActionMode(mode: ActionMode?) {
+           (parentFragment as  IModeChangeListener).onModeChange(false)
+           episodeAdapter.setEditeMode(false)
+       }
+   }
+
+    inner class ViewPagerAdapter(manager: FragmentManager): FragmentPagerAdapter(manager) {
         private var fragments: Map<String, Fragment>
         init {
             fragments= mapOf(
