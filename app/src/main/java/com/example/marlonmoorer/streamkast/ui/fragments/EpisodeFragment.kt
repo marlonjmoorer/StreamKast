@@ -85,6 +85,7 @@ class EpisodeFragment: BottomSheetDialogFragment() {
         binding.actionButtonDownload.setOnClickListener {
             binding.downloadProgress.max=100
             libraryViewModel.queDownload(episode)
+            this.dismiss()
         }
 
         return  binding.root

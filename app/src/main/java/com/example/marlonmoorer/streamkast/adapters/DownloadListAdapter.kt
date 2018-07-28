@@ -12,38 +12,34 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.databinding.ItemDownloadBinding
-import com.example.marlonmoorer.streamkast.databinding.ItemDownloadEditBinding
+
+import com.example.marlonmoorer.streamkast.databinding.ItemEditViewBinding
 import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
-import com.example.marlonmoorer.streamkast.toDateString
 import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
 import io.reactivex.subjects.PublishSubject
-import java.util.*
 
-class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>(){
+class DownloadListAdapter:EditableAdapter<DownloadListAdapter.ViewHolder>(){
 
-    private  val EDITMODE=2
-    private  val VIEWMODE=1
 
     private var episodes:List<DownloadedEpisodeModel>? = null
     val clickEvent= PublishSubject.create<DownloadedEpisodeModel>()
     val deleteEvent=PublishSubject.create<DownloadedEpisodeModel>()
-    private var editMode=false
+
     private val deletedItems:MutableList<DownloadedEpisodeModel> = mutableListOf()
 
 
-    fun setEditeMode(canEdit:Boolean){
-        editMode=canEdit
-        if(!editMode){
-            deletedItems.forEach {
-                deleteEvent.onNext(it)
-            }
-        }
-        notifyDataSetChanged()
+    override fun setEditeMode(canEdit:Boolean){
+        super.setEditeMode(canEdit)
+        deletedItems.clear()
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (editMode) EDITMODE else VIEWMODE
+    fun commitDeletion(){
+        deletedItems.forEach {
+            deleteEvent.onNext(it)
+        }
     }
+
+
     override fun onBindViewHolder(holder: DownloadListAdapter.ViewHolder, position: Int) {
         episodes?.get(position)?.let {holder.bind(it)}
     }
@@ -52,7 +48,7 @@ class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>()
         val viewDataBinding:ViewDataBinding
         val id:Int
         if(viewType==EDITMODE)
-          id=R.layout.item_download_edit
+          id=R.layout.item_edit_view
         else
             id=R.layout.item_download
         viewDataBinding=DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), id, parent, false)
@@ -72,7 +68,6 @@ class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>()
             progress=info.progress
             notifyChange()
         }
-
     }
 
     companion object {
@@ -81,7 +76,7 @@ class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>()
         fun setStatus(view: TextView, status:Int){
             view.text=when(status){
                 DownloadManager.STATUS_PENDING->"Pending"
-                DownloadManager.STATUS_RUNNING->"Running"
+                DownloadManager.STATUS_RUNNING->"Downloading"
                 DownloadManager.STATUS_SUCCESSFUL->"Ready"
                 else->""
             }
@@ -102,16 +97,21 @@ class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>()
                     openContextMenu(v)
                 }
             }else{
-                (binding as ItemDownloadEditBinding).checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
-                    if(isChecked){
-                        deletedItems.add(episodes!![layoutPosition])
-                    }else{
-                        deletedItems.remove(episodes!![layoutPosition])
+                (binding as ItemEditViewBinding).run{
+                    root.setOnClickListener {
+                        checkBox.toggle()
+                    }
+                    checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                        if(isChecked){
+                            deletedItems.add(episodes!![layoutPosition])
+                        }else{
+                            deletedItems.remove(episodes!![layoutPosition])
+                        }
                     }
                 }
             }
         }
-        fun openContextMenu(v:View):Boolean{
+        private fun openContextMenu(v:View):Boolean{
             PopupMenu(v.context,v).run {
                 inflate(R.menu.download_menu)
                 setOnMenuItemClickListener {
@@ -134,7 +134,7 @@ class DownloadListAdapter:RecyclerView.Adapter<DownloadListAdapter.ViewHolder>()
             if(binding is ItemDownloadBinding){
                 binding.episode=model
             }
-            if (binding is ItemDownloadEditBinding){
+            if (binding is ItemEditViewBinding){
                 binding.episode=model
             }
         }

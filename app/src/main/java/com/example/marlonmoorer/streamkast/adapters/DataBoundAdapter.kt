@@ -9,11 +9,22 @@ import android.view.ViewGroup
 /**
  * Created by marlonmoorer on 3/30/18.
  */
-abstract class DataBoundAdapter<T>():RecyclerView.Adapter<DataBoundAdapter.DataViewHolder<T>>() where T:ViewDataBinding {
 
 
+abstract class EditableAdapter<T>:RecyclerView.Adapter<T>() where T:RecyclerView.ViewHolder {
 
-    class DataViewHolder<T> (val binding:T):RecyclerView.ViewHolder(binding.root) where T:ViewDataBinding{
+    protected  val EDITMODE=2
+    protected  val VIEWMODE=1
+    protected var editMode=false
 
+
+    open fun setEditeMode(canEdit:Boolean){
+        editMode=canEdit
+        notifyDataSetChanged()
     }
+    override fun getItemViewType(position: Int): Int {
+        return if (editMode) EDITMODE else VIEWMODE
+    }
+
+
 }

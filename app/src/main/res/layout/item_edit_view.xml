@@ -5,7 +5,7 @@
     <data>
         <variable
             name="episode"
-            type="com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel"/>
+            type="com.example.marlonmoorer.streamkast.models.IEpisode"/>
 
     </data>
 
@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/textView12"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
@@ -29,13 +29,13 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/play_button"
+        app:layout_constraintStart_toEndOf="@+id/image"
         app:layout_constraintTop_toTopOf="parent" />
 
 
 
     <ImageView
-        android:id="@+id/play_button"
+        android:id="@+id/image"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginBottom="16dp"
@@ -44,7 +44,7 @@
         android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView12"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/checkBox"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:src="@{episode.thumbnail}" />
@@ -55,10 +55,12 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/play_button"
+            app:layout_constraintEnd_toStartOf="@+id/image"
+            app:layout_constraintHorizontal_bias="0.45"
+            app:layout_constraintHorizontal_chainStyle="spread"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

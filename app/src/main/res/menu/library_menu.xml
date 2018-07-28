@@ -4,14 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:appcompat="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_history"
+        android:id="@+id/action_edit"
         android:orderInCategory="100"
-        android:title="@string/action_edit_history"
+        android:title="Edit"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_downloads"
-        android:orderInCategory="100"
-        android:title="@string/action_edit_downloads"
-        app:showAsAction="never" />
+
 
 </menu>

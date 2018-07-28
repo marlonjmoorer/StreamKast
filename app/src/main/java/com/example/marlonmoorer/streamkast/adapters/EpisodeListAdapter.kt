@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.api.models.*
-import com.example.marlonmoorer.streamkast.data.Featured
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEpisodeBinding
 
@@ -42,7 +40,7 @@ class EpisodeListAdapter:RecyclerView.Adapter<EpisodeListAdapter.ViewHolder> (){
             binding.setListener {v->
                 episodes?.get(layoutPosition)?.let {p->
                     when(v.id){
-                        R.id.play_button->playEvent.onNext(p)
+                        R.id.image->playEvent.onNext(p)
                         else->openEvent.onNext(p)
                     }
                 }

@@ -110,9 +110,9 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
         }
         val savedEpisode= IEpisode.fromEpisode<SavedEpisode>(episode)
         val downloadId=downloadManager.enqueue(request)
-        val meta= checkStatus(downloadId)
+        checkStatus(downloadId)
         savedEpisode.downloadId= downloadId
-        savedEpisode.url =meta.path
+        savedEpisode.url =Uri.fromFile(File(createPath(episode.guid))).toString()
         doAsync {
             repository.savedEpisodes.insert(savedEpisode)
         }
@@ -155,6 +155,12 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
             if(file.exists()){
                 file.delete()
             }
+        }
+    }
+
+    fun removeHistory(id:String) {
+        doAsync{
+            repository.history.removeFromHistory(id)
         }
     }
 

@@ -28,9 +28,13 @@ interface IModeChangeListener{
 
 class LibraryFragment:Fragment(),IModeChangeListener{
 
+    private lateinit var adapter: LibraryFragment.ViewPagerAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
+        adapter=ViewPagerAdapter(childFragmentManager)
         val view= inflater.inflate(R.layout.fragment_library,container, false).apply {
-            viewPager.adapter= ViewPagerAdapter(childFragmentManager)
+            viewPager.adapter=adapter
             tabs.setupWithViewPager(viewPager)
         }
         (activity as AppCompatActivity).apply {
@@ -50,9 +54,27 @@ class LibraryFragment:Fragment(),IModeChangeListener{
         viewPager.setOnTouchListener { v, event -> inEditMode }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        menu?.clear()
+        inflater?.inflate(R.menu.library_menu,menu)
+    }
+    val currentFragment
+        get() = adapter.getFragment(viewPager.currentItem)
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            R.id.action_edit->{
+                (currentFragment as ActionMode.Callback?)?.let{
+                    activity?.startActionMode(it)
+                }
+            }
+        }
+        return false
+    }
 
 
-    class PlaybackHistoryFragment:Fragment(){
+
+    class PlaybackHistoryFragment:Fragment(),ActionMode.Callback{
         private lateinit var episodeAdapter:HistoryListAdapter
         private  var listener: FragmentEvenListener?=null
 
@@ -61,13 +83,17 @@ class LibraryFragment:Fragment(),IModeChangeListener{
             super.onAttach(context)
             listener= context as FragmentEvenListener
         }
+
         override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
-
+            val viewModel=createViewModel<LibraryViewModel>()
             episodeAdapter.clickEvent.subscribe{
                 listener?.viewEpisode(it)
             }
-            val viewModel=createViewModel<LibraryViewModel>()
+            episodeAdapter.deleteEvent.subscribe{
+                viewModel.removeHistory(it.guid)
+            }
+
             viewModel.getPlayBackHistory().observe(this, Observer { episodes->
                 episodes?.let { episodeAdapter.setEpisodes(it) }
             })
@@ -79,6 +105,33 @@ class LibraryFragment:Fragment(),IModeChangeListener{
                 layoutManager= LinearLayoutManager(context)
             }
         }
+
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+            when(item?.itemId){
+                R.id.action_delete->episodeAdapter.commitDeletion()
+            }
+            mode?.finish()
+            return true
+        }
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            mode?.menuInflater?.inflate(R.menu.edit_menu,menu)
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+            (parentFragment as  IModeChangeListener).onModeChange(true)
+            episodeAdapter.setEditeMode(true)
+            return true
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+            (parentFragment as  IModeChangeListener).onModeChange(false)
+            episodeAdapter.setEditeMode(false)
+        }
+
+
     }
 
 
@@ -90,18 +143,7 @@ class LibraryFragment:Fragment(),IModeChangeListener{
             super.onAttach(context)
             listener= context as FragmentEvenListener
         }
-         override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-             menu?.clear()
-             inflater?.inflate(R.menu.library_menu,menu)
-         }
-         override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-             when(item?.itemId){
-                 R.id.action_downloads->{
-                     activity?.startActionMode(this)
-                 }
-             }
-             return false
-         }
+
         override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
 
@@ -132,16 +174,15 @@ class LibraryFragment:Fragment(),IModeChangeListener{
             return RecyclerView(context).apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = episodeAdapter
-                setOnLongClickListener {
-
-                    return@setOnLongClickListener true
-                }
             }
         }
 
        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-           mode?.finish()
-           return true
+            when(item?.itemId){
+                R.id.action_delete-> episodeAdapter.commitDeletion()
+            }
+            mode?.finish()
+            return true
        }
 
        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
@@ -176,6 +217,10 @@ class LibraryFragment:Fragment(),IModeChangeListener{
         override fun getPageTitle(position: Int): CharSequence? {
             return fragments.keys.elementAt(position)
         }
+
+        fun getFragment(index:Int)=getItem(index)
+
+
     }
 
 
