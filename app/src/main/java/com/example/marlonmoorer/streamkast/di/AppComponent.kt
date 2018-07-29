@@ -1,9 +1,8 @@
 package com.example.marlonmoorer.streamkast.di
 
 
-import android.arch.lifecycle.AndroidViewModel
-import com.example.marlonmoorer.streamkast.viewModels.BaseViewModel
-import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.BaseViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
 import dagger.Component
 import javax.inject.Singleton
 

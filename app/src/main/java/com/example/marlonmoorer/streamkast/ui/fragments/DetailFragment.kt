@@ -18,7 +18,7 @@ import com.example.marlonmoorer.streamkast.setIcon
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 
 
-import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.DetailViewModel
 import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.support.v4.alert
 

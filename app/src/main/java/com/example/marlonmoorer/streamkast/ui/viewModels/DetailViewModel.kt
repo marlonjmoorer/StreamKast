@@ -1,7 +1,6 @@
-package com.example .marlonmoorer.streamkast.viewModels
+package com.example.marlonmoorer.streamkast.ui.viewModels
 
 import android.arch.lifecycle.*
-import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.Utils
 import com.example.marlonmoorer.streamkast.api.models.Channel
 import com.example.marlonmoorer.streamkast.api.models.Episode
@@ -11,8 +10,6 @@ import com.example.marlonmoorer.streamkast.api.models.Podcast
 
 import com.example.marlonmoorer.streamkast.data.Subscription
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.doAsyncResult
-import org.jetbrains.anko.uiThread
 
 
 /**

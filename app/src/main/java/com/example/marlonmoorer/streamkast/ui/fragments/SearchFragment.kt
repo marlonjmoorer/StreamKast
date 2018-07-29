@@ -12,13 +12,13 @@ import android.view.ViewGroup
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.adapters.PagedPodcastListAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.PagedPodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 
-import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
-import com.example.marlonmoorer.streamkast.viewModels.SearchViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.BrowseViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 

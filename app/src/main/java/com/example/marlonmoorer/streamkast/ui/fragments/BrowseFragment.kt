@@ -13,13 +13,13 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 
-import com.example.marlonmoorer.streamkast.adapters.CategoryAdapter
-import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.CategoryAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.FeaturedPodcastAdapter
 
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
-import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.BrowseViewModel
 
 import kotlinx.android.synthetic.main.fragment_browse.view.*
 

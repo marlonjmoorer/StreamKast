@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.viewModels
+package com.example.marlonmoorer.streamkast.ui.viewModels
 
 import android.app.Application
 import android.app.DownloadManager
@@ -6,18 +6,12 @@ import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.ApplicationInfo
 import android.database.ContentObserver
-import android.database.Cursor
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Environment
-import android.os.FileObserver
 import android.os.Handler
-import android.provider.MediaStore
 import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.api.Repository
 
@@ -30,12 +24,10 @@ import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.toByteSize
 import io.reactivex.subjects.PublishSubject
-import org.jetbrains.anko.AnkoAsyncContext
 
 
 import org.jetbrains.anko.doAsync
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 

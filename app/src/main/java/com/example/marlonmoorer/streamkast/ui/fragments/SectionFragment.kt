@@ -9,14 +9,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.adapters.FeaturedPodcastAdapter
-import com.example.marlonmoorer.streamkast.adapters.PodcastListAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.FeaturedPodcastAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.PodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.MediaGenre
 import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.data.Featured
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
-import com.example.marlonmoorer.streamkast.viewModels.BrowseViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.BrowseViewModel
 
 import kotlinx.android.synthetic.main.fragment_section.view.*
 

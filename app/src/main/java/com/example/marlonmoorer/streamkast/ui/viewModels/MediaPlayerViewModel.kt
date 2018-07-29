@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.viewModels
+package com.example.marlonmoorer.streamkast.ui.viewModels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
@@ -6,8 +6,6 @@ import android.arch.lifecycle.Transformations
 import android.content.ComponentName
 import android.content.ServiceConnection
 import android.os.IBinder
-import android.os.SystemClock
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View

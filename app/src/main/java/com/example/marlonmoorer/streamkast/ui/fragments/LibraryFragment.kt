@@ -11,11 +11,11 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.adapters.DownloadListAdapter
-import com.example.marlonmoorer.streamkast.adapters.HistoryListAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.DownloadListAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.HistoryListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
-import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_library.*

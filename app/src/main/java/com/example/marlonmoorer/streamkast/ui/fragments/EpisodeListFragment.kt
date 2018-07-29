@@ -10,10 +10,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.marlonmoorer.streamkast.adapters.EpisodeListAdapter
+import com.example.marlonmoorer.streamkast.ui.adapters.EpisodeListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
-import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.DetailViewModel
 
 
 class EpisodeListFragment: Fragment(){

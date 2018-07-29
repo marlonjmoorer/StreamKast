@@ -13,7 +13,7 @@ import android.view.Menu
 import android.view.MenuItem
 
 import com.example.marlonmoorer.streamkast.ui.fragments.*
-import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +23,7 @@ import com.example.marlonmoorer.streamkast.api.models.Podcast
 
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
-import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.MediaPlayerViewModel
 import org.jetbrains.anko.contentView
 
 

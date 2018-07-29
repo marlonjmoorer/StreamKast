@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.adapters
+package com.example.marlonmoorer.streamkast.ui.adapters
 
 import android.app.DownloadManager
 import android.databinding.BindingAdapter
@@ -15,7 +15,7 @@ import com.example.marlonmoorer.streamkast.databinding.ItemDownloadBinding
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEditViewBinding
 import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
-import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
 import io.reactivex.subjects.PublishSubject
 
 class DownloadListAdapter:EditableAdapter<DownloadListAdapter.ViewHolder>(){

@@ -13,7 +13,7 @@ import com.example.marlonmoorer.streamkast.databinding.FragmentMediaplayerBindin
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.example.marlonmoorer.streamkast.models.MediaPlayerModel
 
-import com.example.marlonmoorer.streamkast.viewModels.MediaPlayerViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.MediaPlayerViewModel
 
 import kotlinx.android.synthetic.main._now_playing.view.*
 import kotlinx.android.synthetic.main.fragment_mediaplayer.*

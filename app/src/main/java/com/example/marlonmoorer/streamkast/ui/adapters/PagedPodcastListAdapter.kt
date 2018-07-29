@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.adapters
+package com.example.marlonmoorer.streamkast.ui.adapters
 
 import android.arch.paging.PagedListAdapter
 import android.databinding.DataBindingUtil

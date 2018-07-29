@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.viewModels
+package com.example.marlonmoorer.streamkast.ui.viewModels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData

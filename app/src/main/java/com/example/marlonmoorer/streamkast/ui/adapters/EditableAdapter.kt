@@ -1,10 +1,6 @@
-package com.example.marlonmoorer.streamkast.adapters
+package com.example.marlonmoorer.streamkast.ui.adapters
 
-import android.databinding.DataBindingUtil
-import android.databinding.ViewDataBinding
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.ViewGroup
 
 /**
  * Created by marlonmoorer on 3/30/18.

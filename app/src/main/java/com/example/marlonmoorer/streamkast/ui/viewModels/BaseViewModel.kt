@@ -1,12 +1,9 @@
-package com.example.marlonmoorer.streamkast.viewModels
+package com.example.marlonmoorer.streamkast.ui.viewModels
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
-import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.api.Repository
-import com.example.marlonmoorer.streamkast.data.KastDatabase
 
 import javax.inject.Inject
 

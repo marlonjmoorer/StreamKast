@@ -10,10 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
-import com.example.marlonmoorer.streamkast.adapters.SubscriptionAdapater
+import com.example.marlonmoorer.streamkast.ui.adapters.SubscriptionAdapater
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
-import com.example.marlonmoorer.streamkast.viewModels.SubscriptionViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.fragment_subscription.view.*
 
 class SubscriptionFragment: Fragment(){

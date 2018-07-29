@@ -16,7 +16,7 @@ import com.example.marlonmoorer.streamkast.databinding.FragmentEpisodeBinding
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.setIcon
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
-import com.example.marlonmoorer.streamkast.viewModels.LibraryViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers

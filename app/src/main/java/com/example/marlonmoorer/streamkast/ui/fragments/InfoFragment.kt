@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentInfoBinding
-import com.example.marlonmoorer.streamkast.viewModels.DetailViewModel
+import com.example.marlonmoorer.streamkast.ui.viewModels.DetailViewModel
 
 
 class InfoFragment: Fragment(){

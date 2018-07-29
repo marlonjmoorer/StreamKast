@@ -1,4 +1,4 @@
-package com.example.marlonmoorer.streamkast.adapters
+package com.example.marlonmoorer.streamkast.ui.adapters
 
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding

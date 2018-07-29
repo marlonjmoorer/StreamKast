@@ -1,15 +1,11 @@
-package com.example.marlonmoorer.streamkast.viewModels
+package com.example.marlonmoorer.streamkast.ui.viewModels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
 import android.arch.paging.DataSource
 import android.arch.paging.LivePagedListBuilder
-import com.example.marlonmoorer.streamkast.api.Repository
-import com.example.marlonmoorer.streamkast.api.models.SearchResults
 
-import org.jetbrains.anko.doAsync
 import android.arch.paging.PagedList
 import com.example.marlonmoorer.streamkast.api.PagedSearchDataSource
 import com.example.marlonmoorer.streamkast.api.models.Podcast
