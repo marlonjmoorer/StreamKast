@@ -16,32 +16,31 @@ import com.example.marlonmoorer.streamkast.databinding.ItemDownloadBinding
 import com.example.marlonmoorer.streamkast.databinding.ItemEditViewBinding
 import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
 import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
-import io.reactivex.subjects.PublishSubject
 
-class DownloadListAdapter:EditableAdapter<DownloadListAdapter.ViewHolder>(){
+class DownloadListAdapter(val callback:EditAdapterCallback?=null):EditableAdapter<DownloadListAdapter.ViewHolder>(){
 
 
-    private var episodes:List<DownloadedEpisodeModel>? = null
-    val clickEvent= PublishSubject.create<DownloadedEpisodeModel>()
-    val deleteEvent=PublishSubject.create<DownloadedEpisodeModel>()
+    private var episodes:List<DownloadedEpisodeModel> = mutableListOf()
 
-    private val deletedItems:MutableList<DownloadedEpisodeModel> = mutableListOf()
+
+    private val selectedItems:MutableList<DownloadedEpisodeModel> = mutableListOf()
 
 
     override fun setEditeMode(canEdit:Boolean){
         super.setEditeMode(canEdit)
-        deletedItems.clear()
+        if(!canEdit)
+            selectedItems.clear()
     }
 
     fun commitDeletion(){
-        deletedItems.forEach {
-            deleteEvent.onNext(it)
+        selectedItems.forEach {
+          callback?.onDelete(it)
         }
     }
 
 
     override fun onBindViewHolder(holder: DownloadListAdapter.ViewHolder, position: Int) {
-        episodes?.get(position)?.let {holder.bind(it)}
+       holder.bind(episodes[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -55,7 +54,7 @@ class DownloadListAdapter:EditableAdapter<DownloadListAdapter.ViewHolder>(){
         return ViewHolder(viewDataBinding)
     }
 
-    override fun getItemCount() =episodes?.size?:0
+    override fun getItemCount() =episodes.size
 
     fun setEpisodes(episodes: List<DownloadedEpisodeModel>){
         this.episodes=episodes
@@ -63,7 +62,7 @@ class DownloadListAdapter:EditableAdapter<DownloadListAdapter.ViewHolder>(){
     }
 
     fun update(info: LibraryViewModel.DownloadInfo) {
-        episodes?.find{ it.downloadId==info.id }?.run {
+        episodes.find{ it.downloadId==info.id }?.run {
             status=info.status
             progress=info.progress
             notifyChange()
@@ -87,14 +86,18 @@ class DownloadListAdapter:EditableAdapter<DownloadListAdapter.ViewHolder>(){
 
     inner class ViewHolder(val binding: ViewDataBinding):RecyclerView.ViewHolder(binding.root){
 
+        val currentEpisode
+            get() = episodes[layoutPosition]
 
         init {
             if(!editMode){
                 binding.root.setOnClickListener {
-                    episodes?.get(layoutPosition)?.let {clickEvent.onNext(it)}
+                   callback?.onOpen(currentEpisode)
                 }
                 binding.root.setOnLongClickListener {v->
-                    openContextMenu(v)
+                    selectedItems.add(currentEpisode)
+                    callback?.onLongClick(currentEpisode)
+                    return@setOnLongClickListener true
                 }
             }else{
                 (binding as ItemEditViewBinding).run{
@@ -103,39 +106,26 @@ class DownloadListAdapter:EditableAdapter<DownloadListAdapter.ViewHolder>(){
                     }
                     checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                         if(isChecked){
-                            deletedItems.add(episodes!![layoutPosition])
+                            selectedItems.add(currentEpisode)
                         }else{
-                            deletedItems.remove(episodes!![layoutPosition])
+                            selectedItems.remove(currentEpisode)
                         }
                     }
                 }
             }
         }
-        private fun openContextMenu(v:View):Boolean{
-            PopupMenu(v.context,v).run {
-                inflate(R.menu.download_menu)
-                setOnMenuItemClickListener {
-                    when(it.itemId){
-                        R.id.action_remove->{
-                            episodes?.get(layoutPosition)?.let {
-                                deleteEvent.onNext(it)
-                            }
-                            return@setOnMenuItemClickListener true
-                        }
-                    }
-                    return@setOnMenuItemClickListener false
-                }
-                show()
-            }
-            return true
-        }
+
 
         fun bind(model: DownloadedEpisodeModel){
             if(binding is ItemDownloadBinding){
                 binding.episode=model
+
             }
             if (binding is ItemEditViewBinding){
                 binding.episode=model
+                if(selectedItems.contains(model)){
+                    binding.checkBox.isChecked=true
+                }
             }
         }
     }

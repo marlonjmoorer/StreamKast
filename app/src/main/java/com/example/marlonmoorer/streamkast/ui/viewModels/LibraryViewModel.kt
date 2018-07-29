@@ -158,4 +158,8 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
 
     data class DownloadInfo(var id:Long,var progress:Int=0,var status:Int=0,var path:String="")
 
+    override fun onCleared() {
+        super.onCleared()
+        getApplication<App>().contentResolver.unregisterContentObserver(observer)
+    }
 }

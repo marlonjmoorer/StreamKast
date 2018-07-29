@@ -10,12 +10,13 @@ import android.view.*
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
+import com.example.marlonmoorer.streamkast.ui.adapters.EditableAdapter
 import com.example.marlonmoorer.streamkast.ui.adapters.HistoryListAdapter
 import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
 import org.jetbrains.anko.cancelButton
 import org.jetbrains.anko.support.v4.alert
 
-class PlaybackHistoryFragment: BaseFragment(), ActionMode.Callback, HistoryListAdapter.AdapterCallback {
+class PlaybackHistoryFragment: BaseFragment(), ActionMode.Callback, EditableAdapter.EditAdapterCallback {
 
 
     private lateinit var episodeAdapter: HistoryListAdapter

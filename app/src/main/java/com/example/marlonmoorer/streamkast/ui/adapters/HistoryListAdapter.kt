@@ -12,22 +12,20 @@ import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 
 import com.example.marlonmoorer.streamkast.databinding.ItemEditViewBinding
 import com.example.marlonmoorer.streamkast.databinding.ItemHistoryBinding
-import com.example.marlonmoorer.streamkast.models.IEpisode
-import io.reactivex.subjects.PublishSubject
 
-class HistoryListAdapter(var callback:AdapterCallback?=null):EditableAdapter<HistoryListAdapter.ViewHolder>(){
+class HistoryListAdapter(var callback: EditAdapterCallback?=null):EditableAdapter<HistoryListAdapter.ViewHolder>(){
     private var episodes:List<PlaybackHistory> = mutableListOf()
-    private val seletedItems:MutableList<PlaybackHistory> = mutableListOf()
+    private val selectedItems:MutableList<PlaybackHistory> = mutableListOf()
 
     override fun setEditeMode(canEdit: Boolean) {
         super.setEditeMode(canEdit)
         if(!canEdit)
-            seletedItems.clear()
+            selectedItems.clear()
     }
     override fun getItemCount()=  episodes.size
 
     fun commitDeletion(){
-        seletedItems.forEach {
+        selectedItems.forEach {
             callback?.onDelete(it)
         }
     }
@@ -52,16 +50,6 @@ class HistoryListAdapter(var callback:AdapterCallback?=null):EditableAdapter<His
         notifyDataSetChanged()
     }
 
-    val clickEvent= PublishSubject.create<IEpisode>()
-    val deleteEvent=PublishSubject.create<PlaybackHistory>()
-
-    interface AdapterCallback{
-        fun onOpen(episode: IEpisode)
-
-        fun onDelete(episode: IEpisode)
-
-        fun onLongClick(episode: IEpisode)
-    }
 
     inner class ViewHolder(val binding: ViewDataBinding):RecyclerView.ViewHolder(binding.root){
 
@@ -75,7 +63,7 @@ class HistoryListAdapter(var callback:AdapterCallback?=null):EditableAdapter<His
 
                 }
                 binding.root.setOnLongClickListener {
-                    seletedItems.add(currentEpisode)
+                    selectedItems.add(currentEpisode)
                     callback?.onLongClick(currentEpisode)
                     return@setOnLongClickListener true
                 }
@@ -88,11 +76,11 @@ class HistoryListAdapter(var callback:AdapterCallback?=null):EditableAdapter<His
                     }
                     checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                         if(isChecked){
-                            //if(!seletedItems.contains(currentEpisode))
-                            seletedItems.add(currentEpisode)
+                            //if(!selectedItems.contains(currentEpisode))
+                            selectedItems.add(currentEpisode)
 
                         }else{
-                            seletedItems.remove(currentEpisode)
+                            selectedItems.remove(currentEpisode)
                         }
                     }
                 }
@@ -104,7 +92,7 @@ class HistoryListAdapter(var callback:AdapterCallback?=null):EditableAdapter<His
         fun bind(model:PlaybackHistory){
             if (binding is ItemEditViewBinding){
                 binding.episode=model
-                if(seletedItems.contains(model)){
+                if(selectedItems.contains(model)){
                     binding.checkBox.isChecked=true
                 }
 
@@ -114,22 +102,6 @@ class HistoryListAdapter(var callback:AdapterCallback?=null):EditableAdapter<His
             }
         }
 
-        private fun openContextMenu(v: View):Boolean{
-            PopupMenu(v.context,v).run {
-                inflate(R.menu.download_menu)
-                setOnMenuItemClickListener {
-                    when(it.itemId){
-                        R.id.action_remove->{
-                            callback?.onDelete(currentEpisode)
-                            return@setOnMenuItemClickListener true
-                        }
-                    }
-                    return@setOnMenuItemClickListener false
-                }
-                show()
-            }
-            return true
-        }
     }
 
 }
