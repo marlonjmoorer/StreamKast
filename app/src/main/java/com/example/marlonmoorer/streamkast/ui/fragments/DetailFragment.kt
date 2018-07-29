@@ -25,19 +25,14 @@ import org.jetbrains.anko.support.v4.alert
 /**
  * Created by marlonmoorer on 3/24/18.
  */
-class DetailFragment:Fragment(){
+class DetailFragment:BaseFragment(){
 
     lateinit var detailModel: DetailViewModel
     lateinit var binding:FragmentDetailsBinding
     private  var Id:String=""
     private var loading= ObservableBoolean(true)
 
-    private  var listener:FragmentEvenListener?=null
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        listener= context as FragmentEvenListener
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

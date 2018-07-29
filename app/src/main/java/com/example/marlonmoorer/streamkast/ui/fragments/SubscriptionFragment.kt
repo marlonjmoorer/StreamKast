@@ -1,34 +1,29 @@
 package com.example.marlonmoorer.streamkast.ui.fragments
 
 import android.arch.lifecycle.Observer
-import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.ui.adapters.SubscriptionAdapater
 import com.example.marlonmoorer.streamkast.createViewModel
-import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
+import com.example.marlonmoorer.streamkast.data.Subscription
 import com.example.marlonmoorer.streamkast.ui.viewModels.SubscriptionViewModel
 import kotlinx.android.synthetic.main.fragment_subscription.view.*
+import org.jetbrains.anko.cancelButton
+import org.jetbrains.anko.contentView
+import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.support.v4.alert
 
-class SubscriptionFragment: Fragment(){
+class SubscriptionFragment: BaseFragment(),SubscriptionAdapater.SubscriptionAdapterCallback,ActionMode.Callback{
 
 
     lateinit var adapter:SubscriptionAdapater
     lateinit var viewModel:SubscriptionViewModel
+    private  var isInActionMode:Boolean=false
 
-    private  var listener: FragmentEvenListener?=null
 
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        listener= context as FragmentEvenListener
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +32,7 @@ class SubscriptionFragment: Fragment(){
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        adapter= SubscriptionAdapater()
+        adapter= SubscriptionAdapater(this)
         return inflater.inflate(R.layout.fragment_subscription,container,false).apply {
             subs.layoutManager=GridLayoutManager(activity,2)
             subs.adapter=adapter
@@ -55,17 +50,65 @@ class SubscriptionFragment: Fragment(){
                 adapter.setSubList(it)
             }
         })
-        adapter.openEvent.subscribe{
-            listener?.viewPodcast(it.podcastId.toString())
-        }
-        adapter.toggleSubEvent.subscribe{
-            viewModel.unsubscribe(it)
-        }
     }
 
-//    override fun subscribe(sub: Subscription) =viewModel.subscribe(sub)
-//    override fun unsubscribe(sub: Subscription) =viewModel.unsubscribe(sub)
-//    override fun viewPodcast(id: String) =listener?.viewPodcast(id)
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.library_menu,menu)
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId){
+            R.id.action_edit->{
+                view?.startActionMode(this)
+            }
+        }
+        return false
+    }
 
+    override fun onOpen(id: String) {
+        listener?.viewPodcast(id)
+    }
+
+    override fun onUnsubscribe(subscription: Subscription) {
+        viewModel.unsubscribe(subscription)
+        if(!isInActionMode)
+            activity?.contentView?.let {
+                snackbar(it,"Unsubscribed","Undo"){
+                     viewModel.subscribe(subscription)
+                }
+            }
+    }
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+        when(item?.itemId){
+            R.id.action_unsubscribe->{
+                alert("Usubscribe from  these podcast?") {
+                    positiveButton("Unsubscribe"){
+                       adapter.commitUnsinscribe()
+                        mode?.finish()
+                    }
+                    cancelButton {
+
+                    }
+                }.show()
+            }
+        }
+        return true
+    }
+
+    override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        mode?.menuInflater?.inflate(R.menu.menu_subscriptions,menu)
+        return true
+    }
+
+    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        adapter.setEditeMode(true)
+        isInActionMode=true
+        return true
+    }
+
+    override fun onDestroyActionMode(mode: ActionMode?) {
+        adapter.setEditeMode(false)
+        isInActionMode=false
+    }
 }

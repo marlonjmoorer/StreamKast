@@ -16,17 +16,10 @@ import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.ui.viewModels.DetailViewModel
 
 
-class EpisodeListFragment: Fragment(){
+class EpisodeListFragment: BaseFragment(){
 
     lateinit var detailModel: DetailViewModel
     lateinit var episodeListAdapter: EpisodeListAdapter
-    private  var listener: FragmentEvenListener?=null
-
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        listener= context as FragmentEvenListener
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         episodeListAdapter= EpisodeListAdapter()

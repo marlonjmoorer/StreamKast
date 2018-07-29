@@ -85,9 +85,9 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
     val episodeObserver= Observer<EpisodeModel> { ep->
        ep?.let{
             mediaPlayerModel.run {
-            Image=ep.thumbnail!!
-            Title=ep.title!!
-            Author= ep.author!!
+            Image=ep.thumbnail
+            Title=ep.title
+            Author= ep.author
             Duration=ep.duration?:0
          }
        }

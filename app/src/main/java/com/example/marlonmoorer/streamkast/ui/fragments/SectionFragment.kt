@@ -23,19 +23,13 @@ import kotlinx.android.synthetic.main.fragment_section.view.*
 
 
 
-class SectionFragment : Fragment() {
+class SectionFragment : BaseFragment() {
     private  val KEY = "SECTION_NAME"
     lateinit var viewModel: BrowseViewModel
     private var podcastAdapter:PodcastListAdapter?=null
     private var featuredPodcastAdapter:FeaturedPodcastAdapter?=null
     lateinit var  genre: MediaGenre
 
-    private  var listener: FragmentEvenListener?=null
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        listener= context as FragmentEvenListener
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

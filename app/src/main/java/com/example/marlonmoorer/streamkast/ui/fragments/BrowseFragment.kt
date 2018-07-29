@@ -27,18 +27,12 @@ import kotlinx.android.synthetic.main.fragment_browse.view.*
 /**
  * Created by marlonmoorer on 3/21/18.
  */
-class BrowseFragment : Fragment() {
+class BrowseFragment : BaseFragment() {
 
     lateinit var browseViewModel: BrowseViewModel
     lateinit var featuredPodcastAdapter:FeaturedPodcastAdapter
     lateinit var categoryAdapter: CategoryAdapter
-    private  var listener:FragmentEvenListener?=null
 
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        listener= context as FragmentEvenListener
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_browse, container, false)

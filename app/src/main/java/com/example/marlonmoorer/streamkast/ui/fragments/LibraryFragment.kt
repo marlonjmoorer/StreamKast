@@ -29,7 +29,6 @@ class LibraryFragment:Fragment(),IModeChangeListener{
         (activity as AppCompatActivity).apply {
             setSupportActionBar(view.toolbar)
         }
-        //setHasOptionsMenu(true)
         return  view
     }
 

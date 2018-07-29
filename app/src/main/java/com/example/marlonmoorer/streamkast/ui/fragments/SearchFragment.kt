@@ -22,18 +22,11 @@ import com.example.marlonmoorer.streamkast.ui.viewModels.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 
-class SearchFragment: Fragment(){
+class SearchFragment: BaseFragment(){
 
     private lateinit var searchViewModel:SearchViewModel
     private lateinit var browseViewModel:BrowseViewModel
     private lateinit var adapter:PagedPodcastListAdapter
-
-    private  var listener: FragmentEvenListener?=null
-
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        listener= context as FragmentEvenListener
-    }
 
 
 
