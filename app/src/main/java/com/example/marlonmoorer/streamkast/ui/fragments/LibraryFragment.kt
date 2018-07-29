@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.*
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.ui.adapters.DownloadListAdapter
-import com.example.marlonmoorer.streamkast.ui.adapters.HistoryListAdapter
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
@@ -73,69 +72,7 @@ class LibraryFragment:Fragment(),IModeChangeListener{
     }
 
 
-
-    class PlaybackHistoryFragment:Fragment(),ActionMode.Callback{
-        private lateinit var episodeAdapter:HistoryListAdapter
-        private  var listener: FragmentEvenListener?=null
-
-
-        override fun onAttach(context: Context?) {
-            super.onAttach(context)
-            listener= context as FragmentEvenListener
-        }
-
-        override fun onActivityCreated(savedInstanceState: Bundle?) {
-            super.onActivityCreated(savedInstanceState)
-            val viewModel=createViewModel<LibraryViewModel>()
-            episodeAdapter.clickEvent.subscribe{
-                listener?.viewEpisode(it)
-            }
-            episodeAdapter.deleteEvent.subscribe{
-                viewModel.removeHistory(it.guid)
-            }
-
-            viewModel.getPlayBackHistory().observe(this, Observer { episodes->
-                episodes?.let { episodeAdapter.setEpisodes(it) }
-            })
-        }
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            episodeAdapter= HistoryListAdapter()
-            return RecyclerView(context).apply{
-                adapter=episodeAdapter
-                layoutManager= LinearLayoutManager(context)
-            }
-        }
-
-
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            when(item?.itemId){
-                R.id.action_delete->episodeAdapter.commitDeletion()
-            }
-            mode?.finish()
-            return true
-        }
-
-        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            mode?.menuInflater?.inflate(R.menu.edit_menu,menu)
-            return true
-        }
-
-        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            (parentFragment as  IModeChangeListener).onModeChange(true)
-            episodeAdapter.setEditeMode(true)
-            return true
-        }
-
-        override fun onDestroyActionMode(mode: ActionMode?) {
-            (parentFragment as  IModeChangeListener).onModeChange(false)
-            episodeAdapter.setEditeMode(false)
-        }
-
-
-    }
-
-
-   class DownloadListFragment:Fragment(),ActionMode.Callback{
+    class DownloadListFragment:Fragment(),ActionMode.Callback{
         private lateinit var episodeAdapter:DownloadListAdapter
         private  var listener: FragmentEvenListener?=null
 

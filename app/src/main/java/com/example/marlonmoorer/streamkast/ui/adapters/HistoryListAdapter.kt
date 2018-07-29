@@ -15,25 +15,24 @@ import com.example.marlonmoorer.streamkast.databinding.ItemHistoryBinding
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import io.reactivex.subjects.PublishSubject
 
-class HistoryListAdapter:EditableAdapter<HistoryListAdapter.ViewHolder>(){
-    private var episodes:List<PlaybackHistory>? = null
-
-    private val deletedItems:MutableList<PlaybackHistory> = mutableListOf()
+class HistoryListAdapter(var callback:AdapterCallback?=null):EditableAdapter<HistoryListAdapter.ViewHolder>(){
+    private var episodes:List<PlaybackHistory> = mutableListOf()
+    private val seletedItems:MutableList<PlaybackHistory> = mutableListOf()
 
     override fun setEditeMode(canEdit: Boolean) {
-       super.setEditeMode(canEdit)
-        deletedItems.clear()
+        super.setEditeMode(canEdit)
+        if(!canEdit)
+            seletedItems.clear()
     }
-
-    override fun getItemCount()=  episodes?.size?:0
+    override fun getItemCount()=  episodes.size
 
     fun commitDeletion(){
-        deletedItems.forEach {
-            deleteEvent.onNext(it)
+        seletedItems.forEach {
+            callback?.onDelete(it)
         }
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        episodes?.get(position)?.let { holder.bind(it) }
+        holder.bind(episodes[position])
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -56,14 +55,29 @@ class HistoryListAdapter:EditableAdapter<HistoryListAdapter.ViewHolder>(){
     val clickEvent= PublishSubject.create<IEpisode>()
     val deleteEvent=PublishSubject.create<PlaybackHistory>()
 
+    interface AdapterCallback{
+        fun onOpen(episode: IEpisode)
+
+        fun onDelete(episode: IEpisode)
+
+        fun onLongClick(episode: IEpisode)
+    }
+
     inner class ViewHolder(val binding: ViewDataBinding):RecyclerView.ViewHolder(binding.root){
+
+        val currentEpisode
+            get() = episodes[layoutPosition]
+
         init{
             if(!editMode){
                 binding.root.setOnClickListener {
-                    episodes?.get(layoutPosition)?.let {clickEvent.onNext(it) }
+                       callback?.onOpen(currentEpisode)
+
                 }
-                binding.root.setOnLongClickListener {v->
-                    openContextMenu(v)
+                binding.root.setOnLongClickListener {
+                    seletedItems.add(currentEpisode)
+                    callback?.onLongClick(currentEpisode)
+                    return@setOnLongClickListener true
                 }
             }
             else{
@@ -74,9 +88,11 @@ class HistoryListAdapter:EditableAdapter<HistoryListAdapter.ViewHolder>(){
                     }
                     checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                         if(isChecked){
-                            deletedItems.add(episodes!![layoutPosition])
+                            //if(!seletedItems.contains(currentEpisode))
+                            seletedItems.add(currentEpisode)
+
                         }else{
-                            deletedItems.remove(episodes!![layoutPosition])
+                            seletedItems.remove(currentEpisode)
                         }
                     }
                 }
@@ -84,13 +100,18 @@ class HistoryListAdapter:EditableAdapter<HistoryListAdapter.ViewHolder>(){
 
         }
 
+
         fun bind(model:PlaybackHistory){
             if (binding is ItemEditViewBinding){
                 binding.episode=model
+                if(seletedItems.contains(model)){
+                    binding.checkBox.isChecked=true
+                }
+
             }else if(binding is ItemHistoryBinding){
                 binding.episode=model
-            }
 
+            }
         }
 
         private fun openContextMenu(v: View):Boolean{
@@ -99,9 +120,7 @@ class HistoryListAdapter:EditableAdapter<HistoryListAdapter.ViewHolder>(){
                 setOnMenuItemClickListener {
                     when(it.itemId){
                         R.id.action_remove->{
-                            episodes?.get(layoutPosition)?.let {
-                                deleteEvent.onNext(it)
-                            }
+                            callback?.onDelete(currentEpisode)
                             return@setOnMenuItemClickListener true
                         }
                     }

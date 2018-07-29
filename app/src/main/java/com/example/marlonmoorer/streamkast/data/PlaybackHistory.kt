@@ -16,10 +16,8 @@ class PlaybackHistory:IEpisode {
     override var thumbnail:String=""
     override var description: String=""
     override var duration:Int?=0
-
     @TypeConverters(Converters::class)
     var lastPlayed:Date?=null
-
 
 }
 
