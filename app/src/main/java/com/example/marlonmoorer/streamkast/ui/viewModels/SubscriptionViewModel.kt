@@ -3,6 +3,7 @@ package com.example.marlonmoorer.streamkast.ui.viewModels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import com.example.marlonmoorer.streamkast.Utils
+import com.example.marlonmoorer.streamkast.api.models.Podcast
 
 import com.example.marlonmoorer.streamkast.data.Subscription
 import com.example.marlonmoorer.streamkast.models.IPodcast
@@ -16,27 +17,20 @@ class  SubscriptionViewModel:BaseViewModel(){
            get() = repository.subscriptions.all
 
 
-    fun toggleSubscription(podcast: IPodcast):LiveData<Boolean>{
+    fun toggleSubscription(podcast: Podcast):LiveData<Boolean>{
         val isSubbed=MediatorLiveData<Boolean>()
-        val wasSubbed=repository.isSubscribed(podcast.id)
-        isSubbed.addSource(wasSubbed,{subbed->
-            doAsync {
-                if(subbed==true){
-                    repository.unsubscribe(podcast.id)
-                    isSubbed.postValue(false)
-                }else{
-                    repository.subscribe(Subscription().apply {
-                        title=podcast.title
-                        thumbnail=podcast.thumbnail
-                        podcastId=podcast.id.toInt()
-                    })
-                    isSubbed.postValue(true)
-                }
-                uiThread {
-                    isSubbed.removeSource(wasSubbed)
-                }
+        doAsync {
+            if(podcast.subscribed==true){
+                repository.unsubscribe(podcast.id)
+            }else{
+                repository.subscribe(Subscription().apply {
+                    title=podcast.title
+                    thumbnail=podcast.thumbnail
+                    podcastId=podcast.id.toInt()
+                })
             }
-        })
+            isSubbed.postValue(podcast.subscribed)
+        }
         return  isSubbed
     }
 

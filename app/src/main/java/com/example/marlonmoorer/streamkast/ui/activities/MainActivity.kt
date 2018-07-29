@@ -172,11 +172,9 @@ class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationVi
     override fun toggleSubscription(podcast: Podcast) {
         subscriptionViewModel?.toggleSubscription(podcast)?.observe(this, Observer { subbed->
               subbed?.let {
-                  podcast.subscribed=subbed
                   val messageId=if(it) R.string.message_subscribe else R.string.message_unsubscribe
                   val message=resources.getString(messageId)
                   Snackbar.make(contentView!!,message, Snackbar.LENGTH_SHORT).show()
-                  podcast.notifyPropertyChanged(BR.subscribed)
               }
         })
     }

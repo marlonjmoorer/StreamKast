@@ -22,17 +22,15 @@ import com.example.marlonmoorer.streamkast.ui.viewModels.SearchViewModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 
-class SearchFragment: BaseFragment(){
+class SearchFragment: BaseFragment(),PagedPodcastListAdapter.PodcastListCallBack{
 
     private lateinit var searchViewModel:SearchViewModel
     private lateinit var browseViewModel:BrowseViewModel
     private lateinit var adapter:PagedPodcastListAdapter
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view=inflater.inflate(R.layout.fragment_search,container,false)
-        adapter=PagedPodcastListAdapter()
+        adapter=PagedPodcastListAdapter(this)
         view.apply {
             resultList?.adapter=adapter
             resultList.layoutManager= LinearLayoutManager(activity)
@@ -54,12 +52,10 @@ class SearchFragment: BaseFragment(){
         searchViewModel=createViewModel()
         browseViewModel=createViewModel()
         searchViewModel.searchResults.observe(this@SearchFragment,resultsObserver)
-        adapter.openEvent.subscribe{
-            listener?.viewPodcast(it.collectionId)
-        }
-        adapter.toggleSubEvent.subscribe{
-            listener?.toggleSubscription(it)
-        }
+    }
+
+    override fun onOpen(id: String) {
+        listener?.viewPodcast(id)
     }
 
     override fun onDestroyView() {
@@ -72,8 +68,5 @@ class SearchFragment: BaseFragment(){
             adapter.notifyDataSetChanged()
         }
     }
-
-
-
-
+    
 }

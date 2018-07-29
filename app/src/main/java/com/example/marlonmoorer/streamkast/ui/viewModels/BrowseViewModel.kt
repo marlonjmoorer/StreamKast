@@ -1,10 +1,12 @@
 package com.example.marlonmoorer.streamkast.ui.viewModels
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Transformations
 
 import com.example.marlonmoorer.streamkast.api.models.Podcast
 
 import com.example.marlonmoorer.streamkast.data.Featured
+import org.jetbrains.anko.doAsync
 
 
 class  BrowseViewModel:BaseViewModel() {
@@ -16,7 +18,17 @@ class  BrowseViewModel:BaseViewModel() {
     fun  setGenre(id: String){
 
         featuredPodcast= repository.getFeaturedPostcasts(id)
-        latestPodcast=repository.getShowsByGenre(id)
+        latestPodcast=Transformations.map(repository.getShowsByGenre(id),{podcasts->
+            podcasts.forEach {p->
+                doAsync {
+                   repository.isSubscribed(p.id).observeForever {
+                       p.subscribed=it!!
+                       p.notifyChange()
+                   }
+                }
+            }
+            return@map podcasts
+        })
     }
 
 }

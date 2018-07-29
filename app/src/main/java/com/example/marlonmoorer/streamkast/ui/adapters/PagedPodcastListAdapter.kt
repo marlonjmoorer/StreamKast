@@ -1,10 +1,13 @@
 package com.example.marlonmoorer.streamkast.ui.adapters
 
+import android.arch.paging.PagedList
 import android.arch.paging.PagedListAdapter
 import android.databinding.DataBindingUtil
+import android.databinding.OnRebindCallback
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.models.Podcast
@@ -12,7 +15,7 @@ import com.example.marlonmoorer.streamkast.databinding.ItemPodcastBinding
 import io.reactivex.subjects.PublishSubject
 
 
-class PagedPodcastListAdapter:PagedListAdapter<Podcast,PagedPodcastListAdapter.ViewHolder>(diffCallback){
+class PagedPodcastListAdapter(var callback: PodcastListCallBack?=null):PagedListAdapter<Podcast,PagedPodcastListAdapter.ViewHolder>(diffCallback){
 
 
     override fun onBindViewHolder(holder:ViewHolder, position: Int) {
@@ -24,19 +27,20 @@ class PagedPodcastListAdapter:PagedListAdapter<Podcast,PagedPodcastListAdapter.V
         return ViewHolder(binding)
     }
 
-    val openEvent=PublishSubject.create<Podcast>()
-    val toggleSubEvent=PublishSubject.create<Podcast>()
+
+
+    interface PodcastListCallBack{
+        fun onOpen(id:String)
+    }
+
 
     inner class  ViewHolder(val binding: ItemPodcastBinding):RecyclerView.ViewHolder(binding.root){
 
         init {
             binding.setListener{v->
-                val p = getItem(layoutPosition)!!
-                when(v.id){
-                    R.id.subscribe_button->toggleSubEvent.onNext(p)
-                    else->openEvent.onNext(p)
-                }
+                callback?.onOpen(getItem(layoutPosition)!!.collectionId)
             }
+            binding.subscribeButton.visibility= View.GONE
         }
 
         fun bind(model: Podcast?){
