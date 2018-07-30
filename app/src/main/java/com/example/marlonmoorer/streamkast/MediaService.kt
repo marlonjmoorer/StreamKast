@@ -92,6 +92,8 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         timer=Timer()
         registerReceiver(noisyReceiver,IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
         registerReceiver(playAudioReceiver, IntentFilter(PLAY_AUDIO))
+
+
     }
 
     override fun onDestroy() {
@@ -154,11 +156,11 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             val play_pause_icon:Int
             if(isPlaying) {
                 play_pauseAction=createAction(1)
-                play_pause_icon= R.drawable.icons8_pause
+                play_pause_icon= R.drawable.ic_pause_solid
             }
             else {
                 play_pauseAction=createAction(0)
-                play_pause_icon= R.drawable.icons8_play
+                play_pause_icon= R.drawable.ic_play_arrow_solid
             }
 
             val mediaStyle=MediaStyle()
@@ -173,9 +175,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                     .setStyle(mediaStyle)
                     .setLargeIcon(bitmapImage)
                     .setSmallIcon(android.R.drawable.stat_sys_headset)
-                    .addAction(android.R.drawable.ic_media_previous, "previous",createAction(3) )
+                    .addAction(R.drawable.ic_replay_30, "previous",createAction(3) )
                     .addAction(play_pause_icon, "play",play_pauseAction)
-                    .addAction(android.R.drawable.ic_media_next, "next",createAction(2))
+                    .addAction(R.drawable.ic_forward_30, "next",createAction(2))
                     .setContentText(currentMedia?.author)
                     .setContentTitle(currentMedia?.title)
                     .setDeleteIntent(createAction(4))
@@ -198,7 +200,6 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
            return ExtractorMediaSource.Factory(
                     DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri)
         }else {
-            //val uri= Uri.fromFile(File(url))
             val dataSpec = DataSpec(uri)
             val fileDataSource = FileDataSource()
             val factory = object : DataSource.Factory {
@@ -228,17 +229,14 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
             exoPlayer.addListener(object :IMediaListener{
 
-                override fun onPlayerError(error: ExoPlaybackException?) {
-                    super.onPlayerError(error)
-                }
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when(playbackState){
                         Player.STATE_BUFFERING->{
-                            playbackStateData.postValue(PlaybackState.STATE_BUFFERING)
+                            setPlaybackState(PlaybackState.STATE_BUFFERING)
                         }
                         Player.STATE_READY->{
                             val state=if(playWhenReady)PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
-                            playbackStateData.postValue(state)
+                            setPlaybackState(state)
                         }
                     }
                 }
@@ -252,6 +250,17 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     }
 
 
+    private fun setPlaybackState(state: Int) {
+        val action=if (state == PlaybackStateCompat.STATE_PLAYING)
+            PlaybackStateCompat.ACTION_PAUSE
+        else
+            PlaybackStateCompat.ACTION_PLAY
+        val playbackstateBuilder = PlaybackStateCompat.Builder()
+                .setActions(action)
+                .setState(state,exoPlayer.contentPosition,1.0f, SystemClock.elapsedRealtime())
+        mediaSession?.setPlaybackState(playbackstateBuilder.build())
+        playbackStateData.postValue(state)
+    }
 
     fun updateNotification(){
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -290,6 +299,15 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         }
 
     }
+
+    private val mediaButtonReceiver = object :BroadcastReceiver() {
+
+        override fun onReceive(context: Context?, intent: Intent) {
+            handleIntent(intent)
+        }
+
+    }
+
     private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
 
         override fun onPlay() {
@@ -297,7 +315,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
             if(successfullyRetrievedAudioFocus()){
                 exoPlayer.playWhenReady=true
                 mediaSession?.setActive(true)
-
+                setPlaybackState(PlaybackStateCompat.STATE_PLAYING)
                 startSeekbarUpdate()
                 startForeground()
             }
@@ -306,7 +324,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         override fun onPause() {
             super.onPause()
             exoPlayer.playWhenReady=false
-            playbackStateData.postValue(PlaybackStateCompat.STATE_PAUSED)
+            setPlaybackState(PlaybackStateCompat.STATE_PAUSED)
             stopForeground(false)
             stopSeekbarUpdate()
             updateNotification()
