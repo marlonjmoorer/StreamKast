@@ -85,7 +85,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:indeterminate="true"
-                    android:indeterminateTint="@color/red_400"
+                    android:indeterminateTint="@color/accent"
                     app:visibility="@{loading}" />
             </FrameLayout>
 

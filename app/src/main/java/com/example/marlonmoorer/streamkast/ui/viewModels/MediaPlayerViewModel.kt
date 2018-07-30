@@ -17,7 +17,7 @@ import com.example.marlonmoorer.streamkast.models.IEpisode
 import org.jetbrains.anko.doAsync
 import java.util.*
 
-class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListener {
+class MediaPlayerViewModel:BaseViewModel(),ServiceConnection {
 
 
     var episode:LiveData<EpisodeModel>?=null
@@ -56,7 +56,7 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
 
 
 
-    override fun onClick(view :View?) {
+    fun togglePlayback() {
         playbackState?.let {
             when (it) {
                 PlaybackStateCompat.STATE_PLAYING
@@ -74,6 +74,8 @@ class MediaPlayerViewModel:BaseViewModel(),ServiceConnection, View.OnClickListen
     fun play()=controls?.play()
     fun pause()=controls?.pause()
     fun seekTo(position: Long)=controls?.seekTo(position)
+    fun fastForward()=controls?.fastForward()
+    fun rewind()=controls?.rewind()
 
     fun addToHistory(episode: EpisodeModel){
         doAsync(Utils.exceptionHandler) {

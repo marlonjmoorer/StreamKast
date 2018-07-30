@@ -3,6 +3,7 @@ package com.example.marlonmoorer.streamkast.models
 import android.databinding.BaseObservable
 import android.databinding.Bindable
 import android.graphics.Bitmap
+import android.support.v4.media.session.PlaybackStateCompat
 import com.example.marlonmoorer.streamkast.BR
 import com.example.marlonmoorer.streamkast.toTime
 
@@ -13,6 +14,7 @@ class MediaPlayerModel:BaseObservable() {
     private  var title=""
     private  var author=""
     private  var image:String?=null
+    private  var state:Int=0
 
 
     var Elapsed
@@ -53,4 +55,12 @@ class MediaPlayerModel:BaseObservable() {
         @Bindable get() = elapsed.toTime()
     val durationTime
         @Bindable get() = duration.toTime()
+
+
+    var playbackState
+        @Bindable get() = state
+        set(value){
+            state=value
+            notifyPropertyChanged(BR.playbackState)
+        }
 }

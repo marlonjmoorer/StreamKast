@@ -1,13 +1,17 @@
 package com.example.marlonmoorer.streamkast.ui.fragments
 
+import android.app.DownloadManager
 import android.arch.lifecycle.Observer
+import android.databinding.BindingAdapter
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.media.session.PlaybackStateCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.SeekBar
+import android.widget.TextView
 import com.example.marlonmoorer.streamkast.*
 import com.example.marlonmoorer.streamkast.databinding.FragmentMediaplayerBinding
 import com.example.marlonmoorer.streamkast.models.EpisodeModel
@@ -35,11 +39,17 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
             nowPlaying?.run {
                 title.isSelected=true
                 playPause.setOnClickListener{
-                    mediaViewModel?.onClick(it)
+                    mediaViewModel?.togglePlayback()
                 }
             }
             playPause.setOnClickListener{
-                mediaViewModel?.onClick(it)
+                mediaViewModel?.togglePlayback()
+            }
+            fastForward.setOnClickListener{
+                mediaViewModel?.fastForward()
+            }
+            rewind.setOnClickListener{
+                mediaViewModel?.rewind()
             }
             seekbar.setOnSeekBarChangeListener(this@MediaPlayerFragment)
         }
@@ -93,28 +103,21 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
        }
     }
     val playStateObserver= Observer<Int> { state->
-        when(state) {
-            PlaybackStateCompat.STATE_PLAYING -> {
-                now_playing.play_pause.setImageResource(R.drawable.icons8_pause)
-                play_pause.setImageResource(R.drawable.icons8_pause)
-            }
-            PlaybackStateCompat.STATE_BUFFERING-> {
-
-            }
-
-            PlaybackStateCompat.STATE_PAUSED,
-            PlaybackStateCompat.STATE_NONE,
-            PlaybackStateCompat.STATE_STOPPED-> {
-                now_playing.play_pause.setImageResource(R.drawable.icons8_play)
-                play_pause.setImageResource(R.drawable.icons8_play)
-            }
-        }
+        mediaPlayerModel.playbackState=state?:0
     }
-    val positionObserver=Observer<Int>{ pos->
-        pos?.let { mediaPlayerModel.Elapsed=pos}
+    val positionObserver=Observer<Int>{ position->
+        position?.let { mediaPlayerModel.Elapsed=position}
     }
-
 
     fun fadeMiniPlayer(offset:Float)=now_playing?.fade(1 - (offset))
+
+    companion object {
+        private val playImage=R.drawable.ic_play_arrow_solid
+        private val playImageSmall=R.drawable.ic_play_arrow_solid_small
+        private val pauseImage=R.drawable.ic_pause_solid
+        private val pauseImageSmall=R.drawable.ic_pause_solid_small
+
+
+    }
 
 }

@@ -10,12 +10,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <android.support.constraint.ConstraintLayout
+            style="@style/Theme.AppCompat.Light.NoActionBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black"
-            style="@style/Theme.AppCompat.Light.NoActionBar"
-            >
+            android:background="@color/colorPrimaryDark">
 
 
 
@@ -23,10 +23,10 @@
                 android:id="@+id/thumbnail"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="64dp"
                 app:layout_constraintBottom_toTopOf="@+id/title"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -40,11 +40,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="@{model.title}"
                 android:gravity="center"
+                android:text="@{model.title}"
+                android:textSize="22sp"
                 app:layout_constraintBottom_toTopOf="@+id/sub_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -57,8 +58,9 @@
                 android:layout_marginBottom="4dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:text="@{model.author}"
                 android:gravity="center"
+                android:text="@{model.author}"
+                android:textSize="17sp"
                 app:layout_constraintBottom_toTopOf="@+id/seekbar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -71,12 +73,12 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                app:progress="@{model.Elapsed}"
-                app:max="@{model.Duration}"
                 app:layout_constraintBottom_toTopOf="@+id/play_pause"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sub_title" />
+                app:layout_constraintTop_toBottomOf="@+id/sub_title"
+                app:max="@{model.Duration}"
+                app:progress="@{model.Elapsed}" />
 
             <TextView
                 android:id="@+id/elapsed"
@@ -103,61 +105,56 @@
                 app:layout_constraintTop_toBottomOf="@+id/seekbar" />
 
             <ImageButton
+                android:background="@drawable/accent_circle"
                 android:id="@+id/play_pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/fast_forward"
                 app:layout_constraintStart_toEndOf="@+id/rewind"
                 app:layout_constraintTop_toBottomOf="@+id/seekbar"
-                app:srcCompat="@drawable/icons8_play" />
+                app:srcCompat="@drawable/ic_play_arrow_solid"
+                playImage="@{@drawable/ic_play_arrow_solid}"
+                pauseImage="@{@drawable/ic_pause_solid}"
+                playState="@{model.playbackState}"/>
 
             <ImageButton
+                android:background="@drawable/accent_circle_small"
                 android:id="@+id/rewind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/play_pause"
                 app:layout_constraintEnd_toStartOf="@+id/play_pause"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/play_pause"
-                app:srcCompat="@drawable/icons8_rewind" />
+                app:srcCompat="@drawable/ic_replay_30" />
 
             <ImageButton
+                android:background="@drawable/accent_circle_small"
                 android:id="@+id/fast_forward"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/play_pause"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/play_pause"
                 app:layout_constraintTop_toTopOf="@+id/play_pause"
-                app:srcCompat="@drawable/icons8_fast_forward" />
+                app:srcCompat="@drawable/ic_forward_30" />
 
         </android.support.constraint.ConstraintLayout>
 
         <include
             android:id="@+id/now_playing"
             layout="@layout/_now_playing"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
 
-
-            app:layout_constraintBottom_toTopOf="@+id/thumbnail"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
+            android:visibility="visible"
             bind:model="@{model}" />
     </FrameLayout>
 

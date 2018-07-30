@@ -2,9 +2,12 @@ package com.example.marlonmoorer.streamkast
 
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.support.v4.media.session.PlaybackStateCompat
 import android.text.Html
 import android.text.method.LinkMovementMethod
 import android.view.View
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
@@ -76,6 +79,26 @@ object BindingAdapters{
     @BindingAdapter("date")
     fun setDate(view:TextView,date: Date?){
         view.text=date?.toDateString()
+    }
+
+    @JvmStatic
+    @BindingAdapter(value = ["playImage", "pauseImage","playState"], requireAll = false)
+    fun setStatus(view: ImageButton, playImage:Drawable, pauseImage:Drawable, playState:Int){
+
+        when(playState) {
+            PlaybackStateCompat.STATE_PLAYING -> {
+                view.setImageDrawable(pauseImage)
+            }
+            PlaybackStateCompat.STATE_BUFFERING-> {
+
+            }
+            PlaybackStateCompat.STATE_PAUSED,
+            PlaybackStateCompat.STATE_NONE,
+            PlaybackStateCompat.STATE_STOPPED-> {
+                view .setImageDrawable(playImage)
+            }
+        }
+
     }
 
 }
