@@ -1,6 +1,7 @@
 package com.example.marlonmoorer.streamkast
 
 import android.app.Notification
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.arch.lifecycle.LiveData
@@ -92,6 +93,16 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         timer=Timer()
         registerReceiver(noisyReceiver,IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
         registerReceiver(playAudioReceiver, IntentFilter(PLAY_AUDIO))
+
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+
+             val channel =  NotificationChannel(CHANNEL_ID,application.packageName,NotificationManager.IMPORTANCE_LOW)
+             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+             notificationManager.createNotificationChannel(channel)
+
+           // mNotificationManager.createNotificationChannel(channel);
+        }
 
 
     }
@@ -300,13 +311,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
 
     }
 
-    private val mediaButtonReceiver = object :BroadcastReceiver() {
 
-        override fun onReceive(context: Context?, intent: Intent) {
-            handleIntent(intent)
-        }
-
-    }
 
     private val mediaSessionCallback = object : MediaSessionCompat.Callback() {
 
@@ -355,22 +360,22 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
     override fun onAudioFocusChange(action: Int) {
         when (action) {
             AudioManager.AUDIOFOCUS_LOSS -> {
-              //  if (mediaPlayer.isPlaying()) {
-                //    transportControls?.stop()
-                //}
+                if (isPlaying) {
+                    transportControls?.pause()
+                }
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
-                //transportControls?.pause()
+                transportControls?.pause()
             }
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-                //mediaPlayer.setVolume(0.3f, 0.3f)
+                exoPlayer.setVolume(0.3f)
 
             }
             AudioManager.AUDIOFOCUS_GAIN -> {
-              //  if (!mediaPlayer.isPlaying()) {
-                //    transportControls?.play()
-               // }
-                //mediaPlayer.setVolume(1.0f, 1.0f)
+                if (isPlaying) {
+                    transportControls?.play()
+                }
+                exoPlayer.setVolume(1.0f)
             }
         }
     }

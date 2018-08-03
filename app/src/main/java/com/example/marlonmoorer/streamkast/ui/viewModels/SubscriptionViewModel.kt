@@ -29,7 +29,7 @@ class  SubscriptionViewModel:BaseViewModel(){
                     podcastId=podcast.id.toInt()
                 })
             }
-            isSubbed.postValue(podcast.subscribed)
+            isSubbed.postValue(!podcast.subscribed)
         }
         return  isSubbed
     }

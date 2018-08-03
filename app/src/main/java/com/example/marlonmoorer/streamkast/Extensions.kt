@@ -73,7 +73,11 @@ fun AppCompatActivity.addFragment(id:Int,fragment: Fragment,withAnimation:Boolea
     supportFragmentManager!!
    .beginTransaction().apply {
         if(withAnimation) {
-            setCustomAnimations(R.anim.enter_right,R.anim.nothing,R.anim.nothing,R.anim.exit_right)
+            //setCustomAnimations(R.anim.enter_right,R.anim.nothing,R.anim.nothing,R.anim.exit_right)
+            setCustomAnimations(R.anim.slide_left_enter,
+                    R.anim.slide_left_exit,
+                    R.anim.slide_right_enter,
+                    R.anim.slide_right_exit);
         }
     }.replace(id,fragment)
     .addToBackStack("over")
