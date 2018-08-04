@@ -2,6 +2,8 @@ package com.example.marlonmoorer.streamkast.ui.activities
 
 import android.arch.lifecycle.Observer
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.BottomSheetBehavior
@@ -25,10 +27,10 @@ import com.example.marlonmoorer.streamkast.models.EpisodeModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
 import com.example.marlonmoorer.streamkast.ui.viewModels.MediaPlayerViewModel
 import org.jetbrains.anko.contentView
+import org.jetbrains.anko.longToast
 
 
-class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationView.OnNavigationItemSelectedListener{
-
+class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationView.OnNavigationItemSelectedListener, ConnectivityReceiverListener {
 
 
 
@@ -40,20 +42,19 @@ class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationVi
     private lateinit var episodeFragment: EpisodeFragment
     private  var isBound=false
 
-    companion object {
-        val PLAY_MEDIA="PLAY_MEDIA"
-    }
 
 
     private var behavior: BottomSheetBehavior<View>?=null
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         Utils.AppExceptionHandler(this)
+
+        registerReceiver(ConnectivityReceiver(this),
+                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+
+
         subscriptionViewModel= createViewModel()
         mediaViewModel=createViewModel()
 
@@ -207,6 +208,11 @@ class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationVi
         }
         updateMargin()
 
+    }
+
+    override fun onConnectionChanged(isConnected: Boolean) {
+        val message=if(isConnected) "Connected" else "Disconected"
+        longToast(message)
     }
 
     override fun onBackPressed() {
