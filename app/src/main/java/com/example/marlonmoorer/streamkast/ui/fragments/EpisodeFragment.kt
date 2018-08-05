@@ -3,8 +3,12 @@ package com.example.marlonmoorer.streamkast.ui.fragments
 import android.app.DownloadManager
 import android.arch.lifecycle.Observer
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.design.widget.BottomSheetDialogFragment
+import android.support.v7.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +24,10 @@ import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import org.jetbrains.anko.cancelButton
+import org.jetbrains.anko.okButton
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.yesButton
 
 
 class EpisodeFragment: BottomSheetDialogFragment() {
@@ -45,37 +53,6 @@ class EpisodeFragment: BottomSheetDialogFragment() {
     }
 
 
-    var observer=Observer<LibraryViewModel.DownloadInfo>{
-        when(it?.status){
-            DownloadManager.STATUS_PENDING->{
-                binding.actionButtonDownload.apply{
-                    text = "Pending ..."
-                    setIcon(0)
-                    isEnabled=false
-                }
-            }
-            DownloadManager.STATUS_RUNNING->{
-                binding.actionButtonDownload.apply{
-                    text = "Downloading (${it.progress}%) ..."
-                    setIcon(0)
-                    isEnabled=false
-                }
-            }
-            DownloadManager.STATUS_SUCCESSFUL->{
-                binding.downloadProgress.progress=0
-                binding.actionButtonDownload.apply {
-                    text="Downloaded"
-                    setIcon(R.drawable.icons8_check_mark_symbol)
-                }
-            }
-        }
-
-    }
-
-
-
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentEpisodeBinding.inflate(inflater)
         binding.episode=episode
@@ -83,12 +60,34 @@ class EpisodeFragment: BottomSheetDialogFragment() {
             listener?.playEpisode(episode)
         }
         binding.actionButtonDownload.setOnClickListener {
-            binding.downloadProgress.max=100
-            libraryViewModel.queDownload(episode)
-            this.dismiss()
-        }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M&& !checkPermission()) {
+              return@setOnClickListener
+            }
+            if (libraryViewModel.wifiOnly){
+                alert("Downloading is only allowed over wifi. Would you like to allow Downloading over your mobile network?"){
+                    yesButton {
+                        startDownload()
+                    }
+                    cancelButton {
+                    }
+                }.show()
 
+            }else{
+                startDownload()
+            }
+        }
         return  binding.root
+    }
+
+    private fun startDownload(){
+        binding.downloadProgress.max=100
+        libraryViewModel.queDownload(episode)
+        this.dismiss()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun checkPermission():Boolean{
+         return activity?.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED
     }
 
 

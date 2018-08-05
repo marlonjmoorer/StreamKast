@@ -109,7 +109,7 @@ class MediaPlayerFragment:Fragment(),SeekBar.OnSeekBarChangeListener{
         position?.let { mediaPlayerModel.Elapsed=position}
     }
 
-    fun fadeMiniPlayer(offset:Float)=now_playing?.fade(1 - (offset))
+    fun setOffset(offset:Float)=now_playing?.fade(1 - (offset))
 
     companion object {
         private val playImage=R.drawable.ic_play_arrow_solid

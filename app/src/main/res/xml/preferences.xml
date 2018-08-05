@@ -7,13 +7,8 @@
         android:title="Download on Wifi-Only"
         android:summary="Turn this option on or off"/>
 
-     <ListPreference
-         android:defaultValue="0"
-         android:dialogTitle="Storage"
-         android:entries="@array/pref_storage"
-         android:entryValues="@array/pref_storage_values"
-         android:key="@string/key_storage"
-         android:summary="Internal or Extenal Storage"
-         android:title="Storage" />
+     <Preference
+         android:title="Download Location"
+         android:key="folderPicker"/>
      </PreferenceCategory>
 </PreferenceScreen>

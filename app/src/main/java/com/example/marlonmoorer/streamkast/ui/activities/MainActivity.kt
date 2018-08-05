@@ -1,9 +1,11 @@
 package com.example.marlonmoorer.streamkast.ui.activities
 
+import android.Manifest
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.BottomSheetBehavior
@@ -51,9 +53,12 @@ class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationVi
         setContentView(R.layout.activity_main)
         Utils.AppExceptionHandler(this)
 
-        registerReceiver(ConnectivityReceiver(this),
-                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+//        registerReceiver(ConnectivityReceiver(this),
+//                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),0)
+        }
 
         subscriptionViewModel= createViewModel()
         mediaViewModel=createViewModel()
@@ -67,7 +72,7 @@ class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationVi
                     nav.animate()
                             .translationY(slideOffset*nav.height)
                             .setDuration(0)
-                    mediaPlayerFragment.fadeMiniPlayer(slideOffset)
+                    mediaPlayerFragment.setOffset(slideOffset)
                 }
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
 

@@ -12,6 +12,7 @@ import android.database.ContentObserver
 import android.net.Uri
 import android.os.Environment
 import android.os.Handler
+import android.support.v7.preference.PreferenceManager
 import com.example.marlonmoorer.streamkast.App
 import com.example.marlonmoorer.streamkast.api.Repository
 
@@ -51,7 +52,7 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
         downloads= MutableLiveData()
         App.component?.inject(this)
         app.run {
-            preferences=getSharedPreferences(packageName,0)
+            preferences= PreferenceManager.getDefaultSharedPreferences(this)
             downloadManager=getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             contentResolver.registerContentObserver(Uri.parse( "content://downloads/my_downloads/"),true,observer)
         }
@@ -63,8 +64,12 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
           return preferences.getString("location","${Environment.getExternalStorageDirectory()}/podcast")
         }
 
+    val wifiOnly:Boolean
+        get() = preferences.getBoolean("wifi_only",true)
 
     val downloadChangeEvent=PublishSubject.create<DownloadInfo>()
+
+
 
     private fun checkStatus(id: Long):DownloadInfo{
         val query=DownloadManager.Query()
@@ -93,18 +98,19 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
 
     fun queDownload(episode: IEpisode):Long{
 
+        val uri=Uri.fromFile(File(createPath(episode.guid)))
         val request= DownloadManager.Request(Uri.parse(episode.url)).run {
             setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE);
             setAllowedOverRoaming(false)
             setTitle(episode.title)
             setVisibleInDownloadsUi(true)
-            setDestinationInExternalPublicDir("/podcast","${episode.guid.replace("[^a-zA-Z0-9]+","")}.mp3")
+            setDestinationUri(uri)
         }
         val savedEpisode= IEpisode.fromEpisode<SavedEpisode>(episode)
         val downloadId=downloadManager.enqueue(request)
         checkStatus(downloadId)
         savedEpisode.downloadId= downloadId
-        savedEpisode.url =Uri.fromFile(File(createPath(episode.guid))).toString()
+        savedEpisode.url =uri.toString()
         doAsync {
             repository.savedEpisodes.insert(savedEpisode)
         }
