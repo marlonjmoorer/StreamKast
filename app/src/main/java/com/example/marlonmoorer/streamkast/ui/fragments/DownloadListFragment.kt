@@ -66,8 +66,8 @@ class DownloadListFragment: BaseFragment(), ActionMode.Callback, EditableAdapter
 
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         when(item?.itemId){
-            R.id.action_delete ->  alert("Delete these items?") {
-                positiveButton("Delete"){
+            R.id.action_delete ->  alert(getString(R.string.delete_download_message)) {
+                positiveButton(getString(R.string.delete_btn_text)){
                     episodeAdapter.commitDeletion()
                     mode?.finish()
                 }

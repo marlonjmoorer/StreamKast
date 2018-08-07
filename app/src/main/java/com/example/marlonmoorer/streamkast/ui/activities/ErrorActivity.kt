@@ -12,7 +12,7 @@ class ErrorActivity : AppCompatActivity() {
         setContentView(R.layout.activity_error)
 
         this.intent.run {
-            var message= getStringExtra("ERROR")
+            val message= getStringExtra("ERROR")
             error.text=message
         }
     }

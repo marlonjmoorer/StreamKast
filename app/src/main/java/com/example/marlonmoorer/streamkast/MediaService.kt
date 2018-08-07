@@ -186,9 +186,9 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
                     .setStyle(mediaStyle)
                     .setLargeIcon(bitmapImage)
                     .setSmallIcon(android.R.drawable.stat_sys_headset)
-                    .addAction(R.drawable.ic_replay_30, "previous",createAction(3) )
-                    .addAction(play_pause_icon, "play",play_pauseAction)
-                    .addAction(R.drawable.ic_forward_30, "next",createAction(2))
+                    .addAction(R.drawable.ic_replay_30, getString(R.string.previous_text),createAction(3) )
+                    .addAction(play_pause_icon, getString(R.string.play_text),play_pauseAction)
+                    .addAction(R.drawable.ic_forward_30, getString(R.string.next_text),createAction(2))
                     .setContentText(currentMedia?.author)
                     .setContentTitle(currentMedia?.title)
                     .setDeleteIntent(createAction(4))
@@ -209,7 +209,7 @@ class MediaService:MediaBrowserServiceCompat(),AudioManager.OnAudioFocusChangeLi
         if(URLUtil.isHttpUrl(url)||URLUtil.isHttpsUrl(url)){
 
            return ExtractorMediaSource.Factory(
-                    DefaultHttpDataSourceFactory("exoplayer-codelab")).createMediaSource(uri)
+                    DefaultHttpDataSourceFactory(getString(R.string.user_agent_text))).createMediaSource(uri)
         }else {
             val dataSpec = DataSpec(uri)
             val fileDataSource = FileDataSource()

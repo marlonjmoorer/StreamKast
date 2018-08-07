@@ -83,8 +83,9 @@ class DetailFragment:BaseFragment(){
     }
     private fun onSubscribeClicked(){
          if(detailModel.isSubbed){
-             alert("Unsubscribe from ${detailModel.title}?") {
-                 positiveButton("Unsubscribe"){
+
+             alert(getString(R.string.unsub_format,detailModel.title)) {
+                 positiveButton(getString(R.string.unsub_btn_text)){
                      detailModel.toggleSubscription()
                  }
                  cancelButton {}

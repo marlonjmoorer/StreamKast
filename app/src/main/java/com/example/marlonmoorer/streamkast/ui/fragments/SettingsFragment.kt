@@ -14,14 +14,7 @@ import com.obsez.android.lib.filechooser.ChooserDialog
 
 
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-       when(key){
-           "wifi_only"-> {
-              var x= sharedPreferences?.getBoolean(key,true)
-           }
-       }
-    }
+class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
@@ -30,34 +23,18 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
                 .withStartFile(null)
                 .withChosenListener { path, pathFile ->
                     val editor=preferenceScreen.sharedPreferences.edit()
-                    editor.putString("location",path).apply()
+                    editor.putString(getString(R.string.key_storage),path).apply()
                     findPreference("folderPicker")?.summary=path
                 }
                 .build()
         findPreference("folderPicker")?.run {
-            summary=preferenceScreen.sharedPreferences.getString("location","")
+            summary=preferenceScreen.sharedPreferences.getString(getString(R.string.key_storage),"")
             setOnPreferenceClickListener {
-            chooser.show()
-            return@setOnPreferenceClickListener true
+                chooser.show()
+                return@setOnPreferenceClickListener true
             }
         }
 
     }
-
-    override fun onResume() {
-        super.onResume()
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        super.onActivityResult(requestCode, resultCode, data)
-        val path= data.data?.path
-        var name= data.data?.toString()
-
-        val editor=preferenceScreen.sharedPreferences.edit()
-        editor.putString("location",path).apply()
-    }
-
-
-
+    
 }

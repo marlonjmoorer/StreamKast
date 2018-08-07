@@ -76,9 +76,8 @@ class HistoryListAdapter(var callback: EditAdapterCallback?=null):EditableAdapte
                     }
                     checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                         if(isChecked){
-                            //if(!selectedItems.contains(currentEpisode))
-                            selectedItems.add(currentEpisode)
-
+                            if(!selectedItems.contains(currentEpisode))
+                                selectedItems.add(currentEpisode)
                         }else{
                             selectedItems.remove(currentEpisode)
                         }
@@ -98,7 +97,6 @@ class HistoryListAdapter(var callback: EditAdapterCallback?=null):EditableAdapte
 
             }else if(binding is ItemHistoryBinding){
                 binding.episode=model
-
             }
         }
 

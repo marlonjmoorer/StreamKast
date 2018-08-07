@@ -65,8 +65,8 @@ class LibraryFragment:Fragment(),IModeChangeListener{
         private var fragments: Map<String, Fragment>
         init {
             fragments= mapOf(
-                    "History" to PlaybackHistoryFragment(),
-                    "Downloads" to DownloadListFragment())
+                    getString(R.string.label_history) to PlaybackHistoryFragment(),
+                    getString(R.string.label_downloads) to DownloadListFragment())
         }
         override fun getItem(position: Int): Fragment {
             return fragments.values.elementAt(position)

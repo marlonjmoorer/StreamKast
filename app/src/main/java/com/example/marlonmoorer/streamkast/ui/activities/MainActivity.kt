@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationVi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Utils.AppExceptionHandler(this)
+        Utils.AppExceptionHandler(applicationContext)
 
 //        registerReceiver(ConnectivityReceiver(this),
 //                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
@@ -216,7 +216,7 @@ class MainActivity : AppCompatActivity(),FragmentEvenListener,BottomNavigationVi
     }
 
     override fun onConnectionChanged(isConnected: Boolean) {
-        val message=if(isConnected) "Connected" else "Disconected"
+        val message=if(isConnected) getString(R.string.connected_text) else getString(R.string.disconnected_text)
         longToast(message)
     }
 

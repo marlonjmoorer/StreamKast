@@ -25,7 +25,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-class Repository @Inject constructor(database: KastDatabase, val itunesService: ItunesService, val httpClient: OkHttpClient, val preferences: SharedPreferences, val downloadManager: DownloadManager) {
+class Repository @Inject constructor(database: KastDatabase, val itunesService: ItunesService, val httpClient: OkHttpClient, val preferences: SharedPreferences) {
 
     val subscriptions:SubscriptionDao
     val featuredItems:FeaturedDao
@@ -75,8 +75,8 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
                 channel.postValue(result)
             }
 
-            override fun onFailure(call: okhttp3.Call?, e: IOException?) {
-
+            override fun onFailure(call: okhttp3.Call?, e: IOException) {
+                throw e
             }
         })
         return channel
@@ -85,8 +85,6 @@ class Repository @Inject constructor(database: KastDatabase, val itunesService: 
     private fun syncFeatured(id:String) {
         val key= "sync${id}"
         val lastSyncDate = preferences.getLong(key,0)
-
-
         val hoursAgo= DateTime.now().minusHours(3).millis
         if (lastSyncDate < hoursAgo) {
 

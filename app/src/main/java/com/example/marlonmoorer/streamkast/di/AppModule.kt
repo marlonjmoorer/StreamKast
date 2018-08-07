@@ -5,7 +5,7 @@ import android.content.Context
 import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.api.ItunesService
 import com.example.marlonmoorer.streamkast.api.Repository
-import com.example.marlonmoorer.streamkast.api.RssToJsonService
+
 import com.example.marlonmoorer.streamkast.data.KastDatabase
 
 import dagger.Module
@@ -32,10 +32,10 @@ class AppModule(context: Context) {
 
     @Provides
     @Singleton
-    fun provideRepository(database: KastDatabase,itunesService: ItunesService, okHttpClient: OkHttpClient,downloadManager: DownloadManager):Repository{
+    fun provideRepository(database: KastDatabase,itunesService: ItunesService, okHttpClient: OkHttpClient):Repository{
 
 
-        return Repository(database,itunesService,okHttpClient,context.getSharedPreferences(context.packageName,0),downloadManager)
+        return Repository(database,itunesService,okHttpClient,context.getSharedPreferences(context.packageName,0))
     }
 
     @Provides
@@ -54,16 +54,7 @@ class AppModule(context: Context) {
                 .create(ItunesService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideRssParseService(context: Context,factory: GsonConverterFactory):RssToJsonService{
 
-        return Retrofit.Builder()
-                .baseUrl(RssToJsonService.baseUrl)
-                .addConverterFactory(factory)
-                .build()
-                .create(RssToJsonService::class.java)
-    }
 
     @Provides
     @Singleton
@@ -73,11 +64,6 @@ class AppModule(context: Context) {
     @Singleton
     fun provideOkHttpClient()= OkHttpClient()
 
-    @Provides
-    @Singleton
-    fun provideDownloadManager(context: Context):DownloadManager{
-        return  context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-    }
 
 
 

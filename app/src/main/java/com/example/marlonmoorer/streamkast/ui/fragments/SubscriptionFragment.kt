@@ -73,7 +73,7 @@ class SubscriptionFragment: BaseFragment(),SubscriptionAdapater.SubscriptionAdap
         viewModel.unsubscribe(subscription)
         if(!isInActionMode)
             activity?.contentView?.let {
-                snackbar(it,"Unsubscribed","Undo"){
+                snackbar(it,getString(R.string.unsubbed_message),getString(R.string.undo_btn_text)){
                      viewModel.subscribe(subscription)
                 }
             }
@@ -82,8 +82,8 @@ class SubscriptionFragment: BaseFragment(),SubscriptionAdapater.SubscriptionAdap
     override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
         when(item?.itemId){
             R.id.action_unsubscribe->{
-                alert("Usubscribe from  these podcast?") {
-                    positiveButton("Unsubscribe"){
+                alert(getString(R.string.unsub_multiple_text)) {
+                    positiveButton(getString(R.string.label_unsubscribe)){
                        adapter.commitUnsinscribe()
                         mode?.finish()
                     }

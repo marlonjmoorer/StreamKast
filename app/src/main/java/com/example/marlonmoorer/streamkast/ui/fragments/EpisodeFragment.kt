@@ -64,7 +64,7 @@ class EpisodeFragment: BottomSheetDialogFragment() {
               return@setOnClickListener
             }
             if (libraryViewModel.wifiOnly){
-                alert("Downloading is only allowed over wifi. Would you like to allow Downloading over your mobile network?"){
+                alert(getString(R.string.wifi_only_warning_message)){
                     yesButton {
                         startDownload()
                     }

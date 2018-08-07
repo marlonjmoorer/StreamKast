@@ -16,6 +16,7 @@ import com.example.marlonmoorer.streamkast.databinding.ItemDownloadBinding
 import com.example.marlonmoorer.streamkast.databinding.ItemEditViewBinding
 import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
 import com.example.marlonmoorer.streamkast.ui.viewModels.LibraryViewModel
+import kotlinx.android.synthetic.main.fragment_subscription.view.*
 
 class DownloadListAdapter(val callback:EditAdapterCallback?=null):EditableAdapter<DownloadListAdapter.ViewHolder>(){
 
@@ -69,18 +70,6 @@ class DownloadListAdapter(val callback:EditAdapterCallback?=null):EditableAdapte
         }
     }
 
-    companion object {
-        @JvmStatic
-        @BindingAdapter("status")
-        fun setStatus(view: TextView, status:Int){
-            view.text=when(status){
-                DownloadManager.STATUS_PENDING->"Pending"
-                DownloadManager.STATUS_RUNNING->"Downloading"
-                DownloadManager.STATUS_SUCCESSFUL->"Ready"
-                else->""
-            }
-        }
-    }
 
 
 

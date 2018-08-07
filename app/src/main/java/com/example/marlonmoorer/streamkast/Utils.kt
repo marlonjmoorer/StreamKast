@@ -33,7 +33,7 @@ class Utils{
 
 
 
-    class AppExceptionHandler(private val context: Activity):Thread.UncaughtExceptionHandler{
+    class AppExceptionHandler(private val context:Context):Thread.UncaughtExceptionHandler{
 
         private val ERROR_FILE = AppExceptionHandler::class.java.getSimpleName() + ".error"
         var handler:Thread.UncaughtExceptionHandler
@@ -59,7 +59,6 @@ class Utils{
                 alert.setMessage(throwable?.message)
                 alert.show()
                 Looper.loop()
-
             }).start()
 
             try {

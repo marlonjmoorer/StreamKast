@@ -10,7 +10,7 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_open_search"
-        android:title="action_settings"
+        android:title=""
         android:icon="@drawable/icons8_search"
         appcompat:showAsAction="always" />
 </menu>

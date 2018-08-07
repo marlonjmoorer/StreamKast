@@ -28,6 +28,36 @@
     <string name="title_activity_settings2">Settings</string>
     <string name="key_storage">Storage</string>
     <string name="key_wifi_only">Wifi Only</string>
+    <string name="downloadUri">content://downloads/my_downloads/</string>
+    <string name="RxReplaceSpecial">[^a-zA-Z0-9]</string>
+    <string name="mp3Format">"%1$s/%2$s.mp3"</string>
+    <string name="staus_pending">Pending</string>
+    <string name="staus_downloading">Downloading</string>
+    <string name="status_ready">Ready</string>
+    <string name="label_edit">Edit</string>
+    <string name="label_remove">Remove</string>
+    <string name="description_category_icon">Category Icon</string>
+    <string name="label_featured">Featured</string>
+    <string name="label_latest">Latest</string>
+    <string name="label_unsubscribe">Unsubscribe</string>
+    <string name="delete_download_message">Delete these items?</string>
+    <string name="delete_btn_text">Delete</string>
+
+    <string name="unsub_format">"Unsubscribe from %1$s?"</string>
+    <string name="unsub_btn_text">Unsubscribe</string>
+    <string name="wifi_only_warning_message">Downloading is only allowed over wifi. Would you like to allow Downloading over  mobile networks?</string>
+    <string name="unsub_multiple_text">Usubscribe from  these podcast?</string>
+    <string name="unsubbed_message">Unsubscribed</string>
+    <string name="undo_btn_text">Undo</string>
+    <string name="connected_text">Connected</string>
+    <string name="disconnected_text">Disconected</string>
+    <string name="previous_text">previous</string>
+    <string name="play_text">play</string>
+    <string name="next_text">next</string>
+    <string name="user_agent_text">exoplayer-codelab</string>
+    <string name="label_history">History</string>
+    <string name="label_downloads">Downloads</string>
+    <string name="search_hint_text">Search...</string>
     <!-- Strings related to Settings -->
 
 </resources>

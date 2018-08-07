@@ -13,17 +13,14 @@ import android.net.Uri
 import android.os.Environment
 import android.os.Handler
 import android.support.v7.preference.PreferenceManager
-import com.example.marlonmoorer.streamkast.App
+import com.example.marlonmoorer.streamkast.*
 import com.example.marlonmoorer.streamkast.api.Repository
 
 
 import com.example.marlonmoorer.streamkast.data.PlaybackHistory
 import com.example.marlonmoorer.streamkast.data.SavedEpisode
-import com.example.marlonmoorer.streamkast.getInt
-import com.example.marlonmoorer.streamkast.getString
 import com.example.marlonmoorer.streamkast.models.DownloadedEpisodeModel
 import com.example.marlonmoorer.streamkast.models.IEpisode
-import com.example.marlonmoorer.streamkast.toByteSize
 import io.reactivex.subjects.PublishSubject
 
 
@@ -32,13 +29,17 @@ import java.io.File
 import javax.inject.Inject
 
 
-class LibraryViewModel(app:Application):AndroidViewModel(app){
+class LibraryViewModel(val app:Application):AndroidViewModel(app){
 
     @Inject
     lateinit var repository: Repository
     private var downloads:MutableLiveData<List<DownloadedEpisodeModel>>
     private lateinit var preferences:SharedPreferences
     private lateinit var  downloadManager:DownloadManager
+    private lateinit var  key_wifi:String
+    private lateinit var  key_location:String
+    private lateinit  var rxRegex: String
+
     private val observer=object :ContentObserver(Handler()){
         override fun onChange(selfChange: Boolean, uri: Uri?) {
             super.onChange(selfChange, uri)
@@ -48,24 +49,29 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
         }
     }
 
+
+
     init {
         downloads= MutableLiveData()
         App.component?.inject(this)
         app.run {
             preferences= PreferenceManager.getDefaultSharedPreferences(this)
             downloadManager=getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            contentResolver.registerContentObserver(Uri.parse( "content://downloads/my_downloads/"),true,observer)
+            contentResolver.registerContentObserver(Uri.parse( getString(R.string.downloadUri)),true,observer)
+            key_location=getString(R.string.key_storage)
+            key_wifi=getString(R.string.key_wifi_only)
+            rxRegex=getString(R.string.RxReplaceSpecial)
         }
     }
 
 
     val downloadLocation:String
         get() {
-          return preferences.getString("location","${Environment.getExternalStorageDirectory()}/podcast")
+          return preferences.getString(key_location,"${Environment.getExternalStorageDirectory()}/podcast")
         }
 
     val wifiOnly:Boolean
-        get() = preferences.getBoolean("wifi_only",true)
+        get() = preferences.getBoolean(key_wifi,true)
 
     val downloadChangeEvent=PublishSubject.create<DownloadInfo>()
 
@@ -118,7 +124,7 @@ class LibraryViewModel(app:Application):AndroidViewModel(app){
     }
 
     private fun createPath(name:String):String{
-        return "${downloadLocation}/${name.replace("[^a-zA-Z0-9]+","")}.mp3"
+        return  app.getString(R.string.mp3Format,downloadLocation,name.replace(Regex(rxRegex),""))
     }
 
     fun getDownloaded(): LiveData<List<DownloadedEpisodeModel>> {

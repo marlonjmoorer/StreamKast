@@ -1,5 +1,6 @@
 package com.example.marlonmoorer.streamkast
 
+import android.app.DownloadManager
 import android.databinding.BindingAdapter
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -99,6 +100,18 @@ object BindingAdapters{
             }
         }
 
+    }
+
+    @JvmStatic
+    @BindingAdapter("status")
+    fun setStatus(view: TextView, status:Int){
+        val ctx= view.context
+        view.text=when(status){
+            DownloadManager.STATUS_PENDING->ctx.getString(R.string.staus_pending)
+            DownloadManager.STATUS_RUNNING->ctx.getString(R.string.staus_downloading)
+            DownloadManager.STATUS_SUCCESSFUL->ctx.getString(R.string.status_ready)
+            else->""
+        }
     }
 
 }
