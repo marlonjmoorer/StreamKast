@@ -2,7 +2,6 @@ package com.example.marlonmoorer.streamkast.ui.fragments
 
 
 import android.arch.lifecycle.Observer
-import android.content.Context
 import android.databinding.ObservableBoolean
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -15,7 +14,6 @@ import com.example.marlonmoorer.streamkast.R
 import com.example.marlonmoorer.streamkast.createViewModel
 import com.example.marlonmoorer.streamkast.databinding.FragmentDetailsBinding
 import com.example.marlonmoorer.streamkast.setIcon
-import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 
 
 import com.example.marlonmoorer.streamkast.ui.viewModels.DetailViewModel
@@ -63,25 +61,23 @@ class DetailFragment:BaseFragment(){
         return binding.root
     }
     private fun setUpButton(subscribed:Boolean){
-        val button_text: String
-        val icon:Int
-        if(subscribed){
-            button_text=resources.getString(R.string.action_subbed)
-            icon=R.drawable.icons8_check_mark_symbol
-        }
-        else{
-            button_text=resources.getString(R.string.action_sub)
-            icon=R.drawable.icons8_add
-        }
         binding.detailCard?.followBtn?.run {
-            text=button_text
-            setIcon(icon)
+            if(subscribed){
+                text=getString(R.string.action_subbed)
+                setIcon(R.drawable.icons8_check_mark_symbol)
+                background=resources.getDrawable(R.drawable.button_subbed,activity?.theme)
+            }
+            else{
+                text=getString(R.string.action_sub)
+                setIcon(R.drawable.icons8_add)
+                background=resources.getDrawable(R.drawable.button_unsubbed,activity?.theme)
+            }
             setOnClickListener{
-                onSubscribeClicked()
+                toggleSubscription()
             }
         }
     }
-    private fun onSubscribeClicked(){
+    private fun toggleSubscription(){
          if(detailModel.isSubbed){
 
              alert(getString(R.string.unsub_format,detailModel.title)) {

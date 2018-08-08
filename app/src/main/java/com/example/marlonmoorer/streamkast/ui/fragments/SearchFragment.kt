@@ -3,6 +3,7 @@ package com.example.marlonmoorer.streamkast.ui.fragments
 import android.arch.lifecycle.Observer
 import android.arch.paging.PagedList
 import android.content.Context
+import android.databinding.ObservableField
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -12,9 +13,11 @@ import android.view.ViewGroup
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
 import com.example.marlonmoorer.streamkast.R
+import com.example.marlonmoorer.streamkast.SearchState
 import com.example.marlonmoorer.streamkast.ui.adapters.PagedPodcastListAdapter
 import com.example.marlonmoorer.streamkast.api.models.Podcast
 import com.example.marlonmoorer.streamkast.createViewModel
+import com.example.marlonmoorer.streamkast.databinding.FragmentSearchBinding
 import com.example.marlonmoorer.streamkast.ui.activities.FragmentEvenListener
 
 import com.example.marlonmoorer.streamkast.ui.viewModels.BrowseViewModel
@@ -27,24 +30,28 @@ class SearchFragment: BaseFragment(),PagedPodcastListAdapter.PodcastListCallBack
     private lateinit var searchViewModel:SearchViewModel
     private lateinit var browseViewModel:BrowseViewModel
     private lateinit var adapter:PagedPodcastListAdapter
+    private  lateinit var binding:FragmentSearchBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view=inflater.inflate(R.layout.fragment_search,container,false)
+
+        binding=FragmentSearchBinding.inflate(inflater,container,false)
         adapter=PagedPodcastListAdapter(this)
-        view.apply {
-            resultList?.adapter=adapter
+        binding.apply {
+            resultList.adapter=adapter
             resultList.layoutManager= LinearLayoutManager(activity)
-            search_view.setOnSearchListener(object:FloatingSearchView.OnSearchListener{
+            searchView.setOnSearchListener(object:FloatingSearchView.OnSearchListener{
                 override fun onSearchAction(currentQuery: String) {
-                    searchViewModel.searchForPodcast(currentQuery)
+                    if(!currentQuery.isEmpty()){
+                     searchViewModel.searchForPodcast(currentQuery)
+                    }
                 }
                 override fun onSuggestionClicked(searchSuggestion: SearchSuggestion?) {
 
                 }
             })
-            search_view.setSearchFocused(true)
+            searchView.setSearchFocused(true)
         }
-        return view
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -63,6 +70,7 @@ class SearchFragment: BaseFragment(),PagedPodcastListAdapter.PodcastListCallBack
         searchViewModel.searchResults.removeObserver(resultsObserver)
     }
     private var resultsObserver= Observer<PagedList<Podcast>> {results->
+
         results?.let {
             adapter.submitList(results)
             adapter.notifyDataSetChanged()

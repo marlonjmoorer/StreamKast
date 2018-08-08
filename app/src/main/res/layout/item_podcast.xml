@@ -40,15 +40,17 @@
                 app:src="@{podcast.artworkUrl100}"/>
         </FrameLayout>
 
-        <Button
+        <ImageButton
             android:id="@+id/subscribe_button"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@{podcast.subscribed?@drawable/ic_check_box_white_24dp:@drawable/icons8_add}"
+            android:background="@color/colorBackground"
+            android:src="@{podcast.subscribed?@drawable/ic_check_circle:@drawable/icons8_add}"
+            android:tint="@color/colorAccent"
             android:onClick="@{listener::onClick}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

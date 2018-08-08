@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/resultList"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/search_view"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/search_view"
-        app:layout_constraintTop_toBottomOf="@+id/search_view"
-        android:paddingTop="60dp"
-        android:clipToPadding="false"/>
+        android:layout_height="match_parent">
 
-    <com.arlib.floatingsearchview.FloatingSearchView
-        android:id="@+id/search_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/SearchView"
-        app:floatingSearch_close_search_on_keyboard_dismiss="true"
-        app:floatingSearch_leftActionMode="showSearch"
-        app:floatingSearch_searchHint="@string/search_hint_text"
-        app:floatingSearch_suggestionsListAnimDuration="250"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/resultList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/search_view"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/search_view"
+            app:layout_constraintTop_toBottomOf="@+id/search_view"
+            android:paddingTop="60dp"
+            android:clipToPadding="false"/>
 
-</RelativeLayout>
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            style="@style/SearchView"
+            android:layout_marginTop="0dp"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"
+            app:floatingSearch_leftActionMode="showSearch"
+            app:floatingSearch_searchHint="@string/search_hint_text"
+            app:floatingSearch_suggestionsListAnimDuration="250"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </FrameLayout>
+</layout>

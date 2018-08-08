@@ -119,7 +119,7 @@ class Utils{
                             "title"-> channel.title =parser.nextText()
                             "link"->channel.link=parser.nextText()
                             "description"-> channel.description=parser.nextText()
-                            "itunes:author"->channel.author=parser.nextText()
+                            "author"->channel.author=parser.nextText()
                             "image"->{
                                 val prefix= parser.prefix
                                 if(prefix==null){
@@ -137,8 +137,11 @@ class Utils{
                                 val episode= parseItem(parser)
 
                                 episode?.let {
-                                    if(episode.thumbnail==""){
+                                    if(episode.thumbnail.isEmpty()){
                                         episode.thumbnail=channel.thumbnail
+                                    }
+                                    if(episode.author.isEmpty()){
+                                        episode.author=channel.author
                                     }
                                     channel.episodes.add(episode)
                                 }

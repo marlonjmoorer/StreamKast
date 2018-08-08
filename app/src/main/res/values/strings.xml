@@ -58,6 +58,9 @@
     <string name="label_history">History</string>
     <string name="label_downloads">Downloads</string>
     <string name="search_hint_text">Search...</string>
+    <string name="pending_text">Pending ...</string>
+    <string name="downloading_format">Downloading (%,.0f%%) ...</string>
+    <string name="downloaded_text">Downloaded</string>
     <!-- Strings related to Settings -->
 
 </resources>

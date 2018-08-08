@@ -80,7 +80,6 @@ class EpisodeFragment: BottomSheetDialogFragment() {
     }
 
     private fun startDownload(){
-        binding.downloadProgress.max=100
         libraryViewModel.queDownload(episode)
         this.dismiss()
     }
@@ -107,23 +106,23 @@ class EpisodeFragment: BottomSheetDialogFragment() {
                     when(it?.status){
                         DownloadManager.STATUS_PENDING->{
                             binding.actionButtonDownload.apply{
-                                text = "Pending ..."
+                                text = getString(R.string.pending_text)
                                 setIcon(0)
                                 isEnabled=false
                             }
                         }
                         DownloadManager.STATUS_RUNNING->{
                             binding.actionButtonDownload.apply{
-                                text = "Downloading (${it.progress}%) ..."
+                                text = getString(R.string.downloading_format,it.progress.toFloat())
                                 setIcon(0)
                                 isEnabled=false
                             }
                         }
                         DownloadManager.STATUS_SUCCESSFUL->{
-                            binding.downloadProgress.progress=0
                             binding.actionButtonDownload.apply {
-                                text="Downloaded"
+                                text=getString(R.string.downloaded_text)
                                 setIcon(R.drawable.icons8_check_mark_symbol)
+                                isEnabled=false
                             }
                             disposeable?.dispose()
                         }

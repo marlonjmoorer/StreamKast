@@ -19,13 +19,15 @@
         android:layout_marginEnd="8dp"
         app:cardUseCompatPadding="true"
         android:onClick="@{listener::onClick}"
+        android:background="@color/colorBackground"
         >
 
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark">
 
             <ImageView
                 android:id="@+id/poster"
@@ -55,9 +57,10 @@
                 android:lineSpacingExtra="2dp"
                 android:maxLines="2"
                 android:text="@{subscription.title}"
-                android:textSize="12sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/menu"
                 app:layout_constraintEnd_toStartOf="@id/menu"
+                app:layout_constraintHorizontal_bias="0.92"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/menu" />
 
@@ -70,7 +73,8 @@
                     android:layout_marginStart="3dp"
                     android:layout_marginTop="8dp"
                     android:background="@color/transparent"
-                    android:src="@drawable/ic_more_vert_black_24dp"
+                    android:src="@drawable/ic_more_vert"
+                    android:padding="5dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/title"

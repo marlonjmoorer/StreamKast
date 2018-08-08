@@ -20,6 +20,7 @@
 
       <android.support.v7.widget.Toolbar
           android:id="@+id/toolbar"
+          app:title="@string/nav_browse"
           android:layout_width="match_parent"
           android:layout_height="?attr/actionBarSize"
           android:background="@color/colorPrimary"
@@ -48,11 +49,11 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
 
-             android:background="@color/black"
+             android:background="@color/colorBackground"
              android:gravity="center_vertical"
              android:padding="8dp"
              android:text="@string/featured_label"
-             android:textColor="@color/white"
+             android:textColor="@color/colorText"
              android:textSize="24sp"
              app:layout_constraintBottom_toTopOf="@+id/nestedScrollView"
              app:layout_constraintEnd_toEndOf="parent"
@@ -64,7 +65,7 @@
              android:id="@+id/featured"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="@color/black"
+             android:background="@color/colorBackground"
              app:layout_constraintBottom_toTopOf="@+id/categories"
              app:layout_constraintEnd_toEndOf="parent"
              app:layout_constraintStart_toStartOf="parent"
@@ -77,18 +78,18 @@
              android:id="@+id/textView"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:background="@color/black"
+             android:background="@color/colorBackground"
              android:padding="8dp"
              android:text="@string/genre_label"
              android:textAlignment="center"
-             android:textColor="@color/white"
+             android:textColor="@color/colorText"
              android:textSize="24sp" />
 
          <android.support.v7.widget.RecyclerView
              android:id="@+id/categories"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:background="@color/black"
+             android:background="@color/colorBackground"
              app:layout_constraintVertical_weight="3">
 
          </android.support.v7.widget.RecyclerView>
