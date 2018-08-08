@@ -6,7 +6,7 @@
         <data>
             <variable
                 name="featured"
-                type="com.example.marlonmoorer.streamkast.data.Featured"/>
+                type="com.marlonmoorer.streamkast.data.Featured"/>
         </data>
 
 

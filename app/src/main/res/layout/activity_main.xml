@@ -36,7 +36,7 @@
 
             <fragment
                 android:id="@+id/mini_player"
-                android:name="com.example.marlonmoorer.streamkast.ui.fragments.MediaPlayerFragment"
+                android:name="com.marlonmoorer.streamkast.ui.fragments.MediaPlayerFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </FrameLayout>

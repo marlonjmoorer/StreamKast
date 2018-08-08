@@ -6,7 +6,7 @@
     <data>
         <variable
             name="genre"
-            type="com.example.marlonmoorer.streamkast.api.models.MediaGenre"/>
+            type="com.marlonmoorer.streamkast.api.models.MediaGenre"/>
 
     </data>
 

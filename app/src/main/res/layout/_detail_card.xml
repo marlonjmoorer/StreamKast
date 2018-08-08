@@ -5,7 +5,7 @@
     <data>
         <variable
             name="podcast"
-            type="com.example.marlonmoorer.streamkast.api.models.Podcast"/>
+            type="com.marlonmoorer.streamkast.api.models.Podcast"/>
 
     </data>
 

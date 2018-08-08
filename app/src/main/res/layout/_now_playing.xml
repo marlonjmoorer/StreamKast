@@ -5,7 +5,7 @@
     <data>
         <variable
             name="model"
-            type="com.example.marlonmoorer.streamkast.models.MediaPlayerModel"/>
+            type="com.marlonmoorer.streamkast.models.MediaPlayerModel"/>
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

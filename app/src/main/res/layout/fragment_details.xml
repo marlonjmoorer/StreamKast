@@ -5,11 +5,11 @@
     <data>
         <variable
             name="channel"
-            type="com.example.marlonmoorer.streamkast.api.models.Channel"/>
+            type="com.marlonmoorer.streamkast.api.models.Channel"/>
 
         <variable
             name="podcast"
-            type="com.example.marlonmoorer.streamkast.api.models.Podcast"/>
+            type="com.marlonmoorer.streamkast.api.models.Podcast"/>
         <variable
             name="loading"
             type="android.databinding.ObservableBoolean"/>

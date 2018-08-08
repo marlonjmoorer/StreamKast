@@ -1,6 +1,6 @@
-package com.example.marlonmoorer.streamkast
+package com.marlonmoorer.streamkast
 
-import com.example.marlonmoorer.streamkast.api.Repository
+import com.marlonmoorer.streamkast.api.Repository
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.junit.Test
